@@ -19,11 +19,12 @@
     "testing",
     "api",
     "REST",
-    "jasmine",
+    "mocha",
     "bdd",
     "frisby"
   ],
   "dependencies": {
+    "clone": "^1.0.0",
     "jsonschema": "1.0.0",
     "lodash": "^3.3.1",
     "mock-request": ">= 0.1.2",
