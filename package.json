@@ -24,13 +24,13 @@
     "frisby"
   ],
   "dependencies": {
-    "request": ">=2.51",
     "jsonschema": "1.0.0",
-    "stack-trace": "0.0.x",
+    "lodash": "^3.3.1",
     "mock-request": ">= 0.1.2",
     "nock": "*",
-    "underscore": "1.6.x",
-    "qs": "1.2.x"
+    "qs": "1.2.x",
+    "request": ">=2.51",
+    "stack-trace": "0.0.x"
   },
   "devDependencies": {
     "form-data": "~0.1.4",
