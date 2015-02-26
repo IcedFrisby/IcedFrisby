@@ -5,11 +5,11 @@ A node.js NPM module that makes testing API endpoints easy, fast and fun.
 This fork is still a major work-in-progress and should be considered unstable.
 
 ## What makes this fork different?
-* Uses Mocha as the driver instad of Jasmine
+* Uses Mocha as the driver instead of Jasmine
 * Uses Chai for assertions
 * Uses [Joi](https://github.com/hapijs/joi) for flexible and simple schema/type JSON validation
 * Uses [lodash](https://github.com/lodash/lodash) instead of underscore
-* Returns a 599 (network teimout error) response if a request times out or is unavailable instead of a 500
+* Returns a 599 (network timeout error) response if a request times out or is unavailable instead of a 500
 
 ## Installation
 
@@ -25,8 +25,8 @@ Each set of unique sequences or API endpoint tests should be started with new `f
 
 ```javascript
 
-var frisby = require('frisby');
-var Joi = require('joi');
+var frisby = require('frisby');  // get Frisby with `npm install frisby`
+var Joi = require('joi'); // get Joi with `npm install joi`
 
 var URL = 'http://localhost:3000/';
 var URL_AUTH = 'http://username:password@localhost:3000/';
@@ -73,9 +73,9 @@ This fork of Frisby is built on top of the Mocha BDD spec framework.
 
 ### File naming conventions
 
-### Install mocha
+### Install Mocha
 
-    npm install -g mocah
+    npm install -g mocha
 
 ### Run it from the CLI
 
