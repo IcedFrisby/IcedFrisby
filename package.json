@@ -1,19 +1,21 @@
 {
   "name": "frisby",
   "version": "0.8.4",
-  "description": "Frisby.js: REST API Endpoint Testing built on Jasmine",
+  "description": "Frisby.js: REST API Endpoint Testing built on Mocha",
   "homepage": "http://frisbyjs.com",
-  "author": "Vance Lucas <vance@vancelucas.com>",
+  "author": "Vance Lucas (orig author), Robert Herhold",
   "license": {
     "type": "BSD"
   },
   "contributors": [
+    "Vance Lucas <vance@vancelucas.com>",
     "Eric Boehs <ericboehs@gmail.com>",
-    "Kevin Morey"
+    "Kevin Morey",
+    "Robert Herhold"
   ],
   "repository": {
     "type": "git",
-    "url": "http://github.com/vlucas/frisby"
+    "url": "http://github.com/RobertHerhold/frisby"
   },
   "keywords": [
     "testing",
@@ -24,8 +26,9 @@
     "frisby"
   ],
   "dependencies": {
+    "chai": "^2.1.0",
     "clone": "^1.0.0",
-    "jsonschema": "1.0.0",
+    "joi": "^5.1.0",
     "lodash": "^3.3.1",
     "mock-request": ">= 0.1.2",
     "nock": "*",
@@ -35,7 +38,7 @@
   },
   "devDependencies": {
     "form-data": "~0.1.4",
-    "minijasminenode2": "^1.0.0"
+    "mochawesome": "^1.0.5"
   },
   "main": "./lib/frisby",
   "engines": {
