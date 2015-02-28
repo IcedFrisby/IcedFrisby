@@ -1,6 +1,7 @@
 var nock = require('nock');
 var frisby = require('../lib/frisby');
 var mockRequest = require('mock-request');
+var Joi = require('joi');
 
 // Built-in node.js
 var fs = require('fs');
@@ -84,7 +85,7 @@ describe('Frisby matchers', function() {
   it('globalSetup should set timeout to 3000', function() {
     mockGlobalSetup();
     var f1 = frisby.create(this.description)
-    expect(f1.timeout()).toBe(3000);
+    expect(f1.timeout()).to.equal(3000);
     restoreGlobalSetup();
   });
 
@@ -102,8 +103,8 @@ describe('Frisby matchers', function() {
     var f1 = frisby.create(this.description)
       .get('http://mock-request/test-object-array', {mock: mockFn})
       .after(function(err, res, body) {
-        expect(this.current.outgoing.headers['test']).toBe('One');
-        expect(this.current.outgoing.headers['referer']).toBe('http://frisbyjs.com');
+        expect(this.current.outgoing.headers['test']).to.equal('One');
+        expect(this.current.outgoing.headers['referer']).to.equal('http://frisbyjs.com');
 
         restoreGlobalSetup();
       })
@@ -126,7 +127,7 @@ describe('Frisby matchers', function() {
       .addHeaders({ 'Test': 'Two' })
       .after(function(err, res, body) {
         // Local addHeaders should override global
-        expect(this.current.outgoing.headers['test']).toBe('Two');
+        expect(this.current.outgoing.headers['test']).to.equal('Two');
 
         restoreGlobalSetup();
       })
@@ -157,7 +158,7 @@ describe('Frisby matchers', function() {
       .addHeaders({ 'Test': 'Two' })
       .after(function(err, res, body) {
         // Local addHeaders should override global
-        expect(this.current.outgoing.headers['test']).toBe('Two');
+        expect(this.current.outgoing.headers['test']).to.equal('Two');
       })
     .toss();
 
@@ -166,7 +167,7 @@ describe('Frisby matchers', function() {
       .addHeaders({ 'Test': 'Three' })
       .after(function(err, res, body) {
         // Local addHeaders should override global
-        expect(this.current.outgoing.headers['test']).toBe('Three');
+        expect(this.current.outgoing.headers['test']).to.equal('Three');
       })
     .toss();
 
@@ -185,52 +186,14 @@ describe('Frisby matchers', function() {
 
     var f1 = frisby.create(this.description)
       .get('http://mock-request/test-object-array', {mock: mockFn})
-      .expectJSON('test_subjects.*', { // * == EACH object in here should match
-        test_str_same: "I am the same...",
-        test_int: function(val) { expect(val).toMatch(/\d+/); }
-      })
-      .toss();
-  });
-
-
-  it('expectJSON should test EACH object in an array with path ending with asterisk and use toBeTypeOrNull callback properly', function() {
-    // Mock API
-    var mockFn = mockRequest.mock()
-    .get('/test-object-array')
-      .respond({
-        statusCode: 200,
-        body: fixtures.arrayOfObjects
-      })
-    .run();
-
-    var f1 = frisby.create(this.description)
-      .get('http://mock-request/test-object-array', {mock: mockFn})
-      .expectJSON('test_subjects.*', { // * == EACH object in here should match
-        test_str_same: 'I am the same...'
-      })
-      .toss();
-  });
-
-
-  it('expectJSONTypes should test EACH object in an array with path ending with asterisk and use toBeTypeOrNull callback properly', function() {
-    // Mock API
-    var mockFn = mockRequest.mock()
-    .get('/test-object-array')
-      .respond({
-        statusCode: 200,
-        body: fixtures.arrayOfObjects
-      })
-    .run();
-
-    var f1 = frisby.create(this.description)
-      .get('http://mock-request/test-object-array', {mock: mockFn})
       .expectJSONTypes('test_subjects.*', { // * == EACH object in here should match
-        test_str_same: String,
-        test_optional: function(val) { expect(val).toBeTypeOrNull(String); }
+        test_str_same: Joi.string().valid("I am the same..."),
+        test_int: Joi.number(),
+        test_str: Joi.string(),
+        test_optional: Joi.any().optional()
       })
       .toss();
   });
-
 
   it('expectJSON should match ONE object in an array with path ending with question mark', function() {
     // Mock API
@@ -244,13 +207,14 @@ describe('Frisby matchers', function() {
 
     var f1 = frisby.create(this.description)
       .get('http://mock-request/test-object-array', {mock: mockFn})
-      .expectJSON('test_subjects.?', { // ? == ONE object in here should match (contains)
-        test_str: "I am a string two!",
-        test_int: 43
+      .expectJSONTypes('test_subjects.?', { // ? == ONE object in here should match (contains)
+        test_str_same: Joi.string().valid("I am the same..."),
+        test_int: Joi.number().valid(43),
+        test_str: Joi.string().valid("I am a string two!"),
+        test_optional: Joi.any().optional()
       })
       .toss();
   });
-
 
   it('expectJSON should NOT match ONE object in an array with path ending with question mark', function() {
     // Mock API
@@ -271,7 +235,6 @@ describe('Frisby matchers', function() {
       .toss();
   });
 
-
   it('expectJSONTypes should NOT match ONE object in an array with path ending with question mark', function() {
     // Mock API
     var mockFn = mockRequest.mock()
@@ -285,12 +248,11 @@ describe('Frisby matchers', function() {
     var f1 = frisby.create(this.description)
       .get('http://mock-request/test-object-array', {mock: mockFn})
       .not().expectJSONTypes('test_subjects.?', { // ? == ONE object in 'test_subjects' array
-        test_str: Boolean,
-        test_int: String
+        test_str: Joi.boolean(),
+        test_int: Joi.string()
       })
       .toss();
   });
-
 
   it('expectJSONLength should properly count arrays, strings, and objects', function() {
     // Mock API
@@ -496,93 +458,6 @@ describe('Frisby matchers', function() {
       .toss();
   });
 
-  it('TEST FROM USER - should NOT pass', function() {
-    // Mock API
-    var mockFn = mockRequest.mock()
-      .get('/test-complex-nesting')
-      .respond({
-        statusCode: 201,
-        body: { response:
-          { code: 201,
-           data:
-            { id: 2863928,
-              user_id: 104,
-              username: 'test_john3000',
-              user_avatar_url:
-               { px_24x24: 'http://example.com/18d083672fcbf860755882ca6eb225c0_24x24.png',
-                 px_48x48: 'http://example.com/18d083672fcbf860755882ca6eb225c0_48x48.png',
-                 px_128x128: 'http://example.com/18d083672fcbf860755882ca6eb225c0_128x128.png',
-                 px_512x512: 'http://example.com/18d083672fcbf860755882ca6eb225c0_512x512.png' },
-              title: 'Test Title',
-              highlight_color: null,
-              content:
-               { rich: false,
-                 yvml: '<?xml version="1.0" encoding="utf-8"?>\n<!DOCTYPE ex-note SYSTEM "http://example.com/pub/exml_1_0.dtd">\n<ex-note>Test Note</ex-note>',
-                 html: 'Test Note',
-                 html_android: 'Test Note',
-                 html_ios: 'Test Note',
-                 text: 'Test Note' },
-              language_tag: 'en',
-              version_id: 1,
-              references: [
-                {
-                  "usfm": "GEN.1.1",
-                  "human": "Genesis 1:1"
-                }
-              ],
-              url: '/notes/2863928/test-title',
-              short_url: 'http://shrt.ly/aSAJ4',
-              user_status: 'public',
-              system_status: 'new',
-              created_dt: '2012-02-23 20:14:23+00',
-              published_dt: null,
-              updated_dt: '2012-02-23 20:14:23.687663+00' },
-           buildtime: '2012-02-23T20:14:23+00:00' } }
-      })
-    .run();
-
-    var f1 = frisby.create(this.description)
-      .get('http://mock-request/test-complex-nesting', {mock: mockFn})
-      .expectStatus(201)
-      .expectJSON('response.data', {
-        "id": function(r) { expect(r).toBeType(Number); },
-        "user_id": function(r) { expect(r).toBeType(Number); },
-        "username": "test_john3000",
-        "user_avatar_url": {
-          "px_128x128": function(r) { expect(r).toBeType(Number); },
-          "px_24x24": function(r) { expect(r).toBeType(String); },
-          "px_48x48": function(r) { expect(r).toBeType(String); },
-          "px_512x512": function(r) { expect(r).toBeType(String); }
-        },
-        "title": "Test Title",
-        "content": {
-          "rich": function(r) { expect(r).toBeType(Boolean); },
-          "yvml": '<?xml version="1.0" encoding="utf-8"?>\n<!DOCTYPE ex-note SYSTEM "http://example.com/pub/exml_1_0.dtd">\n<ex-note>Test Note</ex-note>',
-          "text": "Test Note",
-          "html": "Test Note",
-          "html_android": "Test Note",
-          "html_ios": "Test Note"
-        },
-        "language_tag": "en",
-        "references": [
-          {
-            "usfm": "GEN.1.1",
-            "human": "Genesis 1:1"
-          }
-        ],
-        "version_id": 1,
-        "created_dt": function(r) { expect(r).toBeType(String) },
-        "published_dt": function(r) { expect(r).toBeTypeOrNull(String) },
-        "updated_dt": function(r) { expect(r).toBeType(String) },
-        "url": function(r) { expect(r).toBeType(String) },
-        "short_url": function(r) { expect(r).toBeType(String) },
-        "user_status": "public",
-        "system_status": "new"
-      })
-      .toss();
-  });
-
-
   it('expectStatus for mock request should return 404', function() {
     // Mock API
     var mockFn = mockRequest.mock()
@@ -619,10 +494,10 @@ describe('Frisby matchers', function() {
       .expectHeader('Authorization', 'Basic ZnJpc2J5OnBhc3N3ZA==')
       .after(function(err, res, body) {
         // Check to ensure outgoing set for basic auth
-        expect(this.current.outgoing.auth).toEqual({ user: 'frisby', pass: 'passwd', sendImmediately: true });
+        expect(this.current.outgoing.auth).to.deep.equal({ user: 'frisby', pass: 'passwd', sendImmediately: true });
 
         // Check to ensure response headers contain basic auth header
-        expect(this.current.response.headers.authorization).toBe('Basic ZnJpc2J5OnBhc3N3ZA==');
+        expect(this.current.response.headers.authorization).to.equal('Basic ZnJpc2J5OnBhc3N3ZA==');
 
       })
     .toss();
@@ -634,10 +509,10 @@ describe('Frisby matchers', function() {
 
     frisby.create(this.description)
       .get('invalid-url')
-      .expectStatus(500)
+      .expectStatus(599)
       .timeout(5)
       .exceptionHandler(function(e) {
-        expect(e.message).toContain('Destination URL may be down or URL is invalid');
+        expect(e.message).to.contain('Destination URL may be down or URL is invalid');
       })
     .toss();
 
@@ -683,8 +558,8 @@ describe('Frisby matchers', function() {
       .expectJSON({'foo': 'bar'})
       .expectHeader('Content-Type', 'application/json')
       .after(function(err, res, body) {
-        expect(this.current.outgoing.headers['content-type']).toBe('application/json');
-        expect(this.current.outgoing.body).toEqual({});
+        expect(this.current.outgoing.headers['content-type']).to.equal('application/json');
+        expect(this.current.outgoing.body).to.deep.equal({});
       })
     .toss();
   });
@@ -723,7 +598,7 @@ describe('Frisby matchers', function() {
       .expectStatus(200)
       .expectBodyContains('some body here')
       .after(function() {
-        expect(this.current.outgoing.uri).toBe('http://httpbin.org/test');
+        expect(this.current.outgoing.uri).to.equal('http://httpbin.org/test');
       })
     .toss();
   });
