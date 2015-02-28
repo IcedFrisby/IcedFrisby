@@ -10,7 +10,7 @@ describe('Frisby object setup', function() {
         json: false,
         baseUri: ''
       }
-    }).toEqual(frisby.globalSetup());
+    }).to.deep.equal(frisby.globalSetup());
   });
 
   it('should have empty request properties on creation', function() {
@@ -21,7 +21,7 @@ describe('Frisby object setup', function() {
       inspectOnFailure: false,
       json: false,
       baseUri: ''
-    }).toEqual(f1.current.request);
+    }).to.deep.equal(f1.current.request);
   });
 
   it('should be independent of other Frisby objects', function() {
@@ -29,10 +29,10 @@ describe('Frisby object setup', function() {
     var f2 = frisby.create('test 2');
 
     // Equal setup
-    expect(f1.current.request).toEqual(f2.current.request);
+    expect(f1.current.request).to.deep.equal(f2.current.request);
 
     // Different describe statements
-    expect(f1.current.describe).not.toEqual(f2.current.describe);
+    expect(f1.current.describe).not.to.deep.equal(f2.current.describe);
 
     // Add header only to f1
     f1.addHeaders({
@@ -43,7 +43,7 @@ describe('Frisby object setup', function() {
     });
 
     // Different setup
-    expect(f1.current.request).not.toEqual(f2.current.request);
+    expect(f1.current.request).not.to.deep.equal(f2.current.request);
   });
 
   it('should default to json = false', function() {
@@ -54,9 +54,9 @@ describe('Frisby object setup', function() {
         json: false,
         baseUri: ''
       }
-    }).toEqual(frisby.globalSetup());
+    }).to.deep.equal(frisby.globalSetup());
 
-    expect(frisby.create('mytest').get('/path').current.outgoing.json).toEqual(false);
+    expect(frisby.create('mytest').get('/path').current.outgoing.json).to.deep.equal(false);
   });
 
   it('should switch to json default = true when global config is configured json', function() {
@@ -74,9 +74,9 @@ describe('Frisby object setup', function() {
         inspectOnFailure: false,
         json: true
       }
-    }).toEqual(frisby.globalSetup());
+    }).to.deep.equal(frisby.globalSetup());
 
-    expect(frisby.create('mytest').get('/path').current.outgoing.json).toEqual(true);
+    expect(frisby.create('mytest').get('/path').current.outgoing.json).to.deep.equal(true);
   });
 
   it('should be overridable by the params parameter json=false', function() {
@@ -94,11 +94,11 @@ describe('Frisby object setup', function() {
         inspectOnFailure: false,
         json: true
       }
-    }).toEqual(frisby.globalSetup());
+    }).to.deep.equal(frisby.globalSetup());
 
     expect(frisby.create('mytest').get('/path', {
       json: false
-    }).current.outgoing.json).toEqual(false);
+    }).current.outgoing.json).to.equal(false);
   });
 
   it('should switch to inspectOnFailure default = true when global config is configured inspectOnFailure', function() {
@@ -116,9 +116,9 @@ describe('Frisby object setup', function() {
         inspectOnFailure: true,
         json: false
       }
-    }).toEqual(frisby.globalSetup());
+    }).to.deep.equal(frisby.globalSetup());
 
-    expect(frisby.create('mytest').get('/path').current.outgoing.inspectOnFailure).toEqual(true);
+    expect(frisby.create('mytest').get('/path').current.outgoing.inspectOnFailure).to.deep.equal(true);
   });
 
   it('should be overridable by the params parameter inspectOnFailure=false', function() {
@@ -136,11 +136,11 @@ describe('Frisby object setup', function() {
         inspectOnFailure: true,
         json: false
       }
-    }).toEqual(frisby.globalSetup());
+    }).to.deep.equal(frisby.globalSetup());
 
     expect(frisby.create('mytest').get('/path', {
       inspectOnFailure: false
-    }).current.outgoing.inspectOnFailure).toEqual(false);
+    }).current.outgoing.inspectOnFailure).to.equal(false);
   });
 
 });
