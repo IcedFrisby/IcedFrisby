@@ -8,6 +8,7 @@ This fork is still a major work-in-progress and should be considered unstable.
 * Uses Mocha as the driver instead of Jasmine
 * Uses Chai for assertions
 * Uses [Joi](https://github.com/hapijs/joi) for flexible and simple schema/type JSON validation
+* expectJSON(...) is now strict. Undefined/null fields are not ignored and missing fields are considered errors
 * Uses [lodash](https://github.com/lodash/lodash) instead of underscore
 * Returns a 599 (network timeout error) response if a request times out or is unavailable instead of a 500
 
