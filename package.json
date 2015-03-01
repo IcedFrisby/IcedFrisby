@@ -48,6 +48,6 @@
     "node": ">= 0.10.0"
   },
   "scripts": {
-    "test": "mocha spec/**/*.js --reporter nyan"
+    "test": "mocha spec/**/*.js"
   }
 }
