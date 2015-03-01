@@ -1,4 +1,4 @@
-var frisby = require('../lib/frisby');
+var frisby = require('../lib/icedfrisby');
 var fs = require('fs');
 var path = require('path');
 var util = require('util');

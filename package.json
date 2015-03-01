@@ -1,21 +1,21 @@
 {
-  "name": "frisby",
-  "version": "0.8.4",
-  "description": "Frisby.js: REST API Endpoint Testing built on Mocha",
-  "homepage": "http://frisbyjs.com",
-  "author": "Vance Lucas (orig author), Robert Herhold",
+  "name": "icedfrisby",
+  "version": "0.0.1",
+  "description": "IcedFrisby: REST API Endpoint Testing built on Mocha and Chai",
+  "homepage": "https://github.com/RobertHerhold/IcedFrisby",
+  "author": "Robert Herhold",
   "license": {
     "type": "BSD"
   },
   "contributors": [
+    "Robert Herhold",
     "Vance Lucas <vance@vancelucas.com>",
     "Eric Boehs <ericboehs@gmail.com>",
-    "Kevin Morey",
-    "Robert Herhold"
+    "Kevin Morey"
   ],
   "repository": {
     "type": "git",
-    "url": "http://github.com/RobertHerhold/frisby"
+    "url": "https://github.com/RobertHerhold/IcedFrisby"
   },
   "keywords": [
     "testing",
@@ -23,6 +23,7 @@
     "REST",
     "mocha",
     "bdd",
+    "icedfrisby",
     "frisby"
   ],
   "dependencies": {
@@ -32,20 +33,20 @@
     "joi": "^5.1.0",
     "lodash": "^3.3.1",
     "mock-request": ">= 0.1.2",
-    "nock": "*",
     "qs": "1.2.x",
     "request": ">=2.51",
     "stack-trace": "0.0.x"
   },
   "devDependencies": {
+    "nock": "*",
     "form-data": "~0.1.4",
     "mochawesome": "^1.0.5"
   },
-  "main": "./lib/frisby",
+  "main": "./lib/icedfrisby",
   "engines": {
     "node": ">= 0.10.0"
   },
   "scripts": {
-    "test": "minijasminenode2 spec/*.js"
+    "test": "mocha spec/**/*.js --reporter nyan"
   }
 }

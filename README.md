@@ -1,10 +1,12 @@
-# Mocha-Friendly Frisby
+# IcedFrisby
 
-A node.js NPM module that makes testing API endpoints easy, fast and fun.
+[![Build Status](https://travis-ci.org/RobertHerhold/IcedFrisby.svg)](https://travis-ci.org/RobertHerhold/IcedFrisby)
 
-This fork is still a major work-in-progress and should be considered unstable.
+IcedFrisby is a node.js NPM module that makes testing API endpoints easy, fast and fun. Based on the original [Frisby](https://github.com/vlucas/frisby) project.
 
-## What makes this fork different?
+This is still a major work-in-progress and should be considered unstable.
+
+## What makes IcedFrisby different?
 * Uses Mocha as the driver instead of Jasmine
 * Uses Chai for assertions
 * Uses [Joi](https://github.com/hapijs/joi) for flexible and simple schema/type JSON validation
@@ -14,19 +16,19 @@ This fork is still a major work-in-progress and should be considered unstable.
 
 ## Installation
 
-Install Frisby from NPM:
+Install IcedFrisby from NPM:
 
-    npm install frisby --save-dev
+    npm install icedfrisby --save-dev
 
 ## Creating Tests
 
-Frisby tests start with `frisby.create` with a description of the test followed by one of `get`, `post`, `put`, `delete`, or `head`, and ending with `run` to generate the resulting Mocha spec test. There is a `expectStatus` method built in to more easily test HTTP status codes. Any other Mocha `expect` tests should be done inside the `after` callback.
+IcedFrisby tests start with `frisby.create` with a description of the test followed by one of `get`, `post`, `put`, `delete`, or `head`, and ending with `run` to generate the resulting Mocha spec test. There is a `expectStatus` method built in to more easily test HTTP status codes. Any other Mocha `expect` tests should be done inside the `after` callback.
 
 Each set of unique sequences or API endpoint tests should be started with new `frisby.toss` method calls instead of trying to chain multiple HTTP requests together.
 
 ```javascript
 
-var frisby = require('frisby');  // get Frisby with `npm install frisby`
+var frisby = require('icedfrisby');  // get IcedFrisby with `npm install icedfrisby`
 var Joi = require('joi'); // get Joi with `npm install joi`
 
 var URL = 'http://localhost:3000/';
@@ -51,10 +53,15 @@ frisby.create('GET user johndoe')
     username: 'johndoe',
     is_admin: false
   })
+  .expectJSONTypes({
+    id: Joi.number(),
+    username: Joi.string(),
+    is_admin: Joi.boolean()
+  })
   // 'afterJSON' automatically parses response body as JSON and passes it as an argument
   .afterJSON(function(user) {
   	// You can use any normal assertions here
-  	expect(1+1).toEqual(2);
+  	expect(1+1).to.equal(2);
 
   	// Use data from previous result in next test
     frisby.create('Update user')
@@ -70,9 +77,7 @@ Any Mocha tests can be used inside the `after` and `afterJSON` callbacks to perf
 
 ## Running Tests
 
-This fork of Frisby is built on top of the Mocha BDD spec framework.
-
-### File naming conventions
+Run tests as you normally would with Mocha.
 
 ### Install Mocha
 
@@ -81,7 +86,7 @@ This fork of Frisby is built on top of the Mocha BDD spec framework.
 ### Run it from the CLI
 
     cd your/project
-    mocha .
+    mocha tests/someTest.js --reporter nyan
 
 ## License
 Licensed under the [MIT](http://opensource.org/licenses/MIT)/[BSD](http://opensource.org/licenses/BSD-3-Clause) license.

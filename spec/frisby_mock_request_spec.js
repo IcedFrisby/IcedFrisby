@@ -1,5 +1,5 @@
 var nock = require('nock');
-var frisby = require('../lib/frisby');
+var frisby = require('../lib/icedfrisby');
 var mockRequest = require('mock-request');
 var Joi = require('joi');
 

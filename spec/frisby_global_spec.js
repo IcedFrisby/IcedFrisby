@@ -1,4 +1,4 @@
-var frisby = require('../lib/frisby');
+var frisby = require('../lib/icedfrisby');
 
 describe('Frisby object setup', function() {
 
