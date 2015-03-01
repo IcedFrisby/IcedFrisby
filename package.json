@@ -33,12 +33,12 @@
     "joi": "^5.1.0",
     "lodash": "^3.3.1",
     "mock-request": ">= 0.1.2",
-    "qs": "1.2.x",
+    "qs": "~2.3.3",
     "request": ">=2.51",
     "stack-trace": "0.0.x"
   },
   "devDependencies": {
-    "form-data": "~0.1.4",
+    "form-data": "~0.2.0",
     "mocha": "^2.1.0",
     "mochawesome": "^1.0.5",
     "nock": "*"
