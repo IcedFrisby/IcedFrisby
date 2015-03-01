@@ -46,6 +46,50 @@ describe('Frisby object setup', function() {
     expect(f1.current.request).not.to.deep.equal(f2.current.request);
   });
 
+  it('should be able to add and remove headers', function() {
+    var f1 = frisby.create('test 1');
+
+    // Add header only to f1
+    f1.addHeaders({
+      'accept': 'application/json'
+    });
+
+    // verify that the header is set correctly
+    expect(f1.current.request.headers).to.deep.equal({
+        'accept': 'application/json'
+    });
+
+    // remove the header
+    f1.removeHeader('accept');
+
+    // verify that the header is set correctly
+    expect(f1.current.request.headers).to.deep.equal({});
+  });
+
+  it('should be overrite headers with the same key', function() {
+    var f1 = frisby.create('test 1');
+
+    // Add header only to f1
+    f1.addHeaders({
+      'accept': 'application/json'
+    });
+
+    // verify that the header is set correctly
+    expect(f1.current.request.headers).to.deep.equal({
+      'accept': 'application/json'
+    });
+
+    // Add a new accept header
+    f1.addHeaders({
+      'accept': 'json'
+    });
+
+    // verify that there is only one header
+    expect(f1.current.request.headers).to.deep.equal({
+      'accept': 'json'
+    });
+  });
+
   it('should default to json = false', function() {
     expect({
       request: {
@@ -77,6 +121,30 @@ describe('Frisby object setup', function() {
     }).to.deep.equal(frisby.globalSetup());
 
     expect(frisby.create('mytest').get('/path').current.outgoing.json).to.deep.equal(true);
+  });
+
+  it('should should be able to reset the request object with reset()', function() {
+      frisby.globalSetup({
+          request: {
+              headers: { 'X-Stuff': 'stuff header' },
+              json: true,
+              baseUri: 'https://some.base.url.com/'
+          }
+      });
+
+      // verify that the global config was set properly
+      expect({
+          request: {
+              headers: { 'X-Stuff': 'stuff header' },
+              json: true,
+              baseUri: 'https://some.base.url.com/'
+          }
+      }).to.deep.equal(frisby.globalSetup());
+
+      // verify that the request object has been reset
+      expect(frisby.create('mytest').reset().current.request).to.deep.equal({
+        headers: {}
+      });
   });
 
   it('should be overridable by the params parameter json=false', function() {
