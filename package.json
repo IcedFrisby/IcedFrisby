@@ -38,9 +38,10 @@
     "stack-trace": "0.0.x"
   },
   "devDependencies": {
-    "nock": "*",
     "form-data": "~0.1.4",
-    "mochawesome": "^1.0.5"
+    "mocha": "^2.1.0",
+    "mochawesome": "^1.0.5",
+    "nock": "*"
   },
   "main": "./lib/icedfrisby",
   "engines": {
