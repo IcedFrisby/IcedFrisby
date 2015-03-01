@@ -46,6 +46,17 @@ describe('Frisby object setup', function() {
     expect(f1.current.request).not.to.deep.equal(f2.current.request);
   });
 
+   it('should be able to addHeader when global request headers is not configured', function() {
+     frisby.globalSetup({
+       request: {
+         inspectOnFailure: false,
+         json: false
+       }
+     });
+
+     frisby.create('mytest').addHeader('Cookie', 'key=value').reset();
+   });
+
   it('should be able to add and remove headers', function() {
     var f1 = frisby.create('test 1');
 
@@ -114,6 +125,7 @@ describe('Frisby object setup', function() {
 
     expect({
       request: {
+        baseUri: "",
         headers: {},
         inspectOnFailure: false,
         json: true
@@ -137,7 +149,8 @@ describe('Frisby object setup', function() {
           request: {
               headers: { 'X-Stuff': 'stuff header' },
               json: true,
-              baseUri: 'https://some.base.url.com/'
+              baseUri: 'https://some.base.url.com/',
+              inspectOnFailure: false
           }
       }).to.deep.equal(frisby.globalSetup());
 
@@ -159,6 +172,7 @@ describe('Frisby object setup', function() {
     expect({
       request: {
         headers: {},
+        baseUri: "",
         inspectOnFailure: false,
         json: true
       }
@@ -181,6 +195,7 @@ describe('Frisby object setup', function() {
     expect({
       request: {
         headers: {},
+        baseUri: "",
         inspectOnFailure: true,
         json: false
       }
@@ -201,6 +216,7 @@ describe('Frisby object setup', function() {
     expect({
       request: {
         headers: {},
+        baseUri: "",
         inspectOnFailure: true,
         json: false
       }
