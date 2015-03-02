@@ -89,5 +89,15 @@ Run tests as you normally would with Mocha.
     cd your/project
     mocha tests/someTest.js --reporter nyan
 
+## Development
+
+### Code Coverage
+You can assess code coverage by running `istanbul cover _mocha ./spec/**/*_spec.js -R spec`
+
+### TODO
+1. Add a .containsJSON() method
+1. Make output errors more useful. It can be hard to track down which assertion is causing what error.
+1. More test coverage!
+
 ## License
 Licensed under the [MIT](http://opensource.org/licenses/MIT)/[BSD](http://opensource.org/licenses/BSD-3-Clause) license.
