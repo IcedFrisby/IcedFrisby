@@ -8,8 +8,8 @@ IcedFrisby is a node.js NPM module that makes testing API endpoints easy, fast a
 This is still a major work-in-progress and should be considered unstable.
 
 ## What makes IcedFrisby different?
-* Uses Mocha as the driver instead of Jasmine
-* Uses Chai for assertions
+* Uses [Mocha](https://github.com/mochajs/mocha) as the driver instead of Jasmine
+* Uses [Chai](https://github.com/chaijs/chai) for assertions
 * Uses [Joi](https://github.com/hapijs/joi) for flexible and simple schema/type JSON validation
 * expectJSON(...) is now strict. Undefined/null fields are not ignored and missing fields are considered errors
 * Uses [lodash](https://github.com/lodash/lodash) instead of underscore
