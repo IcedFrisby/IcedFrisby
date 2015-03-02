@@ -38,8 +38,10 @@
     "stack-trace": "0.0.x"
   },
   "devDependencies": {
+    "coveralls": "^2.11.2",
     "form-data": "~0.2.0",
     "mocha": "^2.1.0",
+    "mocha-lcov-reporter": "0.0.2",
     "mochawesome": "^1.0.5",
     "nock": "*"
   },

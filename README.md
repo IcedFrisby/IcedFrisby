@@ -1,6 +1,7 @@
 # IcedFrisby
 
 [![Build Status](https://travis-ci.org/RobertHerhold/IcedFrisby.svg)](https://travis-ci.org/RobertHerhold/IcedFrisby)
+[![Coverage Status](https://coveralls.io/repos/RobertHerhold/IcedFrisby/badge.svg)](https://coveralls.io/r/RobertHerhold/IcedFrisby)
 [![Dependency Status](https://gemnasium.com/RobertHerhold/IcedFrisby.svg)](https://gemnasium.com/RobertHerhold/IcedFrisby)
 
 IcedFrisby is a node.js NPM module that makes testing API endpoints easy, fast and fun. Based on the original [Frisby](https://github.com/vlucas/frisby) project.
