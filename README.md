@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/RobertHerhold/IcedFrisby.svg)](https://travis-ci.org/RobertHerhold/IcedFrisby)
 [![Coverage Status](https://coveralls.io/repos/RobertHerhold/IcedFrisby/badge.svg)](https://coveralls.io/r/RobertHerhold/IcedFrisby)
 [![Dependency Status](https://gemnasium.com/RobertHerhold/IcedFrisby.svg)](https://gemnasium.com/RobertHerhold/IcedFrisby)
-[![npm](https://img.shields.io/npm/v/icedfrisby.svg?style=flat-square)](http://www.npmjs.com/package/icedfrisby)
+[![npm](https://img.shields.io/npm/v/icedfrisby.svg)](http://www.npmjs.com/package/icedfrisby)
 
 
 IcedFrisby is a node.js NPM module that makes testing API endpoints easy, fast and fun. Based on the original [Frisby](https://github.com/vlucas/frisby) project.
