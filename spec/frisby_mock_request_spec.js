@@ -45,6 +45,14 @@ var fixtures = {
       }],
       other_data: false,
       some_string: 'somewhere'
+    },
+    sameNumbers: [{ num: 5 }, { num: 5 }, { num: 5 }, { num: 5 }, { num: 5 }],
+    differentNumbers: [{ num: 1 }, { num: 2 }, { num: 3 }, { num: 4 }, { num: 5 }],
+    singleObject: {
+      test_str: "Hey Hai Hello",
+      test_str_same: "I am the same...",
+      test_int: 1,
+      test_optional: null
     }
 };
 
@@ -172,6 +180,80 @@ describe('Frisby matchers', function() {
     .toss();
 
     restoreGlobalSetup();
+  });
+
+  it('expectJSON should test EQUALITY for a SINGLE object', function() {
+      // Mock API
+      var mockFn = mockRequest.mock()
+      .get('/test-object')
+      .respond({
+          statusCode: 200,
+          body: fixtures.singleObject
+      })
+      .run();
+
+      frisby.create(this.test.title)
+      .get('http://mock-request/test-object', {mock: mockFn})
+      .expectJSON({
+          test_str: "Hey Hai Hello",
+          test_str_same: "I am the same...",
+          test_int: 1,
+          test_optional: null
+      })
+      .toss();
+  });
+
+  it('expectJSON should test INEQUALITY for a SINGLE object', function() {
+      // Mock API
+      var mockFn = mockRequest.mock()
+      .get('/test-object')
+      .respond({
+          statusCode: 200,
+          body: fixtures.singleObject
+      })
+      .run();
+
+      frisby.create(this.test.title)
+      .get('http://mock-request/test-object', {mock: mockFn})
+      .not().expectJSON({
+          test_str: "Bye bye bye!",
+          test_str_same: "I am not the same...",
+          test_int: 9,
+          test_optional: true
+      })
+      .toss();
+  });
+
+  it('expectJSON should test EQUALITY for EACH object in an array with an asterisk path', function() {
+      // Mock API
+      var mockFn = mockRequest.mock()
+      .get('/test-array')
+      .respond({
+          statusCode: 200,
+          body: fixtures.sameNumbers
+      })
+      .run();
+
+      frisby.create(this.test.title)
+      .get('http://mock-request/test-array', {mock: mockFn})
+      .expectJSON('*', { num: 5 })
+      .toss();
+  });
+
+  it('expectJSON should test INEQUALITY for EACH object in an array with an asterisk path', function() {
+      // Mock API
+      var mockFn = mockRequest.mock()
+      .get('/test-array')
+      .respond({
+          statusCode: 200,
+          body: fixtures.sameNumbers
+      })
+      .run();
+
+      frisby.create(this.test.title)
+      .get('http://mock-request/test-array', {mock: mockFn})
+      .not().expectJSON('*', { num: 123 })
+      .toss();
   });
 
   it('expectJSON should test EACH object in an array with path ending with asterisk', function() {
