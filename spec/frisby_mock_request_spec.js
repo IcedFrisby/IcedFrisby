@@ -130,7 +130,7 @@ describe('Frisby matchers', function() {
 
     mockGlobalSetup();
 
-    var f1 = frisby.create(this.description + ' - mock test one')
+    var f1 = frisby.create(this.test.title + ' - mock test one')
       .get('http://mock-request/test-object-array-ex', {mock: mockFn})
       .addHeaders({ 'Test': 'Two' })
       .after(function(err, res, body) {
@@ -139,7 +139,7 @@ describe('Frisby matchers', function() {
       })
     .toss();
 
-    var f2 = frisby.create(this.description + ' - mock test two')
+    var f2 = frisby.create(this.test.title + ' - mock test two')
       .get('http://mock-request/test-object-array-ex2', {mock: mockFn2})
       .addHeaders({ 'Test': 'Three' })
       .after(function(err, res, body) {
@@ -284,6 +284,155 @@ describe('Frisby matchers', function() {
         test_int: 4433
       })
       .toss();
+  });
+
+  it('expectContainsJSON should MATCH fields for a SINGLE object', function() {
+      // Mock API
+      var mockFn = mockRequest.mock()
+      .get('/test-object')
+      .respond({
+          statusCode: 200,
+          body: fixtures.singleObject
+      })
+      .run();
+
+      frisby.create(this.test.title)
+      .get('http://mock-request/test-object', {mock: mockFn})
+      .expectContainsJSON({
+          test_str: "Hey Hai Hello",
+          // test_str_same: "I am the same...", // leave this out of the orig object, should still match
+          test_int: 1,
+          test_optional: null
+      })
+      .toss();
+  });
+
+  it('expectContainsJSON should NOT MATCH for a SINGLE object', function() {
+      // Mock API
+      var mockFn = mockRequest.mock()
+      .get('/test-object')
+      .respond({
+          statusCode: 200,
+          body: fixtures.singleObject
+      })
+      .run();
+
+      frisby.create(this.test.title)
+      .get('http://mock-request/test-object', {mock: mockFn})
+      .not().expectContainsJSON({
+          test_str: "Bye bye bye!",
+          test_str_same: "I am not the same...",
+          test_int: 9,
+          test_optional: true
+      })
+      .toss();
+  });
+
+  it('expectContainsJSON should NOT MATCH for a SINGLE object with a single field', function() {
+      // Mock API
+      var mockFn = mockRequest.mock()
+      .get('/test-object')
+      .respond({
+          statusCode: 200,
+          body: fixtures.singleObject
+      })
+      .run();
+
+      frisby.create(this.test.title)
+      .get('http://mock-request/test-object', {mock: mockFn})
+      .not().expectContainsJSON({
+          test_str: "Bye bye bye!",
+          // test_str_same: "I am not the same...",
+          // test_int: 9,
+          // test_optional: true
+      })
+      .toss();
+  });
+
+  it('expectContainsJSON should MATCH for EACH object in an array with an asterisk path', function() {
+      // Mock API
+      var mockFn = mockRequest.mock()
+      .get('/test-array')
+      .respond({
+          statusCode: 200,
+          body: fixtures.sameNumbers
+      })
+      .run();
+
+      frisby.create(this.test.title)
+      .get('http://mock-request/test-array', {mock: mockFn})
+      .expectContainsJSON('*', { num: 5 })
+      .toss();
+  });
+
+  it('expectContainsJSON should NOT MATCH for EACH object in an array with an asterisk path', function() {
+      // Mock API
+      var mockFn = mockRequest.mock()
+      .get('/test-array')
+      .respond({
+          statusCode: 200,
+          body: fixtures.sameNumbers
+      })
+      .run();
+
+      frisby.create(this.test.title)
+      .get('http://mock-request/test-array', {mock: mockFn})
+      .not().expectContainsJSON('*', { num: 123 })
+      .toss();
+  });
+
+  it('expectContainsJSON should MATCH for EACH object in an array with path ending with asterisk', function() {
+      // Mock API
+      var mockFn = mockRequest.mock()
+      .get('/test-object-array')
+      .respond({
+          statusCode: 200,
+          body: fixtures.arrayOfObjects
+      })
+      .run();
+
+      var f1 = frisby.create(this.test.title)
+      .get('http://mock-request/test-object-array', {mock: mockFn})
+      .expectContainsJSON('test_subjects.*', { // * == EACH object in here should match
+          test_str_same: "I am the same...",
+      })
+      .toss();
+  });
+
+  it('expectContainsJSON should MATCH ONE object in an array with path ending with question mark', function() {
+      // Mock API
+      var mockFn = mockRequest.mock()
+      .get('/test-object-array')
+      .respond({
+          statusCode: 200,
+          body: fixtures.arrayOfObjects
+      })
+      .run();
+
+      var f1 = frisby.create(this.test.title)
+      .get('http://mock-request/test-object-array', {mock: mockFn})
+      .expectContainsJSON('test_subjects.?', { // ? == ONE object in here should match (contains)
+          test_str: "I am a string two!",
+      })
+      .toss();
+  });
+
+  it('expectContainsJSON should NOT MATCH ONE object in an array with path ending with question mark', function() {
+      // Mock API
+      var mockFn = mockRequest.mock()
+      .get('/test-object-array')
+      .respond({
+          statusCode: 200,
+          body: fixtures.arrayOfObjects
+      })
+      .run();
+
+      var f1 = frisby.create(this.test.title)
+      .get('http://mock-request/test-object-array', {mock: mockFn})
+      .not().expectContainsJSON('test_subjects.?', { // ? == ONE object in 'test_subjects' array
+          test_str: "I am a string two nonsense!",
+      })
+     .toss();
   });
 
   it('expectJSONTypes should NOT match ONE object in an array with path ending with question mark', function() {

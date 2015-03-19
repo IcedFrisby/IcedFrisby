@@ -1,9 +1,17 @@
 var pm = require('../lib/pathMatch');
-var expect = require('chai').expect;
+
 var Joi = require('joi');
+
+var chai = require('chai');
+chai.should(); // setup should assertions
+chai.use(require('chai-things'));
+// chai.config.includeStack = true;
+global.expect = chai.expect;
+
 
 // JSON to use in mock tests
 var fixtures = require('./fixtures/repetition_fixture.json');
+var usersFixture = require('./fixtures/users_fixture.json');
 
 //
 // JSON MATCH
@@ -180,6 +188,332 @@ describe('Path match JSON', function() {
 
 
 //
+// JSON CONTAINS
+//
+describe('Path match Contains JSON', function() {
+    describe('Sanity error checking', function() {
+        it('should fail if nothing is provided', function() {
+            var fn = function() {
+                pm.matchContainsJSON();
+            };
+            expect(fn).to.throw('Data to match is not defined');
+        });
+
+        it('should fail if no jsonBody is provided', function() {
+            var fn = function() {
+                pm.matchContainsJSON({
+                    jsonBody: undefined,
+                    jsonTest: {}
+                });
+            };
+            expect(fn).to.throw('jsonBody is not defined');
+        });
+
+        it('should fail if no jsonTest is provided', function() {
+            var fn = function() {
+                pm.matchContainsJSON({
+                    jsonBody: {},
+                    jsonTest: undefined
+                });
+            };
+            expect(fn).to.throw('jsonTest is not defined');
+        });
+    });
+
+    it('should be a function', function() {
+        expect(pm.matchContainsJSON).to.be.a('function');
+    });
+
+    it('should match a simple json object', function() {
+        pm.matchContainsJSON({
+            jsonBody: {},
+            jsonTest: {}
+        });
+    });
+
+    it('should not match a simple json object', function() {
+        var fn = function() {
+            pm.matchContainsJSON({
+                jsonBody: {},
+                jsonTest: { bad: true }
+            });
+        };
+        expect(fn).to.throw();
+    });
+
+    it('should match a simple json object when isNot is set', function() {
+        pm.matchContainsJSON({
+            jsonBody: {},
+            jsonTest: { bad: true },
+            isNot: true
+        });
+    });
+
+    it('should not match a non-Array/Object in the body field', function() {
+        var fn = function() {
+            pm.matchContainsJSON({
+                jsonBody: true,
+                jsonTest: {}
+            });
+        };
+        expect(fn).to.throw(/ContainsJSON does not support non-Array\/Object datatypes/);
+    });
+
+    it('should not match a non-Array/Object in the body field', function() {
+        var fn = function() {
+            pm.matchContainsJSON({
+                jsonBody: 111,
+                jsonTest: {}
+            });
+        };
+        expect(fn).to.throw(/ContainsJSON does not support non-Array\/Object datatypes/);
+    });
+
+    it('should not match a non-Array/Object in the test field', function() {
+        var fn = function() {
+            pm.matchContainsJSON({
+                jsonBody: {},
+                jsonTest: true
+            });
+        };
+        expect(fn).to.throw(/ContainsJSON does not support non-Array\/Object datatypes/);
+    });
+
+    it('should not match a non-Array/Object in the test field', function() {
+        var fn = function() {
+            pm.matchContainsJSON({
+                jsonBody: {},
+                jsonTest: 111
+            });
+        };
+        expect(fn).to.throw(/ContainsJSON does not support non-Array\/Object datatypes/);
+    });
+
+
+    it('should match one object in an array with a \'?\' path', function() {
+        pm.matchContainsJSON({
+            jsonBody: fixtures.arrayOfObjects.test_subjects,
+            jsonTest: fixtures.arrayOfObjects.test_subjects[2],
+            path: '?'
+        });
+    });
+
+    it('should not match any objects in an array with a \'?\' path', function() {
+        var fn = function() {
+            pm.matchContainsJSON({
+                jsonBody: fixtures.differentNumbers,
+                jsonTest: {
+                    num: 999
+                },
+                path: '?'
+            });
+        };
+
+        expect(fn).to.throw();
+    });
+
+    it('should not match any objects in a single element array with a \'?\' path', function() {
+        var fn = function() {
+            pm.matchContainsJSON({
+                jsonBody: [{ num: 6 }],
+                jsonTest: {
+                    num: 999
+                },
+                path: '?'
+            });
+        };
+
+        expect(fn).to.throw();
+    });
+
+    it('should match all objects in an array with a \'*\' path', function() {
+        pm.matchContainsJSON({
+            jsonBody: fixtures.sameNumbers,
+            jsonTest: fixtures.sameNumbers[2],
+            path: '*'
+        });
+    });
+
+    it('should not match any objects in an array with a \'*\' path', function() {
+        var fn = function() {
+            pm.matchContainsJSON({
+                jsonBody: fixtures.sameNumbers,
+                jsonTest: {
+                    num: 999
+                },
+                path: '*'
+            });
+        };
+
+        expect(fn).to.throw();
+    });
+
+    it('should match one object in an array with an \'array.?\' path', function() {
+        pm.matchContainsJSON({
+            jsonBody: fixtures,
+            jsonTest: fixtures.differentNumbers[2],
+            path: 'differentNumbers.?'
+        });
+    });
+
+    it('should not match one object in an array with an \'array.?\' path', function() {
+        var fn = function() {
+            pm.matchContainsJSON({
+                jsonBody: fixtures,
+                jsonTest: {
+                    num: 999
+                },
+                path: 'differentNumbers.?'
+            });
+        };
+
+        expect(fn).to.throw();
+    });
+
+    it('should match all objects in an array with an \'array.*\' path', function() {
+        pm.matchContainsJSON({
+            jsonBody: fixtures,
+            jsonTest: fixtures.sameNumbers[2],
+            path: 'sameNumbers.*'
+        });
+    });
+
+    it('should not match any objects in an array with an \'array.*\' path and isNot set', function() {
+        pm.matchContainsJSON({
+            jsonBody: fixtures,
+            jsonTest: { num: 999 },
+            path: 'sameNumbers.*',
+            isNot: true
+        });
+    });
+
+    it('should not match any objects in an array with an \'array.*\' path', function() {
+        var fn = function() {
+            pm.matchContainsJSON({
+                jsonBody: fixtures,
+                jsonTest: {
+                    num: 999
+                },
+                path: 'sameNumbers.*'
+            });
+        };
+
+        expect(fn).to.throw();
+    });
+
+    it('should not match an empty array with a \'?\' path', function() {
+        var fn = function() {
+            pm.matchContainsJSON({
+                jsonBody: [],
+                jsonTest: {
+                    num: 5
+                },
+                path: '?'
+            });
+        };
+
+        expect(fn).to.throw('There are no JSON objects to match against');
+    });
+
+    describe('real use case: users & passwords', function() {
+
+        // NOTE: the first user in usersFixture has the 'password' and 'salt' fields to represent leaked information.
+        // No other users in the fixture have this.
+
+        it('should match a user\'s first name', function() {
+            pm.matchContainsJSON({
+                jsonBody: usersFixture.users[0],
+                jsonTest: {
+                    first: usersFixture.users[0].name.first
+                },
+                path: 'name'
+            });
+        });
+
+        it('should match a user\'s email', function() {
+
+            // NOTE: the first user has a password and salt field. No other users do.
+
+            pm.matchContainsJSON({
+                jsonBody: usersFixture.users[0],
+                jsonTest: {
+                    email: usersFixture.users[0].email
+                }
+            });
+        });
+
+        it('should match one user\'s email with a \'?\' path', function() {
+            pm.matchContainsJSON({
+                jsonBody: usersFixture.users,
+                jsonTest: {
+                    email: usersFixture.users[3].email
+                },
+                path: '?'
+            });
+        });
+
+        it('should match a (nested) user\'s first name with a path', function() {
+            pm.matchContainsJSON({
+                jsonBody: usersFixture.users[0],
+                jsonTest: {
+                    first: usersFixture.users[0].name.first
+                },
+                path: 'name'
+            });
+        });
+
+        it('should match a user\'s salt and throw an error when isNot is set', function() {
+
+            // NOTE: the first user has a password and salt field. No other users do.
+
+            var fn = function() {
+                pm.matchContainsJSON({
+                    jsonBody: usersFixture.users[0],
+                    jsonTest: {
+                        salt: usersFixture.users[0].salt
+                    },
+                    isNot: true
+                });
+            };
+
+            expect(fn).to.throw();
+        });
+
+        it('should match a user\'s password and throw an error when isNot is set', function() {
+
+            // NOTE: the first user has a password and salt field. No other users do.
+
+            var fn = function() {
+                pm.matchContainsJSON({
+                    jsonBody: usersFixture.users[0],
+                    jsonTest: {
+                        password: usersFixture.users[0].password
+                    },
+                    isNot: true
+                });
+            };
+
+            expect(fn).to.throw();
+        });
+
+        it('should match an object without the id present', function() {
+            pm.matchContainsJSON({
+                jsonBody: {
+                    id: 158254613,
+                    someStuff: 'some text',
+                    someNumber: 55
+                },
+                jsonTest: {
+                    someStuff: 'some text',
+                    someNumber: 55
+                }
+            });
+        });
+    });
+});
+
+
+//
 // JSON TYPE
 //
 describe('Path match JSON Types', function() {
@@ -281,7 +615,7 @@ describe('Path match JSON Types', function() {
             });
         };
 
-        expect(fn).to.throw(/Expected one out of [0-9]+ objects to match/);
+        expect(fn).to.throw(/Expected 1 out of [0-9]+ objects to match/);
     });
 
     it('should allow all objects with a \'*\' path', function() {
@@ -329,7 +663,7 @@ describe('Path match JSON Types', function() {
             });
         };
 
-        expect(fn).to.throw(/Expected one out of [0-9]+ objects to match/);
+        expect(fn).to.throw(/Expected 1 out of [0-9]+ objects to match/);
     });
 
     it('should allow all objects in an array with an \'array.*\' path', function() {

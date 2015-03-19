@@ -15,6 +15,7 @@ This is still a major work-in-progress and should be considered unstable.
 * Uses [Chai](https://github.com/chaijs/chai) for assertions
 * Uses [Joi](https://github.com/hapijs/joi) for flexible and simple schema/type JSON validation
 * expectJSON(...) is now strict. Undefined/null fields are not ignored and missing fields are considered errors
+* Adds expectContainsJSON(...)! Test JSON responses without knowing every field.
 * Uses [lodash](https://github.com/lodash/lodash) instead of underscore
 * Returns a 599 (network timeout error) response if a request times out or is unavailable instead of a 500
 
@@ -98,9 +99,9 @@ Run tests as you normally would with Mocha.
 You can assess code coverage by running `istanbul cover _mocha ./spec/**/*_spec.js -R spec`
 
 ### TODO
-1. Add a .containsJSON() method
 1. Make output errors more useful. It can be hard to track down which assertion is causing what error.
 1. More test coverage!
+1. README API guide
 
 ## License
 Licensed under the [MIT](http://opensource.org/licenses/MIT)/[BSD](http://opensource.org/licenses/BSD-3-Clause) license.
