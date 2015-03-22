@@ -46,4 +46,25 @@ describe('console output', function() {
 
         // TODO: come up with a good way to capture console output and actually check it
     });
+
+    it('should NOT warn developers that "there is a header with \'json\' but the body type is not JOSN" because there is no body provided', function() {
+        // Mock API
+        nock('http://mock-request/', {
+                allowUnmocked: true
+            })
+            .post('/test-object')
+            .once()
+            .reply(201, function(uri, requestBody) {
+                return requestBody;
+            });
+
+        mockGlobalSetup();
+
+        frisby.create(this.test.title)
+            .post('http://mock-request/test-object')
+            .expectStatus(201)
+            .toss();
+
+        // TODO: come up with a good way to capture console output and actually check it
+    });
 });
