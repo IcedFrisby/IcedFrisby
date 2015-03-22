@@ -20,10 +20,11 @@ var mockGlobalSetup = function() {
       }
     }
   });
-}
+};
+
 var restoreGlobalSetup = function() {
   frisby.globalSetup(defaultGlobalSetup);
-}
+};
 
 // Nock to intercept HTTP upload request
 var mock = nock('http://httpbin.org', { allowUnmocked: true })
@@ -61,7 +62,7 @@ describe('Frisby matchers', function() {
 
   it('globalSetup should set timeout to 3000', function() {
     mockGlobalSetup();
-    var f1 = frisby.create(this.test.title)
+    var f1 = frisby.create(this.test.title);
     expect(f1.timeout()).to.equal(3000);
     restoreGlobalSetup();
   });
