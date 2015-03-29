@@ -705,6 +705,22 @@ describe('Frisby matchers', function() {
 
   });
 
+  // reference: https://github.com/vlucas/frisby/issues/213 (does not appear to be an issue in IcedFrisby)
+  it('should work with a HTTP 204 responses', function() {
+      // Mock API
+      var mockFn = mockRequest.mock()
+          .get('/no-content')
+          .respond({
+              statusCode: 204
+          })
+          .run();
+
+      frisby.create(this.test.title)
+          .get('http://mock-request/no-content', {mock: mockFn})
+          .expectStatus(204)
+          .toss();
+
+  });
 
   it('Invalid URLs should fail with an error message', function() {
 
