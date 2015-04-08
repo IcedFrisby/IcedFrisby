@@ -6,7 +6,7 @@
 [![npm](https://img.shields.io/npm/v/icedfrisby.svg)](http://www.npmjs.com/package/icedfrisby)
 
 
-IcedFrisby is a node.js NPM module that makes testing API endpoints easy, fast and fun. Based on the original [Frisby](https://github.com/vlucas/frisby) project.
+**IcedFrisby** is a node.js NPM module that makes testing API endpoints easy, fast and fun. Based on the original [Frisby](https://github.com/vlucas/frisby) project.
 
 This is still a major work-in-progress and should be considered unstable.
 
@@ -25,7 +25,7 @@ Install IcedFrisby from NPM:
 
     npm install icedfrisby --save-dev
 
-## Creating Tests
+## Show me the code!
 
 IcedFrisby tests start with `frisby.create` with a description of the test followed by one of `get`, `post`, `put`, `delete`, or `head`, and ending with `run` to generate the resulting Mocha spec test. There is a `expectStatus` method built in to more easily test HTTP status codes. Any other Mocha `expect` tests should be done inside the `after` callback.
 
@@ -82,7 +82,7 @@ Any Mocha tests can be used inside the `after` and `afterJSON` callbacks to perf
 
 ## Running Tests
 
-Run tests as you normally would with Mocha.
+Run tests as you normally would with [Mocha](https://github.com/mochajs/mocha).
 
 ### Install Mocha
 
@@ -92,6 +92,65 @@ Run tests as you normally would with Mocha.
 
     cd your/project
     mocha tests/someTest.js --reporter nyan
+
+## API
+---
+
+### Global Setup
+
+Global defines default options for all IcedFrisby tests.
+
+#### request.baseUri
+Base URI/URL that will be prepended to every request.
+Type: `string`
+Default: `''`
+
+```javascript
+frisby.globalSetup({
+  request: {
+    baseUri: 'http://localhost:3000/api/'
+  }
+});
+```
+
+#### request.headers
+Default headers by providing an object with key-value pairs.
+Type: `Object`
+Default: `{}`
+
+```javascript
+frisby.globalSetup({
+  request: {
+    headers: { 'Authorization': 'Bearer [...]' }
+  }
+});
+```
+
+#### request.json
+Sets the `content-type` header to `application/json`.
+Type: `boolean`
+Default: `false`
+
+```javascript
+frisby.globalSetup({
+  request: {
+    json: true // or false
+  }
+});
+```
+
+#### request.inspectOnFailure
+This is a really neat option that will help you figure out what is happning with your requests. Dumps request/response information to the logs.
+Type: `boolean`
+Default: `false`
+
+```javascript
+frisby.globalSetup({
+  request: {
+    inspectOnFailure: true // or false
+  }
+});
+```
 
 ## Development
 
