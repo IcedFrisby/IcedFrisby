@@ -25,7 +25,7 @@ Install IcedFrisby from NPM:
 
     npm install icedfrisby --save-dev
 
-## Show me the code!
+## Show me some code!
 
 IcedFrisby tests start with `frisby.create` with a description of the test followed by one of `get`, `post`, `put`, `delete`, or `head`, and ending with `run` to generate the resulting Mocha spec test. There is a `expectStatus` method built in to more easily test HTTP status codes. Any other Mocha `expect` tests should be done inside the `after` callback.
 
@@ -98,7 +98,7 @@ Run tests as you normally would with [Mocha](https://github.com/mochajs/mocha).
 
 ### Global Setup
 
-Global defines default options for all IcedFrisby tests.
+`globalSetup` defines default options for all tests.
 
 #### request.baseUri
 Base URI/URL that will be prepended to every request.
@@ -151,6 +151,17 @@ frisby.globalSetup({
   }
 });
 ```
+
+#### Resetting `globalSetup`
+Resets the `globalSetup` settings for the current test.
+
+```javascript
+frisby.create('Request without the globalSetup options')
+  .reset() // reset the globalSetup options
+  .get(...)
+  ...
+```
+
 
 ## Development
 
