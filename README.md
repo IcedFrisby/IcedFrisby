@@ -27,7 +27,7 @@ Install IcedFrisby from NPM:
 
 ## Show me some code!
 
-IcedFrisby tests start with `frisby.create` with a description of the test followed by one of `get`, `post`, `put`, `delete`, or `head`, and ending with `run` to generate the resulting Mocha spec test. There is a `expectStatus` method built in to more easily test HTTP status codes. Any other Mocha `expect` tests should be done inside the `after` callback.
+IcedFrisby tests start with `frisby.create()` with a description of the test followed by one of `get()`, `put()`, `post()`, `delete()`, or `head()`, and ending with `toss()` to generate the resulting Mocha test. There is a `expectStatus()` method built in to more easily test HTTP status codes. Any other Mocha `expect` tests should be done inside the `after()` or `afterJSON()` callback.
 
 Each set of unique sequences or API endpoint tests should be started with new `frisby.toss` method calls instead of trying to chain multiple HTTP requests together.
 
@@ -140,7 +140,7 @@ frisby.globalSetup({
 ```
 
 #### request.inspectOnFailure
-This is a really neat option that will help you figure out what is happning with your requests. Dumps request/response information to the logs.
+This is a really neat option that will help you figure out what is happening with your requests. Dumps request/response information to the logs.
 Type: `boolean`
 Default: `false`
 
