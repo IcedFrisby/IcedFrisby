@@ -6,9 +6,14 @@
 [![npm](https://img.shields.io/npm/v/icedfrisby.svg)](http://www.npmjs.com/package/icedfrisby)
 
 
-**IcedFrisby** is a node.js NPM module that makes testing API endpoints easy, fast and fun. Based on the original [Frisby](https://github.com/vlucas/frisby) project.
+**IcedFrisby** is a Node.js npm module that makes testing API endpoints easy, fast and fun. Based on the original [Frisby](https://github.com/vlucas/frisby) project.
 
 This is still a major work-in-progress and should be considered unstable.
+
+## :orange_book: API Documentation
+Most of IcedFrisby's features are in the [Frisby API docs](http://frisbyjs.com/docs/api/).
+
+The [**IcedFrisby** API Docs](https://github.com/RobertHerhold/IcedFrisby/blob/master/API.md) are located in [API.md](https://github.com/RobertHerhold/IcedFrisby/blob/master/API.md).
 
 ## What makes IcedFrisby different?
 * Uses [Mocha](https://github.com/mochajs/mocha) as the driver instead of Jasmine
@@ -78,7 +83,7 @@ frisby.create('GET user johndoe')
 
 ```
 
-Any Mocha tests can be used inside the `after` and `afterJSON` callbacks to perform additional or custom tests on the response data.
+Any Mocha/Chai/whatever tests can be used inside the `after` and `afterJSON` callbacks to perform additional or custom tests on the response data.
 
 ## Running Tests
 
@@ -93,80 +98,15 @@ Run tests as you normally would with [Mocha](https://github.com/mochajs/mocha).
     cd your/project
     mocha tests/someTest.js --reporter nyan
 
-## API
 ---
 
-### Global Setup
-
-`globalSetup` defines default options for all tests.
-
-#### request.baseUri
-Base URI/URL that will be prepended to every request.
-Type: `string`
-Default: `''`
-
-```javascript
-frisby.globalSetup({
-  request: {
-    baseUri: 'http://localhost:3000/api/'
-  }
-});
-```
-
-#### request.headers
-Default headers by providing an object with key-value pairs.
-Type: `Object`
-Default: `{}`
-
-```javascript
-frisby.globalSetup({
-  request: {
-    headers: { 'Authorization': 'Bearer [...]' }
-  }
-});
-```
-
-#### request.json
-Sets the `content-type` header to `application/json`.
-Type: `boolean`
-Default: `false`
-
-```javascript
-frisby.globalSetup({
-  request: {
-    json: true // or false
-  }
-});
-```
-
-#### request.inspectOnFailure
-This is a really neat option that will help you figure out what is happening with your requests. Dumps request/response information to the logs.
-Type: `boolean`
-Default: `false`
-
-```javascript
-frisby.globalSetup({
-  request: {
-    inspectOnFailure: true // or false
-  }
-});
-```
-
-#### Resetting `globalSetup`
-Resets the `globalSetup` settings for the current test.
-
-```javascript
-frisby.create('Request without the globalSetup options')
-  .reset() // reset the globalSetup options
-  .get(...)
-  ...
-```
-
-
-## Development
+## IcedFrisby Development
 
 ### Code Coverage
 You can assess code coverage by running `istanbul cover _mocha ./spec/**/*_spec.js -R spec`
+
+### Contributions
+Contributions are awesome! If you have an idea or code that you want to contribute, feel free to submit a pull request and I will gladly review it. I am open to pretty much anything.
 
 ### TODO
 1. Make output errors more useful. It can be hard to track down which assertion is causing what error.
