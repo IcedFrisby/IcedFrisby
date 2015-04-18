@@ -146,7 +146,11 @@ frisby.create('Ensure this is *actually* a real teapot, not some imposter coffee
 ### expectJSONLength([path], length)
 Tests given path or full JSON response for specified length. When used on objects, the number of keys are counted. When used on other JavaScript types such as Arrays or Strings, the native length property is used for comparison.
 
-* Types: `length`: `integer`
+* Types: `length`: `integer >= 0`, `string with <, <=, >, >=`
+  * `'< 5'`
+  * `'<= 5'`
+  * `'> 5'`
+  * `'<= 5'`
 * Defaults: `none`
 
 ```javascript
