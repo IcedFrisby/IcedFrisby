@@ -13,6 +13,35 @@ global.expect = chai.expect;
 var fixtures = require('./fixtures/repetition_fixture.json');
 var usersFixture = require('./fixtures/users_fixture.json');
 
+
+//
+// PATH TRAVERSAL
+//
+describe('Path traversal', function() {
+    it('should fail on a bad path', function() {
+        var fn = function() {
+            // apply path is not exposed, so we will just use matchJSON, which calls it
+            pm.matchJSON({
+                jsonBody: { a: { } },
+                jsonTest: { },
+                path: 'a.b.c.d.e.f',
+                isNot: false
+            });
+        };
+        expect(fn).to.throw(/Cannot read property 'c' of undefined/);
+    });
+
+    it('should not fail on a bad path with isNot specified (even though this is an anti-pattern)', function() {
+        // apply path is not exposed, so we will just use matchJSON, which calls it
+        pm.matchJSON({
+            jsonBody: { a: { } },
+            jsonTest: { },
+            path: 'a.b.c.d.e.f',
+            isNot: true
+        });
+    });
+});
+
 //
 // JSON MATCH
 //
@@ -730,4 +759,405 @@ describe('Path match JSON Types', function() {
         expect(fn).to.throw('There are no JSON objects to match against');
     });
 
+});
+
+//
+// JSON LENGTH
+//
+describe('Path match JSON Length', function() {
+    describe('Sanity error checking', function() {
+        it('should fail if nothing is provided', function() {
+            var fn = function() {
+                pm.matchJSONLength();
+            };
+            expect(fn).to.throw('Data to match is not defined');
+        });
+
+        it('should fail if no jsonBody is provided', function() {
+            var fn = function() {
+                pm.matchJSONLength({
+                    jsonBody: undefined,
+                    jsonTest: {}
+                });
+            };
+            expect(fn).to.throw('jsonBody is not defined');
+        });
+
+        it('should fail if no jsonTest is provided', function() {
+            var fn = function() {
+                pm.matchJSONLength({
+                    jsonBody: {},
+                    jsonTest: undefined
+                });
+            };
+            expect(fn).to.throw('jsonTest is not defined');
+        });
+    });
+
+    it('should be a function', function() {
+        expect(pm.matchJSONLength).to.be.a('function');
+    });
+
+    it('should length match a simple json object', function() {
+        pm.matchJSONLength({
+            jsonBody: {},
+            jsonTest: {
+                count: 0,
+                sign: null
+            }
+        });
+    });
+
+    it('should length match a simple string object', function() {
+        pm.matchJSONLength({
+            jsonBody: 'hello',
+            jsonTest: {
+                count: 5,
+                sign: null
+            }
+        });
+    });
+
+    describe('simple string matching with sign', function() {
+        it('should length match a simple string object with the \'<=\' sign', function() {
+            pm.matchJSONLength({
+                jsonBody: 'hello',
+                jsonTest: {
+                    count: 6,
+                    sign: '<='
+                }
+            });
+        });
+
+        it('should length match a simple string object with the \'<=\' sign', function() {
+            pm.matchJSONLength({
+                jsonBody: 'hello',
+                jsonTest: {
+                    count: 5,
+                    sign: '<='
+                }
+            });
+        });
+
+        it('should not length match a simple string object with the \'<=\' sign', function() {
+            var fn = function() {
+                pm.matchJSONLength({
+                    jsonBody: 'hello',
+                    jsonTest: {
+                        count: 4,
+                        sign: '<='
+                    }
+                });
+            };
+            expect(fn).to.throw(/Expected length/);
+        });
+
+        it('should length match a simple string object with the \'<=\' sign when isNot is set', function() {
+            pm.matchJSONLength({
+                jsonBody: 'hello',
+                jsonTest: {
+                    count: 4,
+                    sign: '<='
+                },
+                isNot: true
+            });
+        });
+
+        it('should length match a simple string object with the \'<\' sign', function() {
+            pm.matchJSONLength({
+                jsonBody: 'hello',
+                jsonTest: {
+                    count: 6,
+                    sign: '<'
+                }
+            });
+        });
+
+        it('should not length match a simple string object with the \'<\' sign', function() {
+            var fn = function() {
+                pm.matchJSONLength({
+                    jsonBody: 'hello',
+                    jsonTest: {
+                        count: 5,
+                        sign: '<'
+                    }
+                });
+            };
+            expect(fn).to.throw(/Expected length/);
+        });
+
+        it('should length match a simple string object with the \'<\' sign when isNot is set', function() {
+            pm.matchJSONLength({
+                jsonBody: 'hello',
+                jsonTest: {
+                    count: 5,
+                    sign: '<'
+                },
+                isNot: true
+            });
+        });
+
+        it('should not length match a simple string object with the \'>=\' sign', function() {
+            var fn = function() {
+                pm.matchJSONLength({
+                    jsonBody: 'hello',
+                    jsonTest: {
+                        count: 6,
+                        sign: '>='
+                    }
+                });
+            };
+            expect(fn).to.throw(/Expected length/);
+        });
+
+        it('should length match a simple string object with the \'>=\' sign when isNot is set', function() {
+            pm.matchJSONLength({
+                jsonBody: 'hello',
+                jsonTest: {
+                    count: 6,
+                    sign: '>='
+                },
+                isNot: true
+            });
+        });
+
+
+        it('should length match a simple string object with the \'>=\' sign', function() {
+            pm.matchJSONLength({
+                jsonBody: 'hello',
+                jsonTest: {
+                    count: 5,
+                    sign: '>='
+                }
+            });
+        });
+
+        it('should length match a simple string object with the \'>=\' sign', function() {
+            pm.matchJSONLength({
+                jsonBody: 'hello',
+                jsonTest: {
+                    count: 4,
+                    sign: '>='
+                }
+            });
+        });
+
+        it('should not length match a simple string object with the \'>\' sign', function() {
+            var fn = function() {
+                pm.matchJSONLength({
+                    jsonBody: 'hello',
+                    jsonTest: {
+                        count: 5,
+                        sign: '>'
+                    }
+                });
+            };
+            expect(fn).to.throw(/Expected length/);
+        });
+
+        it('should length match a simple string object with the \'>\' sign when isNot is set', function() {
+            pm.matchJSONLength({
+                jsonBody: 'hello',
+                jsonTest: {
+                    count: 5,
+                    sign: '>'
+                },
+                isNot: true
+            });
+        });
+
+        it('should length match a simple string object with the \'>\' sign', function() {
+            pm.matchJSONLength({
+                jsonBody: 'hello',
+                jsonTest: {
+                    count: 4,
+                    sign: '>'
+                }
+            });
+        });
+    });
+
+    it('should not length match a simple json object', function() {
+        var fn = function() {
+            pm.matchJSONLength({
+                jsonBody: {},
+                jsonTest: {
+                    count: 'bad'
+                }
+            });
+        };
+        expect(fn).to.throw();
+    });
+
+    it('should not length match a simple string object', function() {
+        var fn = function() {
+            pm.matchJSONLength({
+                jsonBody: 'bad',
+                jsonTest: {
+                    count: 999
+                }
+            });
+        };
+        expect(fn).to.throw(/Expected length/);
+    });
+
+    it('should length match a simple json object when isNot is set', function() {
+        pm.matchJSONLength({
+            jsonBody: {},
+            jsonTest: {
+                count: 1
+            },
+            isNot: true
+        });
+    });
+
+    it('should length match one object in an array with a \'?\' path', function() {
+        pm.matchJSONLength({
+            jsonBody: fixtures.differentSizeObjects,
+            jsonTest: {
+                count: 2
+            },
+            path: '?'
+        });
+    });
+
+    it('should not length match any objects in an array with a \'?\' path', function() {
+        var fn = function() {
+            pm.matchJSONLength({
+                jsonBody: fixtures.differentSizeObjects,
+                jsonTest: {
+                    count: 999
+                },
+                path: '?'
+            });
+        };
+
+        expect(fn).to.throw();
+    });
+
+    it('should not length match any objects in a single element array with a \'?\' path', function() {
+        var fn = function() {
+            pm.matchJSONLength({
+                jsonBody: [{ num: 6 }],
+                jsonTest: {
+                    count: 999
+                },
+                path: '?'
+            });
+        };
+
+        expect(fn).to.throw();
+    });
+
+    it('should length match all objects in an array with a \'*\' path', function() {
+        pm.matchJSONLength({
+            jsonBody: fixtures.sameNumbers,
+            jsonTest: {
+                count: 1
+            },
+            path: '*'
+        });
+    });
+
+    it('should not length match any objects in an array with a \'*\' path', function() {
+        var fn = function() {
+            pm.matchJSONLength({
+                jsonBody: fixtures.sameNumbers,
+                jsonTest: {
+                    count: 999
+                },
+                path: '*'
+            });
+        };
+
+        expect(fn).to.throw();
+    });
+
+    it('should length match one object in an array with an \'array.?\' path', function() {
+        pm.matchJSONLength({
+            jsonBody: fixtures,
+            jsonTest: {
+                count: 1
+            },
+            path: 'differentNumbers.?'
+        });
+    });
+
+    it('should not length match one object in an array with an \'array.?\' path', function() {
+        var fn = function() {
+            pm.matchJSONLength({
+                jsonBody: fixtures,
+                jsonTest: {
+                    count: 999
+                },
+                path: 'differentNumbers.?'
+            });
+        };
+
+        expect(fn).to.throw();
+    });
+
+    it('should length match all objects in an array with an \'array.*\' path', function() {
+        pm.matchJSONLength({
+            jsonBody: fixtures,
+            jsonTest: {
+                count: 1
+            },
+            path: 'sameNumbers.*'
+        });
+    });
+
+    it('should not length match any objects in an array with an \'array.*\' path and isNot set', function() {
+        pm.matchJSONLength({
+            jsonBody: fixtures,
+            jsonTest: {
+                count: 999
+            },
+            path: 'sameNumbers.*',
+            isNot: true
+        });
+    });
+
+    it('should not length match any objects in an array with an \'array.*\' path', function() {
+        var fn = function() {
+            pm.matchJSONLength({
+                jsonBody: fixtures,
+                jsonTest: {
+                    count: 999
+                },
+                path: 'sameNumbers.*'
+            });
+        };
+
+        expect(fn).to.throw();
+    });
+
+    it('should not length match all objects in an array with a \'*\' path and isNot set', function() {
+        var fn = function() {
+            pm.matchJSONLength({
+                jsonBody: fixtures.sameNumbers,
+                jsonTest: {
+                    count: 1
+                },
+                path: '*',
+                isNot: true
+            });
+        };
+
+        expect(fn).to.throw(/Expected all lengths to be invalid but/);
+    });
+
+    it('should not length match an empty array with a \'?\' path', function() {
+        var fn = function() {
+            pm.matchJSONLength({
+                jsonBody: [],
+                jsonTest: {
+                    count: 5
+                },
+                path: '?'
+            });
+        };
+
+        expect(fn).to.throw('There are no JSON objects to match against');
+    });
 });

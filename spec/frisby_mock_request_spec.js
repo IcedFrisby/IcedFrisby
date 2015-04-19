@@ -489,6 +489,24 @@ describe('Frisby matchers', function() {
       .toss();
   });
 
+  it('expectJSONLength should support an asterisk in the path to test that all elements of an array do NOT have a specified length', function() {
+    // Mock API
+    var mockFn = mockRequest.mock()
+    .get('/test-object-array')
+      .respond({
+        statusCode: 200,
+        body: fixtures.arrayOfObjects
+      })
+    .run();
+
+    var f1 = frisby.create(this.test.title)
+      .not()
+      .get('http://mock-request/test-object-array', {mock: mockFn})
+      .expectJSONLength('test_subjects.*', 3)
+      .expectJSONLength('test_subjects.*', 5)
+      .toss();
+  });
+
   it('expectJSONLength should properly count arrays, strings, and objects using <=', function() {
     // Mock API
     var mockFn = mockRequest.mock()
