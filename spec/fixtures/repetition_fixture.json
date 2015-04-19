@@ -41,6 +41,27 @@
     }, {
         "num": 5
     }],
+    "differentSizeObjects": [{
+        "num": 1
+    }, {
+        "num": 2,
+        "saying": "Double Dutch"
+    }, {
+        "num": 3,
+        "things": 3,
+        "saying": "Three strikes and you are out"
+    }, {
+        "num": 4,
+        "things": 4,
+        "isThird": true,
+        "saying": "Four corners of the earth"
+    }, {
+        "num": 5,
+        "things": 5,
+        "isThird": false,
+        "fourFor": "sure",
+        "saying": "Fifth column"
+    }],
     "singleObject": {
         "test_str": "Hey Hai Hello",
         "test_str_same": "I am the same...",
