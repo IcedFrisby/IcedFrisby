@@ -108,10 +108,13 @@ You can assess code coverage by running `istanbul cover _mocha ./spec/**/*_spec.
 ### Contributions
 Contributions are awesome! If you have an idea or code that you want to contribute, feel free to submit a pull request and I will gladly review it. I am open to pretty much anything.
 
-### TODO
+### Roadmap
 1. Make output errors more useful. It can be hard to track down which assertion is causing what error.
 1. More test coverage!
 1. README API guide
+1. Add a "stack trace" for paths to help discern why a path traversal failed
+1. Support [chained tests](https://github.com/vlucas/frisby/issues/223)
+1. ES6 support
 
 ## License
 Licensed under the [MIT](http://opensource.org/licenses/MIT)/[BSD](http://opensource.org/licenses/BSD-3-Clause) license.
