@@ -308,3 +308,103 @@ frisby.create('Request without the globalSetup options')
   .get(...)
   ...
 ```
+
+## Helpers
+
+### after()
+Callback function to run after test is completed. Can be used to run tests sequentially.
+
+```javascript
+frisby.create('First test')
+  .get('http://httpbin.org/get?foo=bar')
+  .after(function(err, res, body) {
+
+    frisby.create('Second test, run after first is completed')
+      .get('http://httpbin.org/get?bar=baz')
+    .toss()
+
+  })
+.toss()
+```
+
+### afterJSON()
+Callback function to run after test is completed. This helper function automatically converts the response body to JSON.
+
+```javascript
+frisby.create('First test')
+  .get('http://httpbin.org/get?foo=bar')
+  afterJSON(function(json) {
+
+    // Now you can use 'json' in additional requests
+    frisby.create('Second test, run after first is completed')
+      .get('http://httpbin.org/get?bar=' + json.args.foo)
+    .toss()
+
+  });
+.toss()
+```
+
+## Inspectors
+Inspectors are useful for viewing details about HTTP requests and responses in the console.
+
+### inspectJSON()
+Dumps parsed JSON body to the console.
+
+```javascript
+frisby.create('Just a quick inspection of the JSON HTTP response')
+  .get('http://httpbin.org/get?foo=bar&bar=baz')
+    .inspectJSON()
+.toss()
+```
+
+```javascript
+// Console output
+{ url: 'http://httpbin.org/get?foo=bar&bar=baz',
+  headers:
+   { 'Content-Length': '',
+     'X-Forwarded-Port': '80',
+     Connection: 'keep-alive',
+     Host: 'httpbin.org',
+     Cookie: '',
+     'Content-Type': 'application/json' },
+  args: { foo: 'bar', bar: 'baz' },
+  origin: '127.0.0.1' }
+```
+
+### inspectBody()
+Dumps the raw response body to the console without any parsing or added markup.
+
+```javascript
+// Test
+frisby.create('Very useful for HTML, text, or raw output')
+  .get('http://asciime.heroku.com/generate_ascii?s=Frisby.js')
+    .inspectBody()
+.toss()
+```
+
+Console output:
+```
+  ______    _     _             _
+ |  ____|  (_)   | |           (_)
+ | |__ _ __ _ ___| |__  _   _   _ ___
+ |  __| '__| / __| '_ \| | | | | / __|
+ | |  | |  | \__ \ |_) | |_| |_| \__ \
+ |_|  |_|  |_|___/_.__/ \__, (_) |___/
+                         __/ |_/ |
+                        |___/|__/
+```
+
+### Send Raw JSON or POST Body
+By default, IcedFrisby sends POST and PUT requests as `application/x-www-form-urlencoded` parameters. If you want to send a raw request body or actual JSON, use `{ json: true }` as the third argument (object literal of options).
+
+```javascript
+frisby.create('Post JSON string as body')
+    .post('http://httpbin.org/post', {
+        arr: [1, 2, 3, 4],
+        foo: "bar",
+        bar: "baz",
+        answer: 42
+    }, {json: true})
+    .expectHeaderContains('Content-Type', 'json')
+.toss()
+```
