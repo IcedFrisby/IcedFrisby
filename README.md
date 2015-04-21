@@ -11,8 +11,6 @@
 This is still a major work-in-progress and should be considered unstable.
 
 ## :orange_book: API Documentation
-Most of IcedFrisby's features are in the [Frisby API docs](http://frisbyjs.com/docs/api/).
-
 The [**IcedFrisby** API Docs](https://github.com/RobertHerhold/IcedFrisby/blob/master/API.md) are located in [API.md](https://github.com/RobertHerhold/IcedFrisby/blob/master/API.md).
 
 ## Changelog

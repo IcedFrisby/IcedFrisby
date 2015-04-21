@@ -21,6 +21,13 @@
 		- [request.inspectOnFailure](#requestinspectonfailure)
 		- [failOnMultiSetup](#failonmultisetup)
 		- [Resetting `globalSetup`](#resetting-globalsetup)
+	- [Helpers](#helpers)
+		- [after()](#after)
+		- [afterJSON()](#afterjson)
+	- [Inspectors](#inspectors)
+		- [inspectJSON()](#inspectjson)
+		- [inspectBody()](#inspectbody)
+		- [Send Raw JSON or POST Body](#send-raw-json-or-post-body)
 
 ## Expectations
 
