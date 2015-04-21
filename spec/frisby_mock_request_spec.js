@@ -9,7 +9,7 @@ var fs = require('fs');
 var path = require('path');
 
 // Test global setup
-var defaultGlobalSetup = frisby.globalSetup();
+
 var mockGlobalSetup = function() {
   frisby.globalSetup({
     timeout: 3000,
@@ -23,7 +23,14 @@ var mockGlobalSetup = function() {
 };
 
 var restoreGlobalSetup = function() {
-  frisby.globalSetup(defaultGlobalSetup);
+  frisby.globalSetup({
+    request: {
+      headers: {},
+      inspectOnFailure: false,
+      json: false,
+      baseUri: ''
+    }
+  });
 };
 
 // Nock to intercept HTTP upload request

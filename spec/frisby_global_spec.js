@@ -3,25 +3,25 @@ var frisby = require('../lib/icedfrisby');
 describe('Frisby object setup', function() {
 
   it('global setup should be empty', function() {
-    expect({
+    expect(frisby.globalSetup()).to.deep.equal({
       request: {
         headers: {},
         inspectOnFailure: false,
         json: false,
         baseUri: ''
       }
-    }).to.deep.equal(frisby.globalSetup());
+    });
   });
 
   it('should have empty request properties on creation', function() {
     var f1 = frisby.create('test 1');
 
-    expect({
+    expect(f1.current.request).to.deep.equal({
       headers: {},
       inspectOnFailure: false,
       json: false,
       baseUri: ''
-    }).to.deep.equal(f1.current.request);
+    });
   });
 
   it('should be independent of other Frisby objects', function() {
@@ -102,14 +102,14 @@ describe('Frisby object setup', function() {
   });
 
   it('should default to json = false', function() {
-    expect({
+    expect(frisby.globalSetup()).to.deep.equal({
       request: {
         headers: {},
         inspectOnFailure: false,
         json: false,
         baseUri: ''
       }
-    }).to.deep.equal(frisby.globalSetup());
+    });
 
     expect(frisby.create('mytest').get('/path').current.outgoing.json).to.deep.equal(false);
   });
@@ -123,19 +123,19 @@ describe('Frisby object setup', function() {
       }
     });
 
-    expect({
+    expect(frisby.globalSetup()).to.deep.equal({
       request: {
         baseUri: "",
         headers: {},
         inspectOnFailure: false,
         json: true
       }
-    }).to.deep.equal(frisby.globalSetup());
+    });
 
     expect(frisby.create('mytest').get('/path').current.outgoing.json).to.deep.equal(true);
   });
 
-  it('should should be able to reset the request object with reset()', function() {
+  it('should be able to reset the request object with reset()', function() {
       frisby.globalSetup({
           request: {
               headers: { 'X-Stuff': 'stuff header' },
@@ -145,18 +145,20 @@ describe('Frisby object setup', function() {
       });
 
       // verify that the global config was set properly
-      expect({
+      expect(frisby.globalSetup()).to.deep.equal({
           request: {
               headers: { 'X-Stuff': 'stuff header' },
               json: true,
               baseUri: 'https://some.base.url.com/',
               inspectOnFailure: false
           }
-      }).to.deep.equal(frisby.globalSetup());
+      });
 
-      // verify that the request object has been reset
       expect(frisby.create('mytest').reset().current.request).to.deep.equal({
-        headers: {}
+        baseUri: "",
+        headers: {},
+        inspectOnFailure: false,
+        json: false
       });
   });
 
@@ -169,14 +171,14 @@ describe('Frisby object setup', function() {
       }
     });
 
-    expect({
+    expect(frisby.globalSetup()).to.deep.equal({
       request: {
         headers: {},
         baseUri: "",
         inspectOnFailure: false,
         json: true
       }
-    }).to.deep.equal(frisby.globalSetup());
+    });
 
     expect(frisby.create('mytest').get('/path', {
       json: false
@@ -192,14 +194,14 @@ describe('Frisby object setup', function() {
       }
     });
 
-    expect({
+    expect(frisby.globalSetup()).to.deep.equal({
       request: {
         headers: {},
         baseUri: "",
         inspectOnFailure: true,
         json: false
       }
-    }).to.deep.equal(frisby.globalSetup());
+    });
 
     expect(frisby.create('mytest').get('/path').current.outgoing.inspectOnFailure).to.deep.equal(true);
   });
