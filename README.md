@@ -15,6 +15,9 @@ Most of IcedFrisby's features are in the [Frisby API docs](http://frisbyjs.com/d
 
 The [**IcedFrisby** API Docs](https://github.com/RobertHerhold/IcedFrisby/blob/master/API.md) are located in [API.md](https://github.com/RobertHerhold/IcedFrisby/blob/master/API.md).
 
+## Changelog
+The [**IcedFrisby** Changelog](https://github.com/RobertHerhold/IcedFrisby/blob/master/CHANGELOG.md) is located in [CHANGELOG.md](https://github.com/RobertHerhold/IcedFrisby/blob/master/CHANGELOG.md).
+
 ## What makes IcedFrisby different?
 * Uses [Mocha](https://github.com/mochajs/mocha) as the driver instead of Jasmine
 * Uses [Chai](https://github.com/chaijs/chai) for assertions
