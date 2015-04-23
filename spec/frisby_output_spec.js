@@ -24,7 +24,7 @@ var restoreGlobalSetup = function() {
 };
 
 describe('console output', function() {
-    it('should warn developers if there is a header with \'json\' but the body type is not JOSN', function() {
+    it('should warn developers if there is a header with \'json\' but the body type is not JSON', function() {
         // Mock API
         nock('http://mock-request/', {
                 allowUnmocked: true
@@ -47,7 +47,7 @@ describe('console output', function() {
         // TODO: come up with a good way to capture console output and actually check it
     });
 
-    it('should NOT warn developers that "there is a header with \'json\' but the body type is not JOSN" because there is no body provided', function() {
+    it('should NOT warn developers that "there is a header with \'json\' but the body type is not JSON" because there is no body provided', function() {
         // Mock API
         nock('http://mock-request/', {
                 allowUnmocked: true

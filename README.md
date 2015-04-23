@@ -103,6 +103,9 @@ Run tests as you normally would with [Mocha](https://github.com/mochajs/mocha).
 
 ## IcedFrisby Development
 
+### Setup
+Code quality is enforced with JSHint. You will need to install JSHint as it is run with the tests: `npm install -g jshint`
+
 ### Code Coverage
 You can assess code coverage by running `istanbul cover _mocha ./spec/**/*_spec.js -R spec`
 

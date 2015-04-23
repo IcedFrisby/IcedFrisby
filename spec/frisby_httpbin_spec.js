@@ -79,7 +79,7 @@ describe('Frisby live running httpbin tests', function() {
       var data = [];
 
       for(var i=0; i< 1024; i++)
-        data.push(Math.round(Math.random()*256))
+        data.push(Math.round(Math.random()*256));
 
 
       frisby.create('POST random binary data via Buffer object')
