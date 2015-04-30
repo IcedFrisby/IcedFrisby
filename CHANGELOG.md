@@ -1,5 +1,9 @@
 # IcedFrisby Changelog
 
+## 0.2.0
+- Added useApp(app, baseUri) method
+- [Devs] added JSHint to the build to help enforce code quality
+
 ## 0.1.0
 - Added this changelog
 - Fixed faulty global setup tests
