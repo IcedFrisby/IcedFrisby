@@ -114,11 +114,9 @@ Contributions are awesome! If you have an idea or code that you want to contribu
 
 ### Roadmap
 1. Make output errors more useful. It can be hard to track down which assertion is causing what error.
-1. More test coverage!
-1. README API guide
 1. Add a "stack trace" for paths to help discern why a path traversal failed
-1. Support [chained tests](https://github.com/vlucas/frisby/issues/223)
-1. ES6 support
+1. Support [chained tests/promises](https://github.com/vlucas/frisby/issues/223). Related: [#127](https://github.com/vlucas/frisby/issues/127), [#154](https://github.com/vlucas/frisby/issues/154), [#200](https://github.com/vlucas/frisby/issues/200)
+1. custom assertion plugin support
 
 ## License
 Licensed under the [MIT](http://opensource.org/licenses/MIT)/[BSD](http://opensource.org/licenses/BSD-3-Clause) license.
