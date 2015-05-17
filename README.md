@@ -8,8 +8,6 @@
 
 **IcedFrisby** is a Node.js npm module that makes testing API endpoints easy, fast and fun. Based on the original [Frisby](https://github.com/vlucas/frisby) project.
 
-This is still a major work-in-progress and should be considered unstable.
-
 ## :orange_book: API Documentation
 The [**IcedFrisby** API Docs](https://github.com/RobertHerhold/IcedFrisby/blob/master/API.md) are located in [API.md](https://github.com/RobertHerhold/IcedFrisby/blob/master/API.md).
 
