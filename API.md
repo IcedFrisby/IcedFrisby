@@ -410,6 +410,17 @@ frisby.create('Just a quick inspection of the JSON HTTP response')
   .toss()
 ```
 
+Console output:
+```json
+{ server: 'nginx',
+  date: 'Sun, 17 May 2015 02:38:21 GMT',
+  'content-type': 'application/json',
+  'content-length': '188',
+  connection: 'close',
+  'access-control-allow-origin': '*',
+  'access-control-allow-credentials': 'true' }
+```
+
 ### inspectJSON(message)
 Dumps parsed JSON body to the console.
 * Types: `message`: `string` An optional message to print before the inspection
@@ -422,8 +433,8 @@ frisby.create('Just a quick inspection of the JSON HTTP response')
   .toss()
 ```
 
+Console output:
 ```javascript
-// Console output
 { url: 'http://httpbin.org/get?foo=bar&bar=baz',
   headers:
    { 'Content-Length': '',
