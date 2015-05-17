@@ -68,7 +68,7 @@ describe('IcedFrisby inspect methods', function() {
 
         frisby.create(this.test.title)
             .get('http://inspectRequest.httpbin.org/get', {json: true})
-            .inspectRequest()
+            .inspectRequest('inspectRequest')
             .after(function() {
                 // check that the mock was consumed
                 inspectNock.done();
@@ -90,7 +90,7 @@ describe('IcedFrisby inspect methods', function() {
 
         frisby.create(this.test.title)
             .get('http://inspectResponse.httpbin.org/get', {json: true})
-            .inspectResponse()
+            .inspectResponse('inspectResponse')
             .after(function() {
                 // check that the mock was consumed
                 inspectNock.done();
@@ -112,7 +112,7 @@ describe('IcedFrisby inspect methods', function() {
 
         frisby.create(this.test.title)
             .get('http://inspectHeaders.httpbin.org/get', {json: true})
-            .inspectHeaders()
+            .inspectHeaders('inspectHeaders')
             .after(function() {
                 // check that the mock was consumed
                 inspectNock.done();
@@ -134,7 +134,7 @@ describe('IcedFrisby inspect methods', function() {
 
         frisby.create(this.test.title)
             .get('http://inspectBody.httpbin.org/get', {json: true})
-            .inspectBody()
+            .inspectBody('inspectBody')
             .after(function() {
                 // check that the mock was consumed
                 inspectNock.done();
@@ -156,7 +156,7 @@ describe('IcedFrisby inspect methods', function() {
 
         frisby.create(this.test.title)
             .get('http://inspectJSON.httpbin.org/get', {json: true})
-            .inspectJSON()
+            .inspectJSON('inspectJSON')
             .after(function() {
                 // check that the mock was consumed
                 inspectNock.done();
@@ -178,7 +178,7 @@ describe('IcedFrisby inspect methods', function() {
 
         frisby.create(this.test.title)
             .get('http://inspectStatus.httpbin.org/get', {json: true})
-            .inspectStatus()
+            .inspectStatus('inspectStatus')
             .after(function() {
                 // check that the mock was consumed
                 inspectNock.done();
