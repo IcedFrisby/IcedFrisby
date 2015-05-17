@@ -25,8 +25,13 @@
 		- [after()](#after)
 		- [afterJSON()](#afterjson)
 	- [Inspectors](#inspectors)
-		- [inspectJSON()](#inspectjson)
-		- [inspectBody()](#inspectbody)
+		- [inspect(cb)](#inspectcb)
+		- [inspectRequest(message)](#inspectrequestmessage)
+		- [inspectResponse(message)](#inspectresponsemessage)
+		- [inspectHeaders(message)](#inspectheadersmessage)
+		- [inspectJSON(message)](#inspectjsonmessage)
+		- [inspectBody(message)](#inspectbodymessage)
+		- [inspectStatus(message)](#inspectstatusmessage)
 		- [Send Raw JSON or POST Body](#send-raw-json-or-post-body)
 
 ## Expectations
