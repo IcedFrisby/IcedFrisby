@@ -8,6 +8,9 @@ var Joi = require('joi');
 var fs = require('fs');
 var path = require('path');
 
+// enable real connections for localhost otherwise useApp() tests won't work
+nock.enableNetConnect('127.0.0.1');
+
 // Test global setup
 
 var mockGlobalSetup = function() {
