@@ -25,8 +25,13 @@
 		- [after()](#after)
 		- [afterJSON()](#afterjson)
 	- [Inspectors](#inspectors)
-		- [inspectJSON()](#inspectjson)
-		- [inspectBody()](#inspectbody)
+		- [inspect(cb)](#inspectcb)
+		- [inspectRequest(message)](#inspectrequestmessage)
+		- [inspectResponse(message)](#inspectresponsemessage)
+		- [inspectHeaders(message)](#inspectheadersmessage)
+		- [inspectJSON(message)](#inspectjsonmessage)
+		- [inspectBody(message)](#inspectbodymessage)
+		- [inspectStatus(message)](#inspectstatusmessage)
 		- [Send Raw JSON or POST Body](#send-raw-json-or-post-body)
 
 ## Expectations
@@ -402,18 +407,87 @@ frisby.create('First test')
 ## Inspectors
 Inspectors are useful for viewing details about HTTP requests and responses in the console.
 
-### inspectJSON()
-Dumps parsed JSON body to the console.
+### inspect(cb)
+Provides access to request and response data before expectations are executed. This should not be used for assertions. Use [after()](https://github.com/RobertHerhold/IcedFrisby/blob/master/API.md#after) for more assertions.
+* Types: `cb`: `function(err, req, res, body, headers)`
+  - callback types:
+    * `err`: `Error` object is there was an error making the request. Will be `null` if no error is present.
+	* `req`: request `object` IcedFrisby made to the endpoint
+	* `res`: response `object` received from the endpoint
+	* `body`: body `object`, a part of the response
+	* `headers`: headers `object`, a part of the response
+* Defaults: `none`, performs no action if the callback is a false value
+
+```javascript
+frisby.create('Inspecting some data')
+  .get('http://httpbin.org/get?foo=bar&bar=baz')
+  .inspect(function(err, req, res, body, headers) {
+	console.log('Got args:' + body.args);
+})
+.toss()
+```
+
+### inspectRequest(message)
+Inspects the entire request object sent from IcedFrisby.
+* Types: `message`: `string` An optional message to print before the inspection
+* Defaults: `none`
 
 ```javascript
 frisby.create('Just a quick inspection of the JSON HTTP response')
   .get('http://httpbin.org/get?foo=bar&bar=baz')
-    .inspectJSON()
-.toss()
+  .inspectRequest()
+  .toss()
 ```
 
+### inspectResponse(message)
+Inspects the entire response.
+* Types: `message`: `string` An optional message to print before the inspection
+* Defaults: `none`
+
 ```javascript
-// Console output
+frisby.create('Just a quick inspection of the JSON HTTP response')
+  .get('http://httpbin.org/get?foo=bar&bar=baz')
+  .inspectResponse()
+  .toss()
+```
+
+### inspectHeaders(message)
+Inspects the response headers.
+* Types: `message`: `string` An optional message to print before the inspection
+* Defaults: `none`
+
+```javascript
+frisby.create('Just a quick inspection of the JSON HTTP response')
+  .get('http://httpbin.org/get?foo=bar&bar=baz')
+  .inspectHeaders()
+  .toss()
+```
+
+Console output:
+```json
+{ server: 'nginx',
+  date: 'Sun, 17 May 2015 02:38:21 GMT',
+  'content-type': 'application/json',
+  'content-length': '188',
+  connection: 'close',
+  'access-control-allow-origin': '*',
+  'access-control-allow-credentials': 'true' }
+```
+
+### inspectJSON(message)
+Dumps parsed JSON body to the console.
+* Types: `message`: `string` An optional message to print before the inspection
+* Defaults: `none`
+
+```javascript
+frisby.create('Just a quick inspection of the JSON HTTP response')
+  .get('http://httpbin.org/get?foo=bar&bar=baz')
+  .inspectJSON()
+  .toss()
+```
+
+Console output:
+```javascript
 { url: 'http://httpbin.org/get?foo=bar&bar=baz',
   headers:
    { 'Content-Length': '',
@@ -426,15 +500,17 @@ frisby.create('Just a quick inspection of the JSON HTTP response')
   origin: '127.0.0.1' }
 ```
 
-### inspectBody()
-Dumps the raw response body to the console without any parsing or added markup.
+### inspectBody(message)
+Dumps the raw response body to the console without any parsing.
+* Types: `message`: `string` An optional message to print before the inspection
+* Defaults: `none`
 
 ```javascript
 // Test
 frisby.create('Very useful for HTML, text, or raw output')
   .get('http://asciime.heroku.com/generate_ascii?s=Frisby.js')
-    .inspectBody()
-.toss()
+  .inspectBody()
+  .toss()
 ```
 
 Console output:
@@ -447,6 +523,18 @@ Console output:
  |_|  |_|  |_|___/_.__/ \__, (_) |___/
                          __/ |_/ |
                         |___/|__/
+```
+
+### inspectStatus(message)
+Inspects the response status.
+* Types: `message`: `string` An optional message to print before the inspection
+* Defaults: `none`
+
+```javascript
+frisby.create('Just a quick inspection of the JSON HTTP response')
+  .get('http://httpbin.org/get?foo=bar&bar=baz')
+  .inspectStatus()
+  .toss()
 ```
 
 ### Send Raw JSON or POST Body

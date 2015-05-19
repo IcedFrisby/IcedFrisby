@@ -2,7 +2,12 @@
 
 ## 0.2.0
 - Added useApp(app, baseUri) method
-- [Devs] added JSHint to the build to help enforce code quality
+
+## 0.1.2
+- Fixed issue [#6](https://github.com/RobertHerhold/IcedFrisby/issues/6) where the inspect functions are not called if the test fails. Inspect functions are now run before the expect functions.
+
+## 0.1.1
+- Removed `[IcedFrisby]` branding from all mocha tests as per [#5](https://github.com/RobertHerhold/IcedFrisby/pull/5)
 
 ## 0.1.0
 - Added this changelog
