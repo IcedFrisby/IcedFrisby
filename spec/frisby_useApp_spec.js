@@ -21,7 +21,7 @@ describe('IcedFrisby useApp(app)', function() {
             res.send('^.^');
         });
 
-        frisby.create('should start the http server on an ephemeral port')
+        frisby.create(this.test.title)
             .useApp(app)
             .get('/')
             .expectStatus(200)
@@ -40,7 +40,7 @@ describe('IcedFrisby useApp(app)', function() {
         });
 
         var server = app.listen(4000, function() {
-            frisby.create('should work with an active http server')
+            frisby.create(this.test.title)
                 .useApp(app)
                 .get('/')
                 .expectStatus(200)
@@ -66,7 +66,7 @@ describe('IcedFrisby useApp(app)', function() {
             cert: fs.readFileSync(path.join(fixtures, 'test_cert.pem'))
         }, app);
 
-        frisby.create('should work with an active https server')
+        frisby.create(this.test.title)
             .useApp(server)
             .get('/')
             .expectStatus(200)
@@ -91,11 +91,23 @@ describe('IcedFrisby useApp(app)', function() {
             cert: fs.readFileSync(path.join(fixtures, 'test_cert.pem'))
         }, app).listen();
 
-        frisby.create('should work with an active https server')
+        frisby.create(this.test.title)
             .useApp(server)
             .get('/')
             .expectStatus(200)
             .expectBodyContains('^.^')
             .toss();
+    });
+
+    it('should throw an exception if app is not defined', function() {
+        var self = this;
+        
+        var fn = function() {
+            frisby.create(self.test.title)
+                .useApp(undefined)
+                .toss();
+        };
+
+        expect(fn).to.throw('No app provided');
     });
 });
