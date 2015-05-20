@@ -8,6 +8,7 @@
 
 ## 0.1.1
 - Removed `[IcedFrisby]` branding from all mocha tests as per [#5](https://github.com/RobertHerhold/IcedFrisby/pull/5)
+- [Devs] added JSHint to the build to help enforce code quality
 
 ## 0.1.0
 - Added this changelog
