@@ -237,7 +237,7 @@ To test a single object in an array, use an asterisk character, so the path look
 .toss();
 ```
 
-## useApp
+## useApp()
 
 IcedFrisby provides the `useApp(app, basePath)` function to bootstrap a Node.js http.Server-based application. Provide your `app` object and IcedFrisby will start the [Express](expressjs.com)/[Koa](koajs.com)/etc application and proceed to test against the application.
 
@@ -245,6 +245,8 @@ This is similar to [supertest's](https://github.com/visionmedia/supertest) reque
 > You may pass an http.Server, or a Function to request() - if the server is not already listening for connections then it is bound to an ephemeral port for you so there is no need to keep track of ports.
 
 This overrides the globalSetup baseUri option for the current test.
+
+:warning: If you are using `useApp()` and [`reset()`](#resetting-globalsetup) in the same test, be sure to use [`reset()`](#resetting-globalsetup) **prior** to calling `useApp()` otherwise the base URL `useApp()` sets will be removed.
 
 * Types: `app`: `http.Server`, `basePath`: `string`
 * Defaults: `app`: `none`, `basePath`: `''`
@@ -260,7 +262,7 @@ app.get('/', function(req, res) {
     res.send('Hello World!');
 });
 
-// prevent the app from starting if it is required as a module
+// prevent the app from starting if it is required as a module (it is in this example!)
 if (!module.parent) {
     var server = app.listen(3000, function() {
         var host = server.address().address;
