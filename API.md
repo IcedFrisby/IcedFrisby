@@ -14,6 +14,10 @@
 			- [Testing Nested Objects](#testing-nested-objects)
 			- [Testing All Objects in an Array](#testing-all-objects-in-an-array)
 			- [Testing One Object in an Array](#testing-one-object-in-an-array)
+	- [useApp()](#useapp)
+		- [Example Use:](#example-use)
+			- [Express Application:](#express-application)
+			- [IcedFrisby Test:](#icedfrisby-test)
 	- [Global Setup](#global-setup)
 		- [request.baseUri](#requestbaseuri)
 		- [request.headers](#requestheaders)
@@ -237,6 +241,56 @@ To test a single object in an array, use an asterisk character, so the path look
 .toss();
 ```
 
+## useApp()
+
+IcedFrisby provides the `useApp(app, basePath)` function to bootstrap a Node.js http.Server-based application. Provide your `app` object and IcedFrisby will start the [Express](expressjs.com)/[Koa](koajs.com)/etc application and proceed to test against the application.
+
+This is similar to [supertest's](https://github.com/visionmedia/supertest) request function:
+> You may pass an http.Server, or a Function to request() - if the server is not already listening for connections then it is bound to an ephemeral port for you so there is no need to keep track of ports.
+
+This overrides the globalSetup baseUri option for the current test.
+
+:warning: If you are using `useApp()` and [`reset()`](#resetting-globalsetup) in the same test, be sure to use [`reset()`](#resetting-globalsetup) **prior** to calling `useApp()` otherwise the base URL `useApp()` sets will be removed.
+
+* Types: `app`: `http.Server`, `basePath`: `string`
+* Defaults: `app`: `none`, `basePath`: `''`
+
+### Example Use:
+
+#### Express Application:
+```javascript
+var express = require('express');
+var app = express();
+
+app.get('/', function(req, res) {
+    res.send('Hello World!');
+});
+
+// prevent the app from starting if it is required as a module (it is in this example!)
+if (!module.parent) {
+    var server = app.listen(3000, function() {
+        var host = server.address().address;
+        var port = server.address().port;
+        console.log('Example app listening at http://%s:%s', host, port);
+    });
+}
+
+module.exports = app; // export the application
+```
+
+#### IcedFrisby Test:
+```javascript
+var app = require('./app');
+
+describe('Express app integration', function() {
+    frisby.create('should start the app and request')
+        .useApp(app)
+        .get('/')
+        .expectStatus(200)
+        .expectBodyContains('Hello World!')
+        .toss();
+});
+```
 
 ## Global Setup
 

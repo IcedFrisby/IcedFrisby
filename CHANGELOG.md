@@ -1,5 +1,8 @@
 # IcedFrisby Changelog
 
+## 0.2.0
+- Added useApp(app, baseUri) method
+
 ## 0.1.2
 - Fixed issue [#6](https://github.com/RobertHerhold/IcedFrisby/issues/6) where the inspect functions are not called if the test fails. Inspect functions are now run before the expect functions.
 

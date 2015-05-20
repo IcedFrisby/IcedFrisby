@@ -41,6 +41,7 @@
   },
   "devDependencies": {
     "coveralls": "^2.11.2",
+    "express": "^4.12.3",
     "form-data": "~0.2.0",
     "istanbul": "^0.3.6",
     "jshint": "^2.7.0",
@@ -55,6 +56,6 @@
   },
   "scripts": {
     "pretest": "./node_modules/.bin/jshint **/*.js",
-    "test": "mocha spec/**/*.js"
+    "test": "mocha spec"
   }
 }
