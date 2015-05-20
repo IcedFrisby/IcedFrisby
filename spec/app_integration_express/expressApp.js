@@ -8,6 +8,7 @@ app.get('/', function(req, res) {
     res.send('Hello World!');
 });
 
+/* istanbul ignore next */
 // prevent the app from starting if it is required as a module
 if (!module.parent) {
     var server = app.listen(3000, function() {
