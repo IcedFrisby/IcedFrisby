@@ -1,5 +1,8 @@
 # IcedFrisby Changelog
 
+## 0.2.1
+- Updated `chai` and `qs`. Nailed down `nock` dependency version.
+
 ## 0.2.0
 - Added useApp(app, baseUri) method
 
