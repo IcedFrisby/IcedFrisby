@@ -1,5 +1,8 @@
 # IcedFrisby Changelog
 
+## 0.2.2
+- Fixed issue where the Content-Type header is incorrectly overwritten when sending JSON data.
+
 ## 0.2.1
 - Updated `chai` and `qs`. Nailed down `nock` dependency version.
 
