@@ -1,3 +1,4 @@
+var path = require('path');
 var frisby = require('../lib/icedfrisby');
 
 describe('Frisby object setup', function() {
@@ -44,6 +45,14 @@ describe('Frisby object setup', function() {
 
     // Different setup
     expect(f1.current.request).not.to.deep.equal(f2.current.request);
+  });
+
+  it('should be able to useApp', function() {
+      frisby.globalSetup({
+        useApp: require(path.join(__dirname, './app_integration_express/expressApp.js'))
+      });
+
+      frisby.create();
   });
 
    it('should be able to addHeader when global request headers is not configured', function() {
