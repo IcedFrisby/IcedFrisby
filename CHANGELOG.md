@@ -1,5 +1,8 @@
 # IcedFrisby Changelog
 
+## 0.2.3
+- Added capability to use useApp in global setup
+
 ## 0.2.2
 - Fixed issue where the Content-Type header is incorrectly overwritten when sending JSON data.
 
