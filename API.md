@@ -24,6 +24,7 @@
 		- [request.json](#requestjson)
 		- [request.inspectOnFailure](#requestinspectonfailure)
 		- [failOnMultiSetup](#failonmultisetup)
+		- [useApp](#useapp-in-globalsetup)
 		- [Resetting `globalSetup`](#resetting-globalsetup)
 	- [Helpers](#helpers)
 		- [after()](#after)
@@ -363,6 +364,16 @@ frisby.globalSetup({
     inspectOnFailure: true // or false
   }
 });
+```
+
+### useApp in globalSetup
+Specifying a Node.js http.Server-based application in global setup will apply [useApp()](#useapp) to every test.
+
+``` javascript
+frisby.globalSetup({
+    useApp: require('./myApp.js')
+});
+
 ```
 
 ### Resetting `globalSetup`
