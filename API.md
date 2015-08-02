@@ -253,6 +253,8 @@ This overrides the globalSetup baseUri option for the current test.
 
 :warning: If you are using `useApp()` and [`reset()`](#resetting-globalsetup) in the same test, be sure to use [`reset()`](#resetting-globalsetup) **prior** to calling `useApp()` otherwise the base URL `useApp()` sets will be removed.
 
+:warning: If you are using `useApp()` to override the app used in the global setup, be sure to use `useApp()` prior to calling `get()`, `patch()`, `post()`, `put()`, `delete()`, `head()`, or `options()`. Otherwise, the app will not be overwritten and the app specified in the global setup will be used instead
+
 * Types: `app`: `http.Server`, `basePath`: `string`
 * Defaults: `app`: `none`, `basePath`: `''`
 
