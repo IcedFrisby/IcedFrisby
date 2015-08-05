@@ -1,5 +1,8 @@
 # IcedFrisby Changelog
 
+## 0.2.4
+- Don't start the app specified in useApp for every test, only once per global setup
+
 ## 0.2.3
 - Added capability to use useApp in global setup
 
