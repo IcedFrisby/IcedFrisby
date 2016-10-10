@@ -55,7 +55,7 @@
     "node": ">= 0.10.0"
   },
   "scripts": {
-    "pretest": "./node_modules/.bin/jshint **/*.js",
+    "pretest": "./node_modules/.bin/jshint lib/*.js",
     "test": "mocha spec"
   }
 }
