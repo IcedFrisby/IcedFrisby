@@ -1,5 +1,12 @@
 # IcedFrisby Changelog
 
+## 0.2.5
+- Upgraded dependencies to latest versions
+- Fixed a bug with hostnames that resolve but don't respond
+- **Breaking Changes**
+  - Support for <= 0.12 is deprecated (LTS support ends December 2016)
+  - Set builds targets to latest stable versions of Node.js, 4, 5 and 6
+
 ## 0.2.4
 - Don't start the app specified in useApp for every test, only once per global setup
 

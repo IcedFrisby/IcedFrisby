@@ -29,6 +29,8 @@ Install IcedFrisby from NPM:
 
     npm install icedfrisby --save-dev
 
+**Note:** IcedFrisby is built and tested against the latest stable versions of Node.js (4, 5, and 6)
+
 ## Show me some code!
 
 IcedFrisby tests start with `frisby.create()` with a description of the test followed by one of `get()`, `put()`, `post()`, `delete()`, or `head()`, and ending with `toss()` to generate the resulting Mocha test. There is a `expectStatus()` method built in to more easily test HTTP status codes. Any other Mocha `expect` tests should be done inside the `after()` or `afterJSON()` callback.
