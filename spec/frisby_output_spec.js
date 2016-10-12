@@ -31,9 +31,7 @@ describe('console output', function() {
             })
             .post('/test-object')
             .once()
-            .reply(201, function(uri, requestBody) {
-                return requestBody;
-            });
+            .reply(201);
 
         mockGlobalSetup();
 

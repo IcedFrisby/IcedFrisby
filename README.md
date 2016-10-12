@@ -1,7 +1,7 @@
 # IcedFrisby
 
-[![Build Status](https://travis-ci.org/RobertHerhold/IcedFrisby.svg)](https://travis-ci.org/RobertHerhold/IcedFrisby)
-[![Coverage Status](https://coveralls.io/repos/RobertHerhold/IcedFrisby/badge.svg)](https://coveralls.io/r/RobertHerhold/IcedFrisby)
+[![Build Status](https://api.travis-ci.org/MarkHerhold/IcedFrisby.svg?branch=master)](https://travis-ci.org/RobertHerhold/IcedFrisby)
+[![Coverage Status](https://coveralls.io/repos/github/MarkHerhold/IcedFrisby/badge.svg)](https://coveralls.io/github/MarkHerhold/IcedFrisby)
 [![Dependency Status](https://gemnasium.com/RobertHerhold/IcedFrisby.svg)](https://gemnasium.com/RobertHerhold/IcedFrisby)
 [![npm](https://img.shields.io/npm/v/icedfrisby.svg)](http://www.npmjs.com/package/icedfrisby)
 
@@ -28,6 +28,8 @@ The [**IcedFrisby** Changelog](https://github.com/RobertHerhold/IcedFrisby/blob/
 Install IcedFrisby from NPM:
 
     npm install icedfrisby --save-dev
+
+**Note:** IcedFrisby is built and tested against the latest stable versions of Node.js (4, 5, and 6)
 
 ## Show me some code!
 
