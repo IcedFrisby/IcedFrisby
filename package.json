@@ -4,9 +4,7 @@
   "description": "IcedFrisby: REST API Endpoint Testing built on Mocha and Chai",
   "homepage": "https://github.com/RobertHerhold/IcedFrisby",
   "author": "Robert Herhold",
-  "license": {
-    "type": "BSD"
-  },
+  "license": "BSD-3-Clause",
   "contributors": [
     "Robert Herhold",
     "Vance Lucas <vance@vancelucas.com>",
