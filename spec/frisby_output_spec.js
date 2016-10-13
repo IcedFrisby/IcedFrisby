@@ -1,3 +1,5 @@
+var chai = require('chai');
+var intercept = require("intercept-stdout");
 var nock = require('nock');
 var frisby = require('../lib/icedfrisby');
 
@@ -24,6 +26,9 @@ var restoreGlobalSetup = function() {
 };
 
 describe('console output', function() {
+  var warning = '\u001b[7m\u001b[33m\u001b[1mWARNING!\u001b[22m\u001b[39m\u001b[27m ' +
+                'You specified a content-type header with \'json\' but did not specify the body type to be json.\n';
+
     it('should warn developers if there is a header with \'json\' but the body type is not JSON', function() {
         // Mock API
         nock('http://mock-request/', {
@@ -35,6 +40,11 @@ describe('console output', function() {
 
         mockGlobalSetup();
 
+        var stdout = "";
+        var unhook = intercept(function(txt) {
+              stdout += txt;
+        });
+
         frisby.create(this.test.title)
             .post('http://mock-request/test-object', {
                 isSomeObj: true
@@ -42,7 +52,8 @@ describe('console output', function() {
             .expectStatus(201)
             .toss();
 
-        // TODO: come up with a good way to capture console output and actually check it
+        unhook();
+        chai.assert.equal(warning, stdout, 'expect stdout to have a specific warning')
     });
 
     it('should NOT warn developers that "there is a header with \'json\' but the body type is not JSON" because there is no body provided', function() {
@@ -56,13 +67,17 @@ describe('console output', function() {
                 return requestBody;
             });
 
-        mockGlobalSetup();
+        var stdout = "";
+        var unhook = intercept(function(txt) {
+              stdout += txt;
+        });
 
         frisby.create(this.test.title)
             .post('http://mock-request/test-object')
             .expectStatus(201)
             .toss();
 
-        // TODO: come up with a good way to capture console output and actually check it
+        unhook();
+        chai.assert.equal("", stdout, 'expect stdout to be empty')
     });
 });
