@@ -60,7 +60,7 @@ describe('IcedFrisby useApp(app)', function() {
             res.send('^.^');
         });
 
-        var fixtures = path.join(__dirname, '../', 'spec', 'fixtures');
+        var fixtures = path.join(__dirname, '../', 'test', 'fixtures');
         var server = https.createServer({
             key: fs.readFileSync(path.join(fixtures, 'test_key.pem')),
             cert: fs.readFileSync(path.join(fixtures, 'test_cert.pem'))
@@ -85,7 +85,7 @@ describe('IcedFrisby useApp(app)', function() {
             res.send('^.^');
         });
 
-        var fixtures = path.join(__dirname, '../', 'spec', 'fixtures');
+        var fixtures = path.join(__dirname, '../', 'test', 'fixtures');
         var server = https.createServer({
             key: fs.readFileSync(path.join(fixtures, 'test_key.pem')),
             cert: fs.readFileSync(path.join(fixtures, 'test_cert.pem'))
@@ -101,7 +101,7 @@ describe('IcedFrisby useApp(app)', function() {
 
     it('should throw an exception if app is not defined', function() {
         var self = this;
-        
+
         var fn = function() {
             frisby.create(self.test.title)
                 .useApp(undefined)
