@@ -4,7 +4,7 @@
   "description": "IcedFrisby: REST API Endpoint Testing built on Mocha and Chai",
   "homepage": "https://github.com/RobertHerhold/IcedFrisby",
   "author": "Robert Herhold",
-  "license": "BSD-3-Clause",
+  "license": "MIT",
   "contributors": [
     "Robert Herhold",
     "Vance Lucas <vance@vancelucas.com>",
@@ -55,6 +55,6 @@
   },
   "scripts": {
     "pretest": "./node_modules/.bin/jshint lib/*.js",
-    "test": "mocha spec"
+    "test": "./node_modules/.bin/mocha"
   }
 }
