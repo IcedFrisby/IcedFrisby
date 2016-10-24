@@ -74,75 +74,7 @@ describe('Frisby live running httpbin tests', function () {
 
   });
 
-  it('should send binary data via put/post requests with Buffer objects',
-    function () {
-
-      var data = [];
-
-      for (var i = 0; i < 1024; i++)
-        data.push(Math.round(Math.random() * 256));
-
-
-      frisby.create('POST random binary data via Buffer object')
-        .post('http://httpbin.org/post',
-          new Buffer(data), {
-            json: false,
-            headers: {
-              "content-type": "application/octet-stream"
-            }
-          })
-        .expectStatus(200)
-        .expectHeaderContains('content-type', 'application/json')
-        .expectJSONTypes({ // use the JSONTypes to check for data and headers. We don't really care about anything else.
-          data: Joi.string().valid(
-            'data:application/octet-stream;base64,' + new Buffer(
-              data).toString('base64')),
-          headers: Joi.object().required().keys({
-            "Content-Type": Joi.string().required().valid(
-              "application/octet-stream"),
-            "Content-Length": Joi.string().required().valid("1024"),
-            Host: Joi.any()
-          }),
-          args: Joi.any(),
-          files: Joi.any(),
-          form: Joi.any(),
-          json: Joi.any(),
-          origin: Joi.any(),
-          url: Joi.string().required().valid("http://httpbin.org/post")
-        })
-        .toss();
-
-      frisby.create('PUT random binary data via Buffer object')
-        .put('http://httpbin.org/put', new Buffer(data), {
-          json: false,
-          headers: {
-            "content-type": "application/octet-stream"
-          }
-        })
-        .expectStatus(200)
-        .expectHeaderContains('content-type', 'application/json')
-        .expectJSONTypes({
-          data: Joi.string().required().valid(
-            'data:application/octet-stream;base64,' +
-            new Buffer(data).toString('base64')),
-          headers: Joi.object().keys({
-            "Content-Type": Joi.string().required().valid(
-              "application/octet-stream"),
-            "Content-Length": Joi.string().required().valid("1024"),
-            Host: Joi.any()
-          }),
-          args: Joi.any(),
-          files: Joi.any(),
-          form: Joi.any(),
-          json: Joi.any(),
-          origin: Joi.any(),
-          url: Joi.string().required().valid("http://httpbin.org/put")
-        })
-        .toss();
-
-    });
-  //
-  it('PATCH requests with Buffer and Stream objects should work.',
+  it('should patch requests with Buffer and Stream objects.',
     function () {
       var patchCommand = 'Patch me!';
 
@@ -207,7 +139,77 @@ describe('Frisby live running httpbin tests', function () {
 
     });
 
-  it('should send binary data via put/post requests using Stream objects',
+  it('should send binary data via put/post requests with buffer objects',
+    function () {
+
+      var data = [];
+
+      for (var i = 0; i < 1024; i++)
+        data.push(Math.round(Math.random() * 256));
+
+
+      frisby.create('POST random binary data via buffer object')
+        .post('http://httpbin.org/post',
+          new Buffer(data), {
+            json: false,
+            headers: {
+              "content-type": "application/octet-stream"
+            }
+          })
+        .expectStatus(200)
+        .expectHeaderContains('content-type', 'application/json')
+        .expectJSONTypes({
+          /* use the JSONTypes to check for data and headers. We don't really
+             care about anything else. */
+          data: Joi.string().valid(
+            'data:application/octet-stream;base64,' + new Buffer(
+              data).toString('base64')),
+          headers: Joi.object().required().keys({
+            "Content-Type": Joi.string().required().valid(
+              "application/octet-stream"),
+            "Content-Length": Joi.string().required().valid("1024"),
+            Host: Joi.any()
+          }),
+          args: Joi.any(),
+          files: Joi.any(),
+          form: Joi.any(),
+          json: Joi.any(),
+          origin: Joi.any(),
+          url: Joi.string().required().valid("http://httpbin.org/post")
+        })
+        .toss();
+
+      frisby.create('PUT random binary data via Buffer object')
+        .put('http://httpbin.org/put', new Buffer(data), {
+          json: false,
+          headers: {
+            "content-type": "application/octet-stream"
+          }
+        })
+        .expectStatus(200)
+        .expectHeaderContains('content-type', 'application/json')
+        .expectJSONTypes({
+          data: Joi.string().required().valid(
+            'data:application/octet-stream;base64,' +
+            new Buffer(data).toString('base64')),
+          headers: Joi.object().keys({
+            "Content-Type": Joi.string().required().valid(
+              "application/octet-stream"),
+            "Content-Length": Joi.string().required().valid("1024"),
+            Host: Joi.any()
+          }),
+          args: Joi.any(),
+          files: Joi.any(),
+          form: Joi.any(),
+          json: Joi.any(),
+          origin: Joi.any(),
+          url: Joi.string().required().valid("http://httpbin.org/put")
+        })
+        .toss();
+
+    });
+
+  it('should send binary data via put/post requests with stream objects',
     function () {
       var filePath = path.resolve(__dirname, './logo-frisby.png');
       var fileSize = fs.statSync(filePath).size;
@@ -487,4 +489,24 @@ describe('Frisby live running httpbin tests', function () {
       .expectStatus(200)
       .toss();
   })
+
+  it('should validate afterJSON() function', function () {
+    frisby.create('validate afterJSON function')
+      .delete('http://httpbin.org/delete')
+      .expectStatus(200)
+      .afterJSON(function(json) {
+        expect(json.url).to.equal('http://httpbin.org/delete')
+      })
+      .toss();
+  })
+
+  it('should validate setResponse* functions', function () {
+    // these dont seem to work right because they don't return this.
+    frisby.create().setResponseJSON({json: true})
+    frisby.create().setResponseBody('<body>skeleton</body>')
+    frisby.create().setResponseHeaders(['key', 'value'])
+    frisby.create().setResponseHeader('key', 'value')
+  })
+
+
 });
