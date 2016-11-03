@@ -83,7 +83,7 @@ describe('Frisby live running httpbin tests', function () {
           new Buffer(patchCommand), {
             json: false,
             headers: {
-              "content-type": "text/plain"
+              'content-type': 'text/plain'
             }
           })
         .expectStatus(200)
@@ -91,9 +91,9 @@ describe('Frisby live running httpbin tests', function () {
         .expectJSONTypes({
           data: Joi.string().valid(patchCommand.toString()),
           headers: Joi.object().required().keys({
-            "Content-Type": Joi.string().required().valid(
-              "text/plain"),
-            "Content-Length": Joi.string().required().valid("" +
+            'Content-Type': Joi.string().required().valid(
+              'text/plain'),
+            'Content-Length': Joi.string().required().valid('' +
               patchCommand.length),
             Host: Joi.any()
           }),
@@ -103,7 +103,7 @@ describe('Frisby live running httpbin tests', function () {
           json: Joi.any(),
           origin: Joi.any(),
           url: Joi.string().required().valid(
-            "http://httpbin.org/patch")
+            'http://httpbin.org/patch')
         })
         .toss();
 
@@ -112,8 +112,8 @@ describe('Frisby live running httpbin tests', function () {
           new StringStream(patchCommand), {
             json: false,
             headers: {
-              "content-type": "text/plain",
-              "content-length": String(patchCommand.length)
+              'content-type': 'text/plain',
+              'content-length': String(patchCommand.length)
             }
           })
         .expectStatus(200)
@@ -121,9 +121,9 @@ describe('Frisby live running httpbin tests', function () {
         .expectJSONTypes({
           data: Joi.string().required().valid(patchCommand.toString()),
           headers: Joi.object().required().keys({
-            "Content-Type": Joi.string().required().valid(
-              "text/plain"),
-            "Content-Length": Joi.string().required().valid("" +
+            'Content-Type': Joi.string().required().valid(
+              'text/plain'),
+            'Content-Length': Joi.string().required().valid('' +
               patchCommand.length),
             Host: Joi.any()
           }),
@@ -133,7 +133,7 @@ describe('Frisby live running httpbin tests', function () {
           json: Joi.any(),
           origin: Joi.any(),
           url: Joi.string().required().valid(
-            "http://httpbin.org/patch")
+            'http://httpbin.org/patch')
         })
         .toss();
 
@@ -153,7 +153,7 @@ describe('Frisby live running httpbin tests', function () {
           new Buffer(data), {
             json: false,
             headers: {
-              "content-type": "application/octet-stream"
+              'content-type': 'application/octet-stream'
             }
           })
         .expectStatus(200)
@@ -165,9 +165,9 @@ describe('Frisby live running httpbin tests', function () {
             'data:application/octet-stream;base64,' + new Buffer(
               data).toString('base64')),
           headers: Joi.object().required().keys({
-            "Content-Type": Joi.string().required().valid(
-              "application/octet-stream"),
-            "Content-Length": Joi.string().required().valid("1024"),
+            'Content-Type': Joi.string().required().valid(
+              'application/octet-stream'),
+            'Content-Length': Joi.string().required().valid('1024'),
             Host: Joi.any()
           }),
           args: Joi.any(),
@@ -175,7 +175,7 @@ describe('Frisby live running httpbin tests', function () {
           form: Joi.any(),
           json: Joi.any(),
           origin: Joi.any(),
-          url: Joi.string().required().valid("http://httpbin.org/post")
+          url: Joi.string().required().valid('http://httpbin.org/post')
         })
         .toss();
 
@@ -183,7 +183,7 @@ describe('Frisby live running httpbin tests', function () {
         .put('http://httpbin.org/put', new Buffer(data), {
           json: false,
           headers: {
-            "content-type": "application/octet-stream"
+            'content-type': 'application/octet-stream'
           }
         })
         .expectStatus(200)
@@ -193,9 +193,9 @@ describe('Frisby live running httpbin tests', function () {
             'data:application/octet-stream;base64,' +
             new Buffer(data).toString('base64')),
           headers: Joi.object().keys({
-            "Content-Type": Joi.string().required().valid(
-              "application/octet-stream"),
-            "Content-Length": Joi.string().required().valid("1024"),
+            'Content-Type': Joi.string().required().valid(
+              'application/octet-stream'),
+            'Content-Length': Joi.string().required().valid('1024'),
             Host: Joi.any()
           }),
           args: Joi.any(),
@@ -203,7 +203,7 @@ describe('Frisby live running httpbin tests', function () {
           form: Joi.any(),
           json: Joi.any(),
           origin: Joi.any(),
-          url: Joi.string().required().valid("http://httpbin.org/put")
+          url: Joi.string().required().valid('http://httpbin.org/put')
         })
         .toss();
 
@@ -228,8 +228,8 @@ describe('Frisby live running httpbin tests', function () {
           fs.createReadStream(filePath), {
             json: false,
             headers: {
-              "content-type": "application/octet-stream",
-              "content-length": fileSize
+              'content-type': 'application/octet-stream',
+              'content-length': fileSize
             }
           })
         .expectStatus(200)
@@ -239,9 +239,9 @@ describe('Frisby live running httpbin tests', function () {
             'data:application/octet-stream;base64,' + fileContent.toString(
               'base64')),
           headers: Joi.object().required().keys({
-            "Content-Type": Joi.string().valid(
-              "application/octet-stream"),
-            "Content-Length": Joi.string().valid("" + fileSize),
+            'Content-Type': Joi.string().valid(
+              'application/octet-stream'),
+            'Content-Length': Joi.string().valid('' + fileSize),
             Host: Joi.any()
           }),
           args: Joi.any(),
@@ -249,7 +249,7 @@ describe('Frisby live running httpbin tests', function () {
           form: Joi.any(),
           json: Joi.any(),
           origin: Joi.any(),
-          url: Joi.string().required().valid("http://httpbin.org/post"),
+          url: Joi.string().required().valid('http://httpbin.org/post'),
         })
         .toss();
 
@@ -259,8 +259,8 @@ describe('Frisby live running httpbin tests', function () {
           fs.createReadStream(filePath), {
             json: false,
             headers: {
-              "Content-Type": "application/octet-stream",
-              "Content-Length": fileSize
+              'Content-Type': 'application/octet-stream',
+              'Content-Length': fileSize
             }
           })
         .expectStatus(200)
@@ -270,9 +270,9 @@ describe('Frisby live running httpbin tests', function () {
             'data:application/octet-stream;base64,' + fileContent.toString(
               'base64')),
           headers: Joi.object().keys({
-            "Content-Type": Joi.string().valid(
-              "application/octet-stream"),
-            "Content-Length": Joi.string().valid("" + fileSize),
+            'Content-Type': Joi.string().valid(
+              'application/octet-stream'),
+            'Content-Length': Joi.string().valid('' + fileSize),
             Host: Joi.any()
           }),
           args: Joi.any(),
@@ -280,7 +280,7 @@ describe('Frisby live running httpbin tests', function () {
           form: Joi.any(),
           json: Joi.any(),
           origin: Joi.any(),
-          url: Joi.string().valid("http://httpbin.org/put"),
+          url: Joi.string().valid('http://httpbin.org/put'),
         })
         .toss();
     });
@@ -328,7 +328,7 @@ describe('Frisby live running httpbin tests', function () {
           'Content-Type': Joi.string().valid(
             'multipart/form-data; boundary=' + form.getBoundary()
           ),
-          'Content-Length': Joi.number().min(19000).max(22000),
+          'Content-Length': Joi.number().min(19000).max(23000),
           Host: Joi.string().hostname().valid('httpbin.org')
         }),
         url: Joi.string().uri({
@@ -375,7 +375,7 @@ describe('Frisby live running httpbin tests', function () {
           'Content-Type': Joi.string().valid(
             'multipart/form-data; boundary=' + form.getBoundary()
           ),
-          'Content-Length': Joi.number().min(19000).max(22000),
+          'Content-Length': Joi.number().min(19000).max(23000),
           Host: Joi.string().hostname().valid('httpbin.org')
         }),
         url: Joi.string().uri({
@@ -422,7 +422,7 @@ describe('Frisby live running httpbin tests', function () {
           'Content-Type': Joi.string().valid(
             'multipart/form-data; boundary=' + form.getBoundary()
           ),
-          'Content-Length': Joi.number().min(19000).max(22000),
+          'Content-Length': Joi.number().min(19000).max(23000),
           Host: Joi.string().hostname().valid('httpbin.org')
         }),
         url: Joi.string().uri({
@@ -500,13 +500,6 @@ describe('Frisby live running httpbin tests', function () {
       .toss();
   })
 
-  it('should validate setResponse* functions', function () {
-    // these dont seem to work right because they don't return this.
-    frisby.create().setResponseJSON({json: true})
-    frisby.create().setResponseBody('<body>skeleton</body>')
-    frisby.create().setResponseHeaders(['key', 'value'])
-    frisby.create().setResponseHeader('key', 'value')
-  })
 
 
 });

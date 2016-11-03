@@ -1,7 +1,7 @@
-var chai = require('chai');
-var intercept = require("intercept-stdout");
-var nock = require('nock');
-var frisby = require('../lib/icedfrisby');
+const chai = require('chai');
+const intercept = require("intercept-stdout");
+const nock = require('nock');
+const frisby = require('../lib/icedfrisby');
 
 //
 // This spec tests and showcases the dev-friendy output features of IcedFrisby
@@ -26,8 +26,7 @@ var restoreGlobalSetup = function() {
 };
 
 describe('console output', function() {
-  var warning = '\u001b[7m\u001b[33m\u001b[1mWARNING!\u001b[22m\u001b[39m\u001b[27m ' +
-                'You specified a content-type header with \'json\' but did not specify the body type to be json.\n';
+  var warning = '\u001b[33m\u001b[1mWARNING - content-type is json but body type is not set\u001b[22m\u001b[39m\n';
 
     it('should warn developers if there is a header with \'json\' but the body type is not JSON', function() {
         // Mock API
