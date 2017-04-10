@@ -96,6 +96,9 @@ describe('Frisby live running httpbin tests', function() {
           .expectJSONTypes({ // use the JSONTypes to check for data and headers. We don't really care about anything else.
               data : Joi.string().valid('data:application/octet-stream;base64,'+ new Buffer(data).toString('base64')),
               headers: Joi.object().required().keys({
+                  Accept: Joi.any(),
+                  "Accept-Encoding": Joi.any(),
+                  Connection: Joi.any(),
                   "Content-Type": Joi.string().required().valid("application/octet-stream"),
                   "Content-Length" : Joi.string().required().valid("1024"),
                   Host: Joi.any()
@@ -123,6 +126,9 @@ describe('Frisby live running httpbin tests', function() {
           .expectJSONTypes({
               data : Joi.string().required().valid('data:application/octet-stream;base64,'+ new Buffer(data).toString('base64')),
               headers: Joi.object().keys({
+                  Accept: Joi.any(),
+                  "Accept-Encoding": Joi.any(),
+                  Connection: Joi.any(),
                   "Content-Type": Joi.string().required().valid("application/octet-stream"),
                   "Content-Length" : Joi.string().required().valid("1024"),
                   Host: Joi.any()
@@ -155,6 +161,9 @@ describe('Frisby live running httpbin tests', function() {
           .expectJSONTypes({
               data : Joi.string().valid(patchCommand.toString()),
               headers: Joi.object().required().keys({
+                  Accept: Joi.any(),
+                  "Accept-Encoding": Joi.any(),
+                  Connection: Joi.any(),
                   "Content-Type": Joi.string().required().valid("text/plain"),
                   "Content-Length" : Joi.string().required().valid("" + patchCommand.length),
                   Host: Joi.any()
@@ -183,6 +192,9 @@ describe('Frisby live running httpbin tests', function() {
           .expectJSONTypes({
               data : Joi.string().required().valid(patchCommand.toString()),
               headers: Joi.object().required().keys({
+                  Accept: Joi.any(),
+                  "Accept-Encoding": Joi.any(),
+                  Connection: Joi.any(),
                   "Content-Type": Joi.string().required().valid("text/plain"),
                   "Content-Length" : Joi.string().required().valid("" + patchCommand.length),
                   Host: Joi.any()
@@ -224,6 +236,9 @@ describe('Frisby live running httpbin tests', function() {
                 .expectJSONTypes({
                     data : Joi.string().required().valid('data:application/octet-stream;base64,' + fileContent.toString('base64')),
                     headers: Joi.object().required().keys({
+                        Accept: Joi.any(),
+                        "Accept-Encoding": Joi.any(),
+                        Connection: Joi.any(),
                         "Content-Type": Joi.string().valid("application/octet-stream"),
                         "Content-Length" : Joi.string().valid("" + fileSize),
                         Host: Joi.any()
@@ -252,6 +267,9 @@ describe('Frisby live running httpbin tests', function() {
                 .expectJSONTypes({
                     data : Joi.string().valid('data:application/octet-stream;base64,' + fileContent.toString('base64')),
                     headers: Joi.object().keys({
+                        Accept: Joi.any(),
+                        "Accept-Encoding": Joi.any(),
+                        Connection: Joi.any(),
                         "Content-Type": Joi.string().valid("application/octet-stream"),
                         "Content-Length" : Joi.string().valid("" + fileSize),
                         Host: Joi.any()
