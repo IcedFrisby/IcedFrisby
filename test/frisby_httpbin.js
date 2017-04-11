@@ -1,22 +1,3 @@
-Skip to content
-This repository
-Search
-Pull requests
-Issues
-Gist
- @cvega
- Sign out
- Unwatch 5
-  Unstar 18
- Fork 187 MarkHerhold/IcedFrisby
-forked from vlucas/frisby
- Code  Issues 5  Pull requests 3  Projects 1  Pulse  Graphs
-Branch: master Find file Copy pathIcedFrisby/test/frisby_httpbin.js
-15ebb5f  20 hours ago
-@cvega cvega fix httpbin tests - update joi header objects
-1 contributor
-RawBlameHistory     
-451 lines (417 sloc)  15.9 KB
 var frisby = require('../lib/icedfrisby');
 var Joi = require('joi');
 var fs = require('fs');
