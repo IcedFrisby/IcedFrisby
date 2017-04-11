@@ -1,3 +1,22 @@
+Skip to content
+This repository
+Search
+Pull requests
+Issues
+Gist
+ @cvega
+ Sign out
+ Unwatch 5
+  Unstar 18
+ Fork 187 MarkHerhold/IcedFrisby
+forked from vlucas/frisby
+ Code  Issues 5  Pull requests 3  Projects 1  Pulse  Graphs
+Branch: master Find file Copy pathIcedFrisby/test/frisby_httpbin.js
+15ebb5f  20 hours ago
+@cvega cvega fix httpbin tests - update joi header objects
+1 contributor
+RawBlameHistory     
+451 lines (417 sloc)  15.9 KB
 var frisby = require('../lib/icedfrisby');
 var Joi = require('joi');
 var fs = require('fs');
@@ -53,13 +72,11 @@ describe('Frisby live running httpbin tests', function() {
     // Digest auth against httpbin not working for some reason
     // but working fine against my own servers running digest auth
     it('should work if digest set', function() {
-
       frisby.create('test with httpbin for valid digest auth')
         .auth('frisby', 'passwd', true)
         .get('http://httpbin.org/digest-auth/auth/frisby/passwd')
         .expectStatus(200)
       .toss();
-
     });
     */
 

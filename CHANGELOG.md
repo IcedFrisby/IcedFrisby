@@ -1,6 +1,18 @@
 # IcedFrisby Changelog
 
-## 0.2.5
+
+## 0.4.0
+- Upgraded dependencies to latest versions, including lodash 4.x branch
+- Removed unused dependencies from package.json
+- Sorted dependencies in icedfrisby.js alphabetically
+- Migrated tests from spec/ to test/ to make the project more mocha friendly
+- Updated the post commit step in .travis.yml
+- Updated header message in icedfrisby.js
+  - adhere to 80 cols
+  - update license urls, add url for MIT
+
+
+## 0.3.0
 - Upgraded dependencies to latest versions
 - Fixed a bug with hostnames that resolve but don't respond
 - **Breaking Changes**
