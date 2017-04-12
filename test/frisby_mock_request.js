@@ -3,6 +3,7 @@ var fixtures = require('./fixtures/repetition_fixture.json');
 var frisby = require('../lib/icedfrisby');
 var mockRequest = require('mock-request');
 var Joi = require('joi');
+const AssertionError = require('chai').AssertionError;
 
 // Built-in node.js
 var fs = require('fs');
@@ -809,16 +810,107 @@ describe('Frisby matchers', function() {
     .toss();
   });
 
-  it('headers should be regex matchable', function() {
-    nock('http://httpbin.org', { allowUnmocked: true })
-      .post('/path')
-      .once()
-      .reply(201, "The payload", {'Location': '/path/23'});
+  it('preserves a custom json header with json:true option', function() {
+    nock('http://example.com')
+      .post('/json')
+      .reply(200, {'foo': 'bar'});
+
+    const customContentType = 'application/json; profile=http://example.com/schema/books#';
+
+    // Intercepted with 'nock'
+    frisby.create(this.test.title)
+      .post('http://example.com/json', {}, { json: true })
+      .addHeader('Content-Type', customContentType)
+      .expectStatus(200)
+      .expectJSON({'foo': 'bar'})
+      .expectHeader('Content-Type', 'application/json')
+      .after(function(err, res, body) {
+        expect(this.current.outgoing.headers['content-type']).to.equal(customContentType);
+        expect(this.current.outgoing.body).to.deep.equal({});
+      })
+    .toss();
+  });
+
+  describe('expectBodyContains', function () {
+    it('should fail when the response is empty', function () {
+      nock('http://example.com')
+        .post('/path')
+        .reply(201);
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectBodyContains('this-will-not-match')
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(AssertionError);
+          expect(err.message).to.equal("expected '' to include 'this-will-not-match'");
+        })
+        .toss();
+    });
+
+    it('TODO should fail when the response is absent');
+    // Not sure how to reach the else block in `expectBodyContains`.
+  });
+
+  describe('expectHeaderToMatch', function () {
+    it('should pass when regex matches', function() {
+      nock('http://httpbin.org', { allowUnmocked: true })
+        .post('/path')
+        .once()
+        .reply(201, "The payload", {'Location': '/path/23'});
+
+      frisby.create(this.test.title)
+        .post('http://httpbin.org/path', {foo: 'bar'})
+        .expectStatus(201)
+        .expectHeaderToMatch('location', /^\/path\/\d+$/)
+        .toss();
+    });
+
+    it('should fail when the regex does not match', function () {
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'The payload', {'Location': '/something-else/23'});
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeaderToMatch('location', /^\/path\/\d+$/)
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(AssertionError);
+          expect(err.message).to.equal("expected '/something-else/23' to match /^\\/path\\/\\d+$/");
+        })
+        .toss();
+    });
+
+    it('should fail when the header is absent', function () {
+      nock('http://example.com')
+        .post('/path')
+        .reply(201);
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeaderToMatch('location', /^\/path\/\d+$/)
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(Error);
+          expect(err.message).to.equal("Header 'location' does not match pattern '/^\\/path\\/\\d+$/' in HTTP response");
+        })
+        .toss();
+    });
+  });
+
+  it('afterJSON should be invoked with the body json', function () {
+    nock('http://example.com')
+      .get('/json')
+      .reply(200, {foo: 'bar'});
 
     frisby.create(this.test.title)
-      .post('http://httpbin.org/path', {foo: 'bar'})
-      .expectStatus(201)
-      .expectHeaderToMatch('location', /^\/path\/\d+$/)
+      .get('http://example.com/json')
+      .expectStatus(200)
+      .expectJSON({foo: 'bar'})
+      .afterJSON(json => {
+        expect(json).to.eql({ foo: 'bar' });
+      })
       .toss();
   });
 
@@ -871,5 +963,51 @@ describe('Frisby matchers', function() {
         expect(this.current.outgoing.uri).to.equal('http://httpbin.org/test');
       })
     .toss();
+  });
+
+  describe('Other HTTP methods', function () {
+    it('delete', function () {
+      nock('http://example.com')
+       .delete('/test')
+       .query({ name: 'sally' })
+       .reply(204, (uri, requestBody) => requestBody);
+
+      frisby.create(this.test.title)
+        .delete('http://example.com/test', {}, {
+          qs: { name: 'sally' },
+          body: 'some body here'
+        })
+        .expectStatus(204)
+        .expectBodyContains('some body here')
+        .toss();
+    });
+
+    it('head', function () {
+      nock('http://example.com')
+       .head('/test')
+       .query({ name: 'sally' })
+       .reply(204, (uri, requestBody) => requestBody);
+
+      frisby.create(this.test.title)
+        .head('http://example.com/test', {
+          qs: { name: 'sally' }
+        })
+        .expectStatus(204)
+        .toss();
+    });
+
+    it('options', function () {
+      nock('http://example.com')
+       .options('/test')
+       .query({ name: 'sally' })
+       .reply(204, (uri, requestBody) => requestBody);
+
+      frisby.create(this.test.title)
+        .options('http://example.com/test', {
+          qs: { name: 'sally' }
+        })
+        .expectStatus(204)
+        .toss();
+    });
   });
 });
