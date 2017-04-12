@@ -847,4 +847,29 @@ describe('Frisby matchers', function() {
       })
     .toss();
   });
+
+  it('baseUri should be able to override global setup', function() {
+    nock('http://httpbin.org', { allowUnmocked: true })
+     .post('/test')
+     .once()
+     .reply(200, (uri, requestBody) => requestBody);
+
+    frisby.globalSetup({
+      request: {
+        baseUri: 'http://example.com'
+      }
+    });
+
+    frisby.create(this.test.title)
+      .baseUri('http://httpbin.org')
+      .post('/test', {}, {
+        body: 'some body here'
+      })
+      .expectStatus(200)
+      .expectBodyContains('some body here')
+      .after(function() {
+        expect(this.current.outgoing.uri).to.equal('http://httpbin.org/test');
+      })
+    .toss();
+  });
 });
