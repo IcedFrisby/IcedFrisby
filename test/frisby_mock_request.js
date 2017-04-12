@@ -769,9 +769,14 @@ describe('Frisby matchers', function() {
   });
 
   it('should allow for passing raw request body', function() {
-    // Intercepted with 'nock'
+    nock('http://example.com')
+      .post('/raw')
+      .reply(200, function(uri, requestBody) {
+        return requestBody;
+      });
+
     frisby.create(this.test.title)
-      .post('http://httpbin.org/raw', {}, {
+      .post('http://example.com/raw', {}, {
         body: 'some body here'
       })
       .expectStatus(200)
