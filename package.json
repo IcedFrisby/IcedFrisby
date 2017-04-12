@@ -48,7 +48,11 @@
     "mochawesome": "^1.5.3",
     "nock": "^9.0.2"
   },
-  "main": "./lib/icedfrisby",
+  "main": "lib/icedfrisby",
+  "files": [
+    "lib",
+    "API.md"
+  ],
   "engines": {
     "node": "4.x.x || 5.x.x || 6.x.x"
   },
