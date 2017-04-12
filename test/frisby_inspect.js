@@ -1,3 +1,5 @@
+'use strict';
+
 var frisby = require('../lib/icedfrisby');
 var expect = require('chai').expect;
 var nock = require('nock');

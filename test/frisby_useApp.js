@@ -1,4 +1,3 @@
-/*jshint -W030 */ // .exist causes "Expected an assignment or function call and instead saw an expression". Disable.
 'use strict';
 
 var fs = require('fs');
@@ -39,7 +38,7 @@ describe('IcedFrisby useApp(app)', function() {
             res.send('^.^');
         });
 
-        var server = app.listen(4000, function() {
+        app.listen(4000, function() {
             frisby.create(this.test.title)
                 .useApp(app)
                 .get('/')

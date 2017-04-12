@@ -1,3 +1,5 @@
+'use strict';
+
 const chai = require('chai');
 const intercept = require("intercept-stdout");
 const nock = require('nock');
@@ -28,6 +30,8 @@ var restoreGlobalSetup = function() {
 describe('console output', function() {
   var warning = '\u001b[33m\u001b[1mWARNING - content-type is json but body type is not set\u001b[22m\u001b[39m\n';
 
+  afterEach(restoreGlobalSetup);
+
     it('should warn developers if there is a header with \'json\' but the body type is not JSON', function() {
         // Mock API
         nock('http://mock-request/', {
@@ -52,7 +56,7 @@ describe('console output', function() {
             .toss();
 
         unhook();
-        chai.assert.equal(warning, stdout, 'expect stdout to have a specific warning')
+        chai.assert.equal(warning, stdout, 'expect stdout to have a specific warning');
     });
 
     it('should NOT warn developers that "there is a header with \'json\' but the body type is not JSON" because there is no body provided', function() {
@@ -77,6 +81,6 @@ describe('console output', function() {
             .toss();
 
         unhook();
-        chai.assert.equal("", stdout, 'expect stdout to be empty')
+        chai.assert.equal("", stdout, 'expect stdout to be empty');
     });
 });

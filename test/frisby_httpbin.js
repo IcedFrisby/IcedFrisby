@@ -1,10 +1,11 @@
+'use strict';
+
 var frisby = require('../lib/icedfrisby');
 var Joi = require('joi');
 var fs = require('fs');
 var path = require('path');
 var util = require('util');
 var Readable = require('stream').Readable;
-var FormData = require('form-data');
 
 function StringStream(string, options) {
     Readable.call(this, options);
@@ -281,7 +282,7 @@ describe('Frisby live running httpbin tests', function() {
                 })
                 .toss();
     });
-  
+
   // it('sending multipart/from-data encoded bodies should work', function () {
   //
   //   var logoPath = path.resolve(__dirname, '../spec/logo-frisby.png');
