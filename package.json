@@ -32,20 +32,22 @@
     "check-types": "^7.0.1",
     "joi": "^10.4.1",
     "lodash": "^4.16.6",
-    "mock-request": "^0.1.2",
     "qs": "^6.3.0",
     "request": "^2.76.0"
+  },
+  "peerDependencies": {
+    "mocha": "*"
   },
   "devDependencies": {
     "coveralls": "^2.11.14",
     "express": "^4.14.0",
-    "form-data": "2.1.4",
+    "form-data": "^2.1.4",
     "intercept-stdout": "^0.1.2",
     "istanbul": "^0.4.5",
     "jshint": "^2.9.4",
     "mocha": "^3.1.2",
     "mocha-lcov-reporter": "^1.2.0",
-    "mochawesome": "^2.0.4",
+    "mock-request": "^0.1.2",
     "nock": "^9.0.2"
   },
   "main": "lib/icedfrisby",
