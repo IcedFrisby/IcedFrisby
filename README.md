@@ -1,5 +1,7 @@
 # IcedFrisby
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/MarkHerhold/IcedFrisby.svg)](https://greenkeeper.io/)
+
 [![Build Status](https://api.travis-ci.org/MarkHerhold/IcedFrisby.svg?branch=master)](https://travis-ci.org/MarkHerhold/IcedFrisby/)
 [![Coverage Status](https://coveralls.io/repos/github/MarkHerhold/IcedFrisby/badge.svg)](https://coveralls.io/github/MarkHerhold/IcedFrisby)
 [![Dependency Status](https://gemnasium.com/RobertHerhold/IcedFrisby.svg)](https://gemnasium.com/RobertHerhold/IcedFrisby)
