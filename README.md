@@ -102,7 +102,7 @@ Run tests as you normally would with [Mocha](https://github.com/mochajs/mocha).
 ## IcedFrisby Development
 
 ### Code Coverage
-You can assess code coverage by running `istanbul cover _mocha ./spec/**/*_spec.js -R spec`
+You can assess code coverage by running `npm run coverage`.
 
 ### Contributions
 Contributions are awesome! If you have an idea or code that you want to contribute, feel free to submit a pull request and I will gladly review it. I am open to pretty much anything.

@@ -59,7 +59,9 @@
     "node": "4.x.x || 5.x.x || 6.x.x"
   },
   "scripts": {
-    "pretest": "./node_modules/.bin/jshint lib/*.js",
-    "test": "./node_modules/.bin/mocha"
+    "coverage": "istanbul cover _mocha --report lcovonly",
+    "lint": "jshint lib/*.js",
+    "test:js": "mocha",
+    "test": "npm run lint && npm run test:js"
   }
 }
