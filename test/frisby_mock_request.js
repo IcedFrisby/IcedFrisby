@@ -82,10 +82,9 @@ describe('Frisby matchers', function() {
       .after(function(err, res, body) {
         expect(this.current.outgoing.headers['test']).to.equal('One');
         expect(this.current.outgoing.headers['referer']).to.equal('http://frisbyjs.com');
-
-        restoreGlobalSetup();
       })
       .toss();
+    restoreGlobalSetup();
   });
 
   it('addHeaders should override globalSetup request headers', function() {
@@ -105,10 +104,9 @@ describe('Frisby matchers', function() {
       .after(function(err, res, body) {
         // Local addHeaders should override global
         expect(this.current.outgoing.headers['test']).to.equal('Two');
-
-        restoreGlobalSetup();
       })
       .toss();
+    restoreGlobalSetup();
   });
 
   it('addHeaders should override globalSetup request headers and not taint other Frisby tests', function() {
@@ -149,6 +147,54 @@ describe('Frisby matchers', function() {
     .toss();
 
     restoreGlobalSetup();
+  });
+
+  describe('before callbacks', function () {
+    it('should be invoked in sequence before the request', function() {
+      const sequence = [];
+
+      const mockFn = mockRequest.mock()
+        .get('/test-object')
+        .respond({
+            statusCode: 200,
+            body: fixtures.singleObject
+        })
+        .run();
+      const requestFn = function () {
+        sequence.push('request');
+        return mockFn.apply(this, arguments);
+      };
+
+      frisby.create(this.test.title)
+        .before(() => { sequence.push('before-one'); })
+        .before(() => { sequence.push('before-two'); })
+        .get('http://mock-request/test-object', {mock: requestFn})
+        .after(() => {
+          const expectedSequence = ['before-one', 'before-two', 'request'];
+          expect(sequence).to.deep.equal(expectedSequence);
+        })
+        .toss();
+    });
+
+    it('should respect the exception handler', function() {
+      const mockFn = mockRequest.mock()
+        .get('/test-object')
+        .respond({
+            statusCode: 200,
+            body: fixtures.singleObject
+        })
+        .run();
+
+      const message = 'this is the error';
+
+      frisby.create(this.test.title)
+        .before(() => { throw new Error(message); })
+        .get('http://mock-request/test-object', {mock: mockFn})
+        .exceptionHandler(err => {
+          expect(err.message).to.equal(message);
+        })
+        .toss();
+    });
   });
 
   it('expectJSON should test EQUALITY for a SINGLE object', function() {
@@ -816,7 +862,7 @@ describe('Frisby matchers', function() {
       .toss();
   });
 
-  it('globalSetup should be able to set baseURI', function() {
+  it('globalSetup should be able to set baseURI', function () {
     nock('http://httpbin.org', { allowUnmocked: true })
      .post('/test')
      .once()
@@ -840,6 +886,8 @@ describe('Frisby matchers', function() {
         expect(this.current.outgoing.uri).to.equal('http://httpbin.org/test');
       })
     .toss();
+
+    restoreGlobalSetup();
   });
 
   it('baseUri should be able to override global setup', function() {
@@ -865,5 +913,7 @@ describe('Frisby matchers', function() {
         expect(this.current.outgoing.uri).to.equal('http://httpbin.org/test');
       })
     .toss();
+
+    restoreGlobalSetup();
   });
 });
