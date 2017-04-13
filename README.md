@@ -2,7 +2,7 @@
 
 [![Build Status](https://api.travis-ci.org/MarkHerhold/IcedFrisby.svg?branch=master)](https://travis-ci.org/MarkHerhold/IcedFrisby/)
 [![Coverage Status](https://coveralls.io/repos/github/MarkHerhold/IcedFrisby/badge.svg)](https://coveralls.io/github/MarkHerhold/IcedFrisby)
-[![Dependency Status](https://gemnasium.com/RobertHerhold/IcedFrisby.svg)](https://gemnasium.com/RobertHerhold/IcedFrisby)
+[![Greenkeeper badge](https://badges.greenkeeper.io/MarkHerhold/IcedFrisby.svg)](https://greenkeeper.io/)
 [![npm](https://img.shields.io/npm/v/icedfrisby.svg)](http://www.npmjs.com/package/icedfrisby)
 
 
@@ -25,9 +25,9 @@ The [**IcedFrisby** Changelog](https://github.com/RobertHerhold/IcedFrisby/blob/
 
 ## Installation
 
-Install IcedFrisby from NPM:
+Install IcedFrisby and Mocha from NPM:
 
-    npm install icedfrisby --save-dev
+    npm install mocha icedfrisby --save-dev
 
 **Note:** IcedFrisby is built and tested against the latest stable versions of Node.js (4, 5, and 6)
 
@@ -90,10 +90,6 @@ Any Mocha/Chai/whatever tests can be used inside the `after` and `afterJSON` cal
 
 Run tests as you normally would with [Mocha](https://github.com/mochajs/mocha).
 
-### Install Mocha
-
-    npm install -g mocha
-
 ### Run it from the CLI
 
     cd your/project
@@ -103,11 +99,8 @@ Run tests as you normally would with [Mocha](https://github.com/mochajs/mocha).
 
 ## IcedFrisby Development
 
-### Setup
-Code quality is enforced with JSHint. You will need to install JSHint as it is run with the tests: `npm install -g jshint`
-
 ### Code Coverage
-You can assess code coverage by running `istanbul cover _mocha ./spec/**/*_spec.js -R spec`
+You can assess code coverage by running `npm run coverage`.
 
 ### Contributions
 Contributions are awesome! If you have an idea or code that you want to contribute, feel free to submit a pull request and I will gladly review it. I am open to pretty much anything.
