@@ -94,9 +94,9 @@ describe('Frisby matchers', function() {
         expect(this.current.outgoing.headers['test']).to.equal('One');
         expect(this.current.outgoing.headers['referer']).to.equal('http://frisbyjs.com');
 
-        restoreGlobalSetup();
       })
       .toss();
+    restoreGlobalSetup();
   });
 
   it('addHeaders should override globalSetup request headers', function() {
@@ -116,10 +116,9 @@ describe('Frisby matchers', function() {
       .after(function(err, res, body) {
         // Local addHeaders should override global
         expect(this.current.outgoing.headers['test']).to.equal('Two');
-
-        restoreGlobalSetup();
       })
       .toss();
+    restoreGlobalSetup();
   });
 
   it('addHeaders should override globalSetup request headers and not taint other Frisby tests', function() {
@@ -870,36 +869,32 @@ describe('Frisby matchers', function() {
       .toss();
   });
 
-  describe('globalSetup', function () {
-    afterEach(function () {
-      frisby.globalSetup();
+  it('globalSetup should be able to set baseURI', function () {
+    nock('http://httpbin.org', { allowUnmocked: true })
+     .post('/test')
+     .once()
+     .reply(200, function(uri, requestBody) {
+       return requestBody;
+     });
+
+    frisby.globalSetup({
+      request: {
+        baseUri: 'http://httpbin.org'
+      }
     });
 
-    it('should be able to set baseURI', function() {
-      nock('http://httpbin.org', { allowUnmocked: true })
-       .post('/test')
-       .once()
-       .reply(200, function(uri, requestBody) {
-         return requestBody;
-       });
+    frisby.create(this.test.title)
+      .post('/test', {}, {
+        body: 'some body here'
+      })
+      .expectStatus(200)
+      .expectBodyContains('some body here')
+      .after(function() {
+        expect(this.current.outgoing.uri).to.equal('http://httpbin.org/test');
+      })
+    .toss();
 
-      frisby.globalSetup({
-        request: {
-          baseUri: 'http://httpbin.org'
-        }
-      });
-
-      frisby.create(this.test.title)
-        .post('/test', {}, {
-          body: 'some body here'
-        })
-        .expectStatus(200)
-        .expectBodyContains('some body here')
-        .after(function() {
-          expect(this.current.outgoing.uri).to.equal('http://httpbin.org/test');
-        })
-      .toss();
-    });
+    restoreGlobalSetup();
   });
 
   it('baseUri should be able to override global setup', function() {
@@ -925,5 +920,7 @@ describe('Frisby matchers', function() {
         expect(this.current.outgoing.uri).to.equal('http://httpbin.org/test');
       })
     .toss();
+
+    restoreGlobalSetup();
   });
 });
