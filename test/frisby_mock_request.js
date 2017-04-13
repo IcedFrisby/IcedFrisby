@@ -93,7 +93,6 @@ describe('Frisby matchers', function() {
       .after(function(err, res, body) {
         expect(this.current.outgoing.headers['test']).to.equal('One');
         expect(this.current.outgoing.headers['referer']).to.equal('http://frisbyjs.com');
-
       })
       .toss();
     restoreGlobalSetup();
