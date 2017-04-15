@@ -1,5 +1,8 @@
 # IcedFrisby Changelog
 
+## 1.0.0
+
+- Identical API to 0.4.0
 
 ## 0.4.0
 - Added support for plugins
