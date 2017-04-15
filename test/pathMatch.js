@@ -1,3 +1,5 @@
+'use strict';
+
 var pm = require('../lib/pathMatch');
 
 var Joi = require('joi');
