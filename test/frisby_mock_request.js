@@ -738,6 +738,62 @@ describe('Frisby matchers', function() {
       .toss();
   });
 
+  describe('after() callbacks', function() {
+    it('should be invoked in sequence after a successful request', function () {
+      const sequence = [];
+      const mockFn = mockRequest.mock()
+        .get('/test-object')
+        .respond({
+            statusCode: 200,
+            body: fixtures.singleObject
+        })
+        .run();
+      const requestFn = function () {
+        sequence.push('request');
+        return mockFn.apply(this, arguments);
+      };
+
+      frisby.create(this.test.title)
+        .get('http://mock-request/test-object', {mock: requestFn})
+        .expectStatus(200)
+        .after(() => { sequence.push('after-one'); })
+        .after(() => { sequence.push('after-two'); })
+        .after(() => {
+          const expectedSequence = ['request', 'after-one', 'after-two'];
+          expect(sequence).to.deep.equal(expectedSequence);
+        })
+        .toss();
+    });
+
+    describe('should not be invoked after an failed expectation', function() {
+      const mockFn = mockRequest.mock()
+        .get('/test-object')
+        .respond({
+            statusCode: 200,
+            body: fixtures.singleObject
+        })
+        .run();
+
+      const test = frisby.create('aaa')
+        .get('http://mock-request/test-object', {mock: mockFn})
+        .expectStatus(204)
+        .after(() => { expect.fail("The after function shouldn't be invoked"); });
+
+      // Intercept the raised exception to prevent Mocha from receiving it.
+      test._invokeExpects = function (mochaContext, done) {
+        try {
+          test.prototype._invokeExpects.call(this, mochaContext, done);
+        } catch (e) {
+          done();
+          return;
+        }
+        // If we catch the exeption, as expected, we should never get here.
+        expect.fail('The failed expectation should have raised an exception');
+      };
+
+      test.toss();
+    });
+  });
 
   it('Frisby basicAuth should set the correct HTTP Authorization header', function() {
 
