@@ -1,8 +1,11 @@
+'use strict';
+
 var nock = require('nock');
 var fixtures = require('./fixtures/repetition_fixture.json');
 var frisby = require('../lib/icedfrisby');
 var mockRequest = require('mock-request');
 var Joi = require('joi');
+const AssertionError = require('chai').AssertionError;
 
 // Built-in node.js
 var fs = require('fs');
@@ -36,19 +39,6 @@ var restoreGlobalSetup = function() {
   });
 };
 
-// Nock to intercept HTTP upload request
-var mock = nock('http://httpbin.org', { allowUnmocked: true })
-  .post('/file-upload')
-  .reply(200, {
-    name: 'Test Upload',
-    file: '/some/path/logo-frisby.png'
-  })
-  .post('/raw')
-  .reply(200, function(uri, requestBody) {
-    return requestBody;
-  });
-
-
 //
 // Tests run like normal Frisby specs but with 'mock' specified with a 'mock-request' object
 // These work without further 'expects' statements because Frisby generates and runs Jasmine tests
@@ -64,7 +54,7 @@ describe('Frisby matchers', function() {
       })
     .run();
 
-    var f1 = frisby.create(this.test.title)
+    frisby.create(this.test.title)
       .get('http://mock-request/not-found', {mock: mockFn})
       .expectStatus(404)
       .toss();
@@ -88,7 +78,7 @@ describe('Frisby matchers', function() {
     .run();
 
     mockGlobalSetup();
-    var f1 = frisby.create(this.test.title)
+    frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
       .after(function(err, res, body) {
         expect(this.current.outgoing.headers['test']).to.equal('One');
@@ -109,7 +99,7 @@ describe('Frisby matchers', function() {
     .run();
 
     mockGlobalSetup();
-    var f1 = frisby.create(this.test.title)
+    frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
       .addHeaders({ 'Test': 'Two' })
       .after(function(err, res, body) {
@@ -139,7 +129,7 @@ describe('Frisby matchers', function() {
 
     mockGlobalSetup();
 
-    var f1 = frisby.create(this.test.title + ' - mock test one')
+    frisby.create(this.test.title + ' - mock test one')
       .get('http://mock-request/test-object-array-ex', {mock: mockFn})
       .addHeaders({ 'Test': 'Two' })
       .after(function(err, res, body) {
@@ -148,7 +138,7 @@ describe('Frisby matchers', function() {
       })
     .toss();
 
-    var f2 = frisby.create(this.test.title + ' - mock test two')
+    frisby.create(this.test.title + ' - mock test two')
       .get('http://mock-request/test-object-array-ex2', {mock: mockFn2})
       .addHeaders({ 'Test': 'Three' })
       .after(function(err, res, body) {
@@ -292,7 +282,7 @@ describe('Frisby matchers', function() {
       })
     .run();
 
-    var f1 = frisby.create(this.test.title)
+    frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
       .expectJSONTypes('test_subjects.*', { // * == EACH object in here should match
         test_str_same: Joi.string().valid("I am the same..."),
@@ -313,7 +303,7 @@ describe('Frisby matchers', function() {
       })
     .run();
 
-    var f1 = frisby.create(this.test.title)
+    frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
       .expectJSONTypes('test_subjects.?', { // ? == ONE object in here should match (contains)
         test_str_same: Joi.string().valid("I am the same..."),
@@ -334,7 +324,7 @@ describe('Frisby matchers', function() {
       })
     .run();
 
-    var f1 = frisby.create(this.test.title)
+    frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
       .not().expectJSON('test_subjects.?', { // ? == ONE object in 'test_subjects' array
         test_str: "I am a string two nonsense!",
@@ -448,7 +438,7 @@ describe('Frisby matchers', function() {
       })
       .run();
 
-      var f1 = frisby.create(this.test.title)
+      frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
       .expectContainsJSON('test_subjects.*', { // * == EACH object in here should match
           test_str_same: "I am the same...",
@@ -466,7 +456,7 @@ describe('Frisby matchers', function() {
       })
       .run();
 
-      var f1 = frisby.create(this.test.title)
+      frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
       .expectContainsJSON('test_subjects.?', { // ? == ONE object in here should match (contains)
           test_str: "I am a string two!",
@@ -484,7 +474,7 @@ describe('Frisby matchers', function() {
       })
       .run();
 
-      var f1 = frisby.create(this.test.title)
+      frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
       .not().expectContainsJSON('test_subjects.?', { // ? == ONE object in 'test_subjects' array
           test_str: "I am a string two nonsense!",
@@ -502,7 +492,7 @@ describe('Frisby matchers', function() {
       })
     .run();
 
-    var f1 = frisby.create(this.test.title)
+    frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
       .not().expectJSONTypes('test_subjects.?', { // ? == ONE object in 'test_subjects' array
         test_str: Joi.boolean(),
@@ -521,7 +511,7 @@ describe('Frisby matchers', function() {
       })
     .run();
 
-    var f1 = frisby.create(this.test.title)
+    frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
       .expectJSONLength('test_subjects', 3)
       .expectJSONLength('test_subjects.0', 4)
@@ -539,7 +529,7 @@ describe('Frisby matchers', function() {
       })
     .run();
 
-    var f1 = frisby.create(this.test.title)
+    frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
       .expectJSONLength('test_subjects.*', 4)
       .toss();
@@ -555,7 +545,7 @@ describe('Frisby matchers', function() {
       })
     .run();
 
-    var f1 = frisby.create(this.test.title)
+    frisby.create(this.test.title)
       .not()
       .get('http://mock-request/test-object-array', {mock: mockFn})
       .expectJSONLength('test_subjects.*', 3)
@@ -573,7 +563,7 @@ describe('Frisby matchers', function() {
       })
     .run();
 
-    var f1 = frisby.create(this.test.title)
+    frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
       .expectJSONLength('test_subjects', '<=3')
       .expectJSONLength('test_subjects.0', '<=4')
@@ -591,7 +581,7 @@ describe('Frisby matchers', function() {
       })
     .run();
 
-    var f1 = frisby.create(this.test.title)
+    frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
       .expectJSONLength('test_subjects.*', '<=4')
       .toss();
@@ -607,7 +597,7 @@ describe('Frisby matchers', function() {
       })
     .run();
 
-    var f1 = frisby.create(this.test.title)
+    frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
       .expectJSONLength('test_subjects', '<4')
       .expectJSONLength('test_subjects.0', '<5')
@@ -625,7 +615,7 @@ describe('Frisby matchers', function() {
       })
     .run();
 
-    var f1 = frisby.create(this.test.title)
+    frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
       .expectJSONLength('test_subjects.*', '<5')
       .toss();
@@ -641,7 +631,7 @@ describe('Frisby matchers', function() {
       })
     .run();
 
-    var f1 = frisby.create(this.test.title)
+    frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
       .expectJSONLength('test_subjects', '>=3')
       .expectJSONLength('test_subjects.0', '>=4')
@@ -659,7 +649,7 @@ describe('Frisby matchers', function() {
       })
     .run();
 
-    var f1 = frisby.create(this.test.title)
+    frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
       .expectJSONLength('test_subjects.*', '>=4')
       .toss();
@@ -675,7 +665,7 @@ describe('Frisby matchers', function() {
       })
     .run();
 
-    var f1 = frisby.create(this.test.title)
+    frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
       .expectJSONLength('test_subjects', '>2')
       .expectJSONLength('test_subjects.0', '>3')
@@ -693,7 +683,7 @@ describe('Frisby matchers', function() {
       })
     .run();
 
-    var f1 = frisby.create(this.test.title)
+    frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
       .expectJSONLength('test_subjects.*', '>3')
       .toss();
@@ -709,7 +699,7 @@ describe('Frisby matchers', function() {
       })
     .run();
 
-    var f1 = frisby.create(this.test.title)
+    frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
       .expectJSONLength('test_subjects', '3')
       .expectJSONLength('test_subjects.0', '4')
@@ -727,7 +717,7 @@ describe('Frisby matchers', function() {
       })
     .run();
 
-    var f1 = frisby.create(this.test.title)
+    frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
       .expectJSONLength('test_subjects.*', '4')
       .toss();
@@ -742,7 +732,7 @@ describe('Frisby matchers', function() {
       })
     .run();
 
-    var f1 = frisby.create(this.test.title)
+    frisby.create(this.test.title)
       .get('http://mock-request/not-found', {mock: mockFn})
       .expectStatus(404)
       .toss();
@@ -882,9 +872,14 @@ describe('Frisby matchers', function() {
   });
 
   it('should allow for passing raw request body', function() {
-    // Intercepted with 'nock'
+    nock('http://example.com')
+      .post('/raw')
+      .reply(200, function(uri, requestBody) {
+        return requestBody;
+      });
+
     frisby.create(this.test.title)
-      .post('http://httpbin.org/raw', {}, {
+      .post('http://example.com/raw', {}, {
         body: 'some body here'
       })
       .expectStatus(200)
@@ -911,16 +906,107 @@ describe('Frisby matchers', function() {
     .toss();
   });
 
-  it('headers should be regex matchable', function() {
-    nock('http://httpbin.org', { allowUnmocked: true })
-      .post('/path')
-      .once()
-      .reply(201, "The payload", {'Location': '/path/23'});
+  it('preserves a custom json header with json:true option', function() {
+    nock('http://example.com')
+      .post('/json')
+      .reply(200, {'foo': 'bar'});
+
+    const customContentType = 'application/json; profile=http://example.com/schema/books#';
+
+    // Intercepted with 'nock'
+    frisby.create(this.test.title)
+      .post('http://example.com/json', {}, { json: true })
+      .addHeader('Content-Type', customContentType)
+      .expectStatus(200)
+      .expectJSON({'foo': 'bar'})
+      .expectHeader('Content-Type', 'application/json')
+      .after(function(err, res, body) {
+        expect(this.current.outgoing.headers['content-type']).to.equal(customContentType);
+        expect(this.current.outgoing.body).to.deep.equal({});
+      })
+    .toss();
+  });
+
+  describe('expectBodyContains', function () {
+    it('should fail when the response is empty', function () {
+      nock('http://example.com')
+        .post('/path')
+        .reply(201);
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectBodyContains('this-will-not-match')
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(AssertionError);
+          expect(err.message).to.equal("expected '' to include 'this-will-not-match'");
+        })
+        .toss();
+    });
+
+    it('TODO should fail when the response is absent');
+    // Not sure how to reach the else block in `expectBodyContains`.
+  });
+
+  describe('expectHeaderToMatch', function () {
+    it('should pass when regex matches', function() {
+      nock('http://httpbin.org', { allowUnmocked: true })
+        .post('/path')
+        .once()
+        .reply(201, "The payload", {'Location': '/path/23'});
+
+      frisby.create(this.test.title)
+        .post('http://httpbin.org/path', {foo: 'bar'})
+        .expectStatus(201)
+        .expectHeaderToMatch('location', /^\/path\/\d+$/)
+        .toss();
+    });
+
+    it('should fail when the regex does not match', function () {
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'The payload', {'Location': '/something-else/23'});
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeaderToMatch('location', /^\/path\/\d+$/)
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(AssertionError);
+          expect(err.message).to.equal("expected '/something-else/23' to match /^\\/path\\/\\d+$/");
+        })
+        .toss();
+    });
+
+    it('should fail when the header is absent', function () {
+      nock('http://example.com')
+        .post('/path')
+        .reply(201);
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeaderToMatch('location', /^\/path\/\d+$/)
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(Error);
+          expect(err.message).to.equal("Header 'location' does not match pattern '/^\\/path\\/\\d+$/' in HTTP response");
+        })
+        .toss();
+    });
+  });
+
+  it('afterJSON should be invoked with the body json', function () {
+    nock('http://example.com')
+      .get('/json')
+      .reply(200, {foo: 'bar'});
 
     frisby.create(this.test.title)
-      .post('http://httpbin.org/path', {foo: 'bar'})
-      .expectStatus(201)
-      .expectHeaderToMatch('location', /^\/path\/\d+$/)
+      .get('http://example.com/json')
+      .expectStatus(200)
+      .expectJSON({foo: 'bar'})
+      .afterJSON(json => {
+        expect(json).to.eql({ foo: 'bar' });
+      })
       .toss();
   });
 
@@ -977,5 +1063,51 @@ describe('Frisby matchers', function() {
     .toss();
 
     restoreGlobalSetup();
+  });
+
+  describe('Other HTTP methods', function () {
+    it('delete', function () {
+      nock('http://example.com')
+       .delete('/test')
+       .query({ name: 'sally' })
+       .reply(204, (uri, requestBody) => requestBody);
+
+      frisby.create(this.test.title)
+        .delete('http://example.com/test', {}, {
+          qs: { name: 'sally' },
+          body: 'some body here'
+        })
+        .expectStatus(204)
+        .expectBodyContains('some body here')
+        .toss();
+    });
+
+    it('head', function () {
+      nock('http://example.com')
+       .head('/test')
+       .query({ name: 'sally' })
+       .reply(204, (uri, requestBody) => requestBody);
+
+      frisby.create(this.test.title)
+        .head('http://example.com/test', {
+          qs: { name: 'sally' }
+        })
+        .expectStatus(204)
+        .toss();
+    });
+
+    it('options', function () {
+      nock('http://example.com')
+       .options('/test')
+       .query({ name: 'sally' })
+       .reply(204, (uri, requestBody) => requestBody);
+
+      frisby.create(this.test.title)
+        .options('http://example.com/test', {
+          qs: { name: 'sally' }
+        })
+        .expectStatus(204)
+        .toss();
+    });
   });
 });

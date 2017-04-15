@@ -1,0 +1,27 @@
+env:
+  node: true
+  es6: true
+  mocha: true
+
+globals:
+  expect: true
+
+extends:
+  - "eslint:recommended"
+
+plugins:
+  - "mocha"
+
+rules:
+  semi: ["error", "always"]
+  strict: ["error", "safe"]
+  no-trailing-spaces: "error"
+  eol-last: "error"
+
+  # Disable a couple rules from eslint:recommended.
+  no-unused-vars: ["error", {"args": "none"}]
+  no-console: "off"
+
+  "mocha/handle-done-callback": "error"
+  "mocha/no-global-tests": "error"
+  "mocha/no-mocha-arrows": "error"

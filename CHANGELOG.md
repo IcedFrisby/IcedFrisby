@@ -1,16 +1,16 @@
 # IcedFrisby Changelog
 
+## 1.0.0
+
+- Identical API to 0.4.0
 
 ## 0.4.0
+- Added support for plugins
+    - Added `before()` callbacks
+    - Exported the constructor, not just the `create()` function
+- Added `baseURI()` to set base URI without using `globalSetup()`
+- Improved test coverage
 - Upgraded dependencies to latest versions, including lodash 4.x branch
-- Removed unused dependencies from package.json
-- Sorted dependencies in icedfrisby.js alphabetically
-- Migrated tests from spec/ to test/ to make the project more mocha friendly
-- Updated the post commit step in .travis.yml
-- Updated header message in icedfrisby.js
-  - adhere to 80 cols
-  - update license urls, add url for MIT
-
 
 ## 0.3.0
 - Upgraded dependencies to latest versions

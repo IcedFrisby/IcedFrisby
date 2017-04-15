@@ -1,6 +1,6 @@
 {
   "name": "icedfrisby",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "description": "IcedFrisby: REST API Endpoint Testing built on Mocha and Chai",
   "homepage": "https://github.com/RobertHerhold/IcedFrisby",
   "author": "Robert Herhold",
@@ -40,11 +40,11 @@
   },
   "devDependencies": {
     "coveralls": "^2.11.14",
+    "eslint": "^3.19.0",
+    "eslint-plugin-mocha": "^4.9.0",
     "express": "^4.14.0",
-    "form-data": "^2.1.4",
     "intercept-stdout": "^0.1.2",
     "istanbul": "^0.4.5",
-    "jshint": "^2.9.4",
     "mocha": "^3.1.2",
     "mocha-lcov-reporter": "^1.2.0",
     "mock-request": "^0.1.2",
@@ -60,7 +60,7 @@
   },
   "scripts": {
     "coverage": "istanbul cover _mocha --report lcovonly",
-    "lint": "jshint lib/*.js",
+    "lint": "eslint '**/*.js'",
     "test:js": "mocha",
     "test": "npm run lint && npm run test:js"
   }
