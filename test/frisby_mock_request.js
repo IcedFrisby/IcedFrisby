@@ -6,6 +6,7 @@ var frisby = require('../lib/icedfrisby');
 var mockRequest = require('mock-request');
 var Joi = require('joi');
 const AssertionError = require('chai').AssertionError;
+const MultiError = require('verror').MultiError;
 
 // Built-in node.js
 var fs = require('fs');
@@ -781,15 +782,106 @@ describe('Frisby matchers', function() {
         .after(() => { expect.fail("The after function shouldn't be invoked"); });
 
       // Intercept the raised exception to prevent Mocha from receiving it.
-      test._invokeExpects = function (mochaContext, done) {
+      test._invokeExpects = function (done) {
         try {
-          test.prototype._invokeExpects.call(this, mochaContext, done);
+          test.prototype._invokeExpects.call(test, done);
         } catch (e) {
           done();
           return;
         }
         // If we catch the exeption, as expected, we should never get here.
         expect.fail('The failed expectation should have raised an exception');
+      };
+
+      test.toss();
+    });
+
+    it('TODO: should not be invoked after a test failure');
+  });
+
+  describe('finally() hooks', function() {
+    it('should be invoked in sequence after after() hooks', function () {
+      const sequence = [];
+      const mockFn = mockRequest.mock()
+        .get('/test-object')
+        .respond({
+            statusCode: 200,
+            body: fixtures.singleObject
+        })
+        .run();
+      const requestFn = function () {
+        sequence.push('request');
+        return mockFn.apply(this, arguments);
+      };
+
+      frisby.create(this.test.title)
+        .get('http://mock-request/test-object', {mock: requestFn})
+        .expectStatus(200)
+        .after(() => { sequence.push('after-one'); })
+        .after(() => { sequence.push('after-two'); })
+        .finally(() => { sequence.push('finally-one'); })
+        .finally(() => { sequence.push('finally-two'); })
+        .finally(() => {
+          const expectedSequence = ['request', 'after-one', 'after-two', 'finally-one', 'finally-two'];
+          expect(sequence).to.deep.equal(expectedSequence);
+        })
+        .toss();
+    });
+
+    describe('should be invoked after an failed expectation', function() {
+      const mockFn = mockRequest.mock()
+        .get('/test-object')
+        .respond({
+            statusCode: 200,
+            body: fixtures.singleObject
+        })
+        .run();
+
+      let finallyInvoked = false;
+
+      const test = frisby.create('aaa')
+        .get('http://mock-request/test-object', {mock: mockFn})
+        .expectStatus(204)
+        .finally(() => { finallyInvoked = true; });
+
+      // TODO: How can I ensure this has been called?
+      test._finish = function (done) {
+        test.constructor.prototype._finish.call(this, (err) => {
+          expect(finallyInvoked).to.be.ok;
+          done();
+        });
+      };
+
+      test.toss();
+    });
+
+    describe('before hook errors are bundled together', function () {
+      const mockFn = mockRequest.mock()
+        .get('/test-object')
+        .respond({
+            statusCode: 200,
+            body: fixtures.singleObject
+        })
+        .run();
+
+      const beforeErrorMessage = 'this-is-the-before-error';
+      const finallyErrorMessage = 'this-is-the-finally-error';
+
+      const test = frisby.create('error bundling')
+        .get('http://mock-request/test-object', {mock: mockFn})
+        .expectStatus(200)
+        .before(() => { throw Error(beforeErrorMessage); })
+        .finally(() => { throw Error(finallyErrorMessage); });
+
+      // TODO: How can I ensure this has been called?
+      test._finish = function (done) {
+        test.constructor.prototype._finish.call(this, (err) => {
+          expect(err).to.be.an.instanceOf(MultiError);
+          expect(err.errors()).to.have.lengthOf(2);
+          expect(err.errors()[0].message).to.equal(beforeErrorMessage);
+          expect(err.errors()[1].message).to.equal(finallyErrorMessage);
+          done();
+        });
       };
 
       test.toss();
