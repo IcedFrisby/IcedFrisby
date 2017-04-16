@@ -1119,7 +1119,7 @@ describe('Frisby matchers', function() {
     // difficult to debug.
     const test = frisby.create(this.test.title);
     expect(test.current.inspections).to.have.lengthOf(0);
-    test.inspectJSON(() => {})
+    test.inspectJSON(() => {});
     expect(test.current.inspections).to.have.lengthOf(1);
     util.inspect(test);
     expect(test.current.inspections).to.have.lengthOf(1);
