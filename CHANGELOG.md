@@ -1,5 +1,19 @@
 # IcedFrisby Changelog
 
+## [Unreleased][]
+
+## [1.1.0][]
+
+- Added `finally()` hooks which run even after an error and can be used for
+  cleanup. Throw a [MultiError][] if more than one error occurs. (#45)
+- Fixed issue where printing frisby objects caused side effects (#44)
+- Fixed bug where `after()` callbacks are erroneously invoked after an error
+  in `before()` hook or request (#45)
+- Moved all internal state from the Mocha context to the frisby object (#45)
+- Improved test coverage
+
+[MultiError]: https://github.com/joyent/node-verror#reference-multierror
+
 ## 1.0.0
 
 - Identical API to 0.4.0
@@ -58,3 +72,6 @@
 * Adds expectContainsJSON(...)! Test JSON responses without knowing every field.
 * Uses [lodash](https://github.com/lodash/lodash) instead of underscore
 * Returns a 599 (network timeout error) response if a request times out or is unavailable instead of a 500
+
+[Unreleased]: https://github.com/MarkHerhold/IcedFrisby/compare/1.1.0...HEAD
+[1.1.0]: https://github.com/MarkHerhold/IcedFrisby/compare/1.1.0...1.0.0
