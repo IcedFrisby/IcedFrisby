@@ -10,6 +10,7 @@ const AssertionError = require('chai').AssertionError;
 // Built-in node.js
 var fs = require('fs');
 var path = require('path');
+const util = require('util');
 
 // enable real connections for localhost otherwise useApp() tests won't work
 nock.enableNetConnect('127.0.0.1');
@@ -1109,5 +1110,18 @@ describe('Frisby matchers', function() {
         .expectStatus(204)
         .toss();
     });
+  });
+
+  it('util.inspect should not have side effects', function () {
+    // Invoking console.log() on a frisby object invokes util.inspect, which
+    // in turn invokes inspect() on the frisby object. This causes side
+    // effects which trigger a ("cb.call is not a function") error, which is
+    // difficult to debug.
+    const test = frisby.create(this.test.title);
+    expect(test.current.inspections).to.have.lengthOf(0);
+    test.inspectJSON(() => {});
+    expect(test.current.inspections).to.have.lengthOf(1);
+    util.inspect(test);
+    expect(test.current.inspections).to.have.lengthOf(1);
   });
 });
