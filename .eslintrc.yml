@@ -13,7 +13,8 @@ plugins:
   - "mocha"
 
 rules:
-  semi: ["error", "always"]
+  semi: ["error", "never"]
+  indent: ["error", 2, { "SwitchCase": 1 }]
   strict: ["error", "safe"]
   no-trailing-spaces: "error"
   eol-last: "error"

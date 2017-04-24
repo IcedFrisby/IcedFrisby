@@ -1,25 +1,25 @@
-'use strict';
+'use strict'
 
-var frisby = require('../lib/icedfrisby');
-var Joi = require('joi');
-var fs = require('fs');
-var path = require('path');
-var util = require('util');
-var Readable = require('stream').Readable;
+var frisby = require('../lib/icedfrisby')
+var Joi = require('joi')
+var fs = require('fs')
+var path = require('path')
+var util = require('util')
+var Readable = require('stream').Readable
 
 function StringStream(string, options) {
-    Readable.call(this, options);
+  Readable.call(this, options)
 
-    this.writable = false;
-    this.readable = true;
-    this.string = string;
+  this.writable = false
+  this.readable = true
+  this.string = string
 }
-util.inherits(StringStream, Readable);
+util.inherits(StringStream, Readable)
 
 StringStream.prototype._read = function (ignore) {
-    this.push(this.string);
-    this.push(null);
-};
+  this.push(this.string)
+  this.push(null)
+}
 
 //
 // Tests run like normal Frisby specs but with 'mock' specified with a 'mock-request' object
@@ -33,9 +33,9 @@ describe('Frisby live running httpbin tests', function() {
       .get('http://httpbin.org/basic-auth/frisby/passwd')
       .auth('frisby', 'passwd')
       .expectStatus(200)
-    .toss();
+    .toss()
 
-  });
+  })
 
   describe('Frisby digestAuth', function() {
 
@@ -45,9 +45,9 @@ describe('Frisby live running httpbin tests', function() {
         .auth('frisby', 'passwd')
         .get('http://httpbin.org/digest-auth/auth/frisby/passwd')
         .expectStatus(401)
-      .toss();
+      .toss()
 
-    });
+    })
 
 
     /*
@@ -62,157 +62,157 @@ describe('Frisby live running httpbin tests', function() {
     });
     */
 
-  });
+  })
 
   it('should pass in param hash to request call dependency', function() {
 
     frisby.create('test with httpbin for valid basic auth')
       .get('http://httpbin.org/redirect/3', { followRedirect: false, maxRedirects: 1 })
       .expectStatus(302)
-    .toss();
+    .toss()
 
-  });
+  })
   //
   it('sending binary data via put or post requests using Buffer objects should work', function() {
 
-      var data = [];
+    var data = []
 
-      for(var i=0; i< 1024; i++)
-        data.push(Math.round(Math.random()*256));
+    for(var i=0; i< 1024; i++)
+      data.push(Math.round(Math.random()*256))
 
 
-      frisby.create('POST random binary data via Buffer object')
+    frisby.create('POST random binary data via Buffer object')
         .post('http://httpbin.org/post',
               new Buffer(data),
-              {
-                  json : false,
-                  headers : {
-                      "content-type" : "application/octet-stream"
-                  }
-              })
+      {
+        json : false,
+        headers : {
+          "content-type" : "application/octet-stream"
+        }
+      })
           .expectStatus(200)
           .expectHeaderContains('content-type', 'application/json')
           .expectJSONTypes({ // use the JSONTypes to check for data and headers. We don't really care about anything else.
-              data : Joi.string().valid('data:application/octet-stream;base64,'+ new Buffer(data).toString('base64')),
-              headers: Joi.object().required().keys({
-                  Accept: Joi.any(),
-                  "Accept-Encoding": Joi.any(),
-                  Connection: Joi.any(),
-                  "Content-Type": Joi.string().required().valid("application/octet-stream"),
-                  "Content-Length" : Joi.string().required().valid("1024"),
-                  Host: Joi.any()
-              }),
-              args: Joi.any(),
-              files: Joi.any(),
-              form: Joi.any(),
-              json: Joi.any(),
-              origin: Joi.any(),
-              url: Joi.string().required().valid("http://httpbin.org/post")
+            data : Joi.string().valid('data:application/octet-stream;base64,'+ new Buffer(data).toString('base64')),
+            headers: Joi.object().required().keys({
+              Accept: Joi.any(),
+              "Accept-Encoding": Joi.any(),
+              Connection: Joi.any(),
+              "Content-Type": Joi.string().required().valid("application/octet-stream"),
+              "Content-Length" : Joi.string().required().valid("1024"),
+              Host: Joi.any()
+            }),
+            args: Joi.any(),
+            files: Joi.any(),
+            form: Joi.any(),
+            json: Joi.any(),
+            origin: Joi.any(),
+            url: Joi.string().required().valid("http://httpbin.org/post")
           })
-      .toss();
+      .toss()
 
-      frisby.create('PUT random binary data via Buffer object')
+    frisby.create('PUT random binary data via Buffer object')
         .put('http://httpbin.org/put',
               new Buffer(data),
-              {
-                  json : false,
-                  headers : {
-                      "content-type" : "application/octet-stream"
-                  }
-              })
+      {
+        json : false,
+        headers : {
+          "content-type" : "application/octet-stream"
+        }
+      })
           .expectStatus(200)
           .expectHeaderContains('content-type', 'application/json')
           .expectJSONTypes({
-              data : Joi.string().required().valid('data:application/octet-stream;base64,'+ new Buffer(data).toString('base64')),
-              headers: Joi.object().keys({
-                  Accept: Joi.any(),
-                  "Accept-Encoding": Joi.any(),
-                  Connection: Joi.any(),
-                  "Content-Type": Joi.string().required().valid("application/octet-stream"),
-                  "Content-Length" : Joi.string().required().valid("1024"),
-                  Host: Joi.any()
-              }),
-              args: Joi.any(),
-              files: Joi.any(),
-              form: Joi.any(),
-              json: Joi.any(),
-              origin: Joi.any(),
-              url: Joi.string().required().valid("http://httpbin.org/put")
+            data : Joi.string().required().valid('data:application/octet-stream;base64,'+ new Buffer(data).toString('base64')),
+            headers: Joi.object().keys({
+              Accept: Joi.any(),
+              "Accept-Encoding": Joi.any(),
+              Connection: Joi.any(),
+              "Content-Type": Joi.string().required().valid("application/octet-stream"),
+              "Content-Length" : Joi.string().required().valid("1024"),
+              Host: Joi.any()
+            }),
+            args: Joi.any(),
+            files: Joi.any(),
+            form: Joi.any(),
+            json: Joi.any(),
+            origin: Joi.any(),
+            url: Joi.string().required().valid("http://httpbin.org/put")
           })
-      .toss();
+      .toss()
 
-  });
+  })
   //
   it('PATCH requests with Buffer and Stream objects should work.', function() {
-      var patchCommand = 'Patch me!';
+    var patchCommand = 'Patch me!'
 
-      frisby.create('PATCH via Buffer object')
+    frisby.create('PATCH via Buffer object')
           .patch('http://httpbin.org/patch',
           new Buffer(patchCommand),
-          {
-              json : false,
-              headers : {
-                  "content-type" : "text/plain"
-              }
-          })
+      {
+        json : false,
+        headers : {
+          "content-type" : "text/plain"
+        }
+      })
           .expectStatus(200)
           .expectHeaderContains('content-type', 'application/json')
           .expectJSONTypes({
-              data : Joi.string().valid(patchCommand.toString()),
-              headers: Joi.object().required().keys({
-                  Accept: Joi.any(),
-                  "Accept-Encoding": Joi.any(),
-                  Connection: Joi.any(),
-                  "Content-Type": Joi.string().required().valid("text/plain"),
-                  "Content-Length" : Joi.string().required().valid("" + patchCommand.length),
-                  Host: Joi.any()
-              }),
-              args: Joi.any(),
-              files: Joi.any(),
-              form: Joi.any(),
-              json: Joi.any(),
-              origin: Joi.any(),
-              url: Joi.string().required().valid("http://httpbin.org/patch")
+            data : Joi.string().valid(patchCommand.toString()),
+            headers: Joi.object().required().keys({
+              Accept: Joi.any(),
+              "Accept-Encoding": Joi.any(),
+              Connection: Joi.any(),
+              "Content-Type": Joi.string().required().valid("text/plain"),
+              "Content-Length" : Joi.string().required().valid("" + patchCommand.length),
+              Host: Joi.any()
+            }),
+            args: Joi.any(),
+            files: Joi.any(),
+            form: Joi.any(),
+            json: Joi.any(),
+            origin: Joi.any(),
+            url: Joi.string().required().valid("http://httpbin.org/patch")
           })
-          .toss();
+          .toss()
 
-      frisby.create('PATCH via Stream object')
+    frisby.create('PATCH via Stream object')
           .patch('http://httpbin.org/patch',
           new StringStream(patchCommand),
-          {
-              json : false,
-              headers : {
-                  "content-type" : "text/plain",
-                  "content-length" : String(patchCommand.length)
-              }
-          })
+      {
+        json : false,
+        headers : {
+          "content-type" : "text/plain",
+          "content-length" : String(patchCommand.length)
+        }
+      })
           .expectStatus(200)
           .expectHeaderContains('content-type', 'application/json')
           .expectJSONTypes({
-              data : Joi.string().required().valid(patchCommand.toString()),
-              headers: Joi.object().required().keys({
-                  Accept: Joi.any(),
-                  "Accept-Encoding": Joi.any(),
-                  Connection: Joi.any(),
-                  "Content-Type": Joi.string().required().valid("text/plain"),
-                  "Content-Length" : Joi.string().required().valid("" + patchCommand.length),
-                  Host: Joi.any()
-              }),
-              args: Joi.any(),
-              files: Joi.any(),
-              form: Joi.any(),
-              json: Joi.any(),
-              origin: Joi.any(),
-              url: Joi.string().required().valid("http://httpbin.org/patch")
+            data : Joi.string().required().valid(patchCommand.toString()),
+            headers: Joi.object().required().keys({
+              Accept: Joi.any(),
+              "Accept-Encoding": Joi.any(),
+              Connection: Joi.any(),
+              "Content-Type": Joi.string().required().valid("text/plain"),
+              "Content-Length" : Joi.string().required().valid("" + patchCommand.length),
+              Host: Joi.any()
+            }),
+            args: Joi.any(),
+            files: Joi.any(),
+            form: Joi.any(),
+            json: Joi.any(),
+            origin: Joi.any(),
+            url: Joi.string().required().valid("http://httpbin.org/patch")
           })
-          .toss();
+          .toss()
 
-  });
+  })
 
   it('sending binary data via put or post requests using Stream objects should work', function() {
-        var filePath = path.resolve(__dirname, './logo-frisby.png');
-        var fileSize = fs.statSync(filePath).size;
-        var fileContent = fs.readFileSync(filePath);
+    var filePath = path.resolve(__dirname, './logo-frisby.png')
+    var fileSize = fs.statSync(filePath).size
+    var fileContent = fs.readFileSync(filePath)
 
         /*
          * NOTE: Using a Stream with httpbin.org requires to set the Content-Length header to not use chunked
@@ -220,68 +220,68 @@ describe('Frisby live running httpbin tests', function() {
          *       Content-Length
          */
 
-        frisby.create('POST frisby logo to http://httpbin.org/post using a Stream')
+    frisby.create('POST frisby logo to http://httpbin.org/post using a Stream')
             .post('http://httpbin.org/post',
                 fs.createReadStream(filePath),
-                {
-                    json: false,
-                    headers: {
-                        "content-type": "application/octet-stream",
-                        "content-length": fileSize
-                    }
-                })
+      {
+        json: false,
+        headers: {
+          "content-type": "application/octet-stream",
+          "content-length": fileSize
+        }
+      })
                 .expectStatus(200)
                 .expectHeaderContains('content-type', 'application/json')
                 .expectJSONTypes({
-                    data : Joi.string().required().valid('data:application/octet-stream;base64,' + fileContent.toString('base64')),
-                    headers: Joi.object().required().keys({
-                        Accept: Joi.any(),
-                        "Accept-Encoding": Joi.any(),
-                        Connection: Joi.any(),
-                        "Content-Type": Joi.string().valid("application/octet-stream"),
-                        "Content-Length" : Joi.string().valid("" + fileSize),
-                        Host: Joi.any()
-                    }),
-                    args: Joi.any(),
-                    files: Joi.any(),
-                    form: Joi.any(),
-                    json: Joi.any(),
-                    origin: Joi.any(),
-                    url: Joi.string().required().valid("http://httpbin.org/post"),
+                  data : Joi.string().required().valid('data:application/octet-stream;base64,' + fileContent.toString('base64')),
+                  headers: Joi.object().required().keys({
+                    Accept: Joi.any(),
+                    "Accept-Encoding": Joi.any(),
+                    Connection: Joi.any(),
+                    "Content-Type": Joi.string().valid("application/octet-stream"),
+                    "Content-Length" : Joi.string().valid("" + fileSize),
+                    Host: Joi.any()
+                  }),
+                  args: Joi.any(),
+                  files: Joi.any(),
+                  form: Joi.any(),
+                  json: Joi.any(),
+                  origin: Joi.any(),
+                  url: Joi.string().required().valid("http://httpbin.org/post"),
                 })
-                .toss();
+                .toss()
 
-        frisby.create('PUT frisby logo to http://httpbin.org/put using a Stream')
+    frisby.create('PUT frisby logo to http://httpbin.org/put using a Stream')
             .put('http://httpbin.org/put',
                 fs.createReadStream(filePath),
-                {
-                    json: false,
-                    headers: {
-                        "Content-Type": "application/octet-stream",
-                        "Content-Length": fileSize
-                    }
-                })
+      {
+        json: false,
+        headers: {
+          "Content-Type": "application/octet-stream",
+          "Content-Length": fileSize
+        }
+      })
                 .expectStatus(200)
                 .expectHeaderContains('content-type', 'application/json')
                 .expectJSONTypes({
-                    data : Joi.string().valid('data:application/octet-stream;base64,' + fileContent.toString('base64')),
-                    headers: Joi.object().keys({
-                        Accept: Joi.any(),
-                        "Accept-Encoding": Joi.any(),
-                        Connection: Joi.any(),
-                        "Content-Type": Joi.string().valid("application/octet-stream"),
-                        "Content-Length" : Joi.string().valid("" + fileSize),
-                        Host: Joi.any()
-                    }),
-                    args: Joi.any(),
-                    files: Joi.any(),
-                    form: Joi.any(),
-                    json: Joi.any(),
-                    origin: Joi.any(),
-                    url: Joi.string().valid("http://httpbin.org/put"),
+                  data : Joi.string().valid('data:application/octet-stream;base64,' + fileContent.toString('base64')),
+                  headers: Joi.object().keys({
+                    Accept: Joi.any(),
+                    "Accept-Encoding": Joi.any(),
+                    Connection: Joi.any(),
+                    "Content-Type": Joi.string().valid("application/octet-stream"),
+                    "Content-Length" : Joi.string().valid("" + fileSize),
+                    Host: Joi.any()
+                  }),
+                  args: Joi.any(),
+                  files: Joi.any(),
+                  form: Joi.any(),
+                  json: Joi.any(),
+                  origin: Joi.any(),
+                  url: Joi.string().valid("http://httpbin.org/put"),
                 })
-                .toss();
-    });
+                .toss()
+  })
 
   // it('sending multipart/from-data encoded bodies should work', function () {
   //
@@ -446,4 +446,4 @@ describe('Frisby live running httpbin tests', function() {
   //     .toss();
   //
   // })
-});
+})
