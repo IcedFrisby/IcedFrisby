@@ -39,17 +39,17 @@ Each set of unique sequences or API endpoint tests should be started with new `f
 
 ```javascript
 
-var frisby = require('icedfrisby');  // get IcedFrisby with `npm install icedfrisby`
-var Joi = require('joi'); // get Joi with `npm install joi`
+var frisby = require('icedfrisby')  // Get IcedFrisby with `npm install icedfrisby`.
+var Joi = require('joi') // Joi is installed along with IcedFrisby.
 
-var URL = 'http://localhost:3000/';
-var URL_AUTH = 'http://username:password@localhost:3000/';
+var URL = 'http://localhost:3000/'
+var URL_AUTH = 'http://username:password@localhost:3000/'
 
-frisby.globalSetup({ // globalSetup is for ALL requests
+frisby.globalSetup({ // globalSetup is for ALL requests.
   request: {
     headers: { 'X-Auth-Token': 'fa8426a0-8eaf-4d22-8e13-7c1b16a9370c' }
   }
-});
+})
 
 frisby.create('GET user johndoe')
   .get(URL + '/users/3.json')
@@ -71,16 +71,16 @@ frisby.create('GET user johndoe')
   })
   // 'afterJSON' automatically parses response body as JSON and passes it as an argument
   .afterJSON(function(user) {
-  	// You can use any normal assertions here
-  	expect(1+1).to.equal(2);
+    // You can use any normal assertions here
+    expect(1+1).to.equal(2)
 
-  	// Use data from previous result in next test
+    // Use data from previous result in next test
     frisby.create('Update user')
       .put(URL_AUTH + '/users/' + user.id + '.json', {tags: ['mocha', 'bdd']})
       .expectStatus(200)
-    .toss();
+      .toss()
   })
-.toss();
+  .toss()
 
 ```
 
