@@ -40,7 +40,7 @@ Each set of unique sequences or API endpoint tests should be started with new `f
 ```javascript
 
 const frisby = require('icedfrisby')  // Get IcedFrisby with `npm install icedfrisby`.
-const Joi = require('joi') // Joi is installed along with IcedFrisby.
+const Joi = require('joi') // Get Joi with `npm install joi`.
 
 const URL = 'http://localhost:3000/'
 const URL_AUTH = 'http://username:password@localhost:3000/'
