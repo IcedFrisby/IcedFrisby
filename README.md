@@ -146,12 +146,30 @@ const frisby = mix(require('icedfrisby')).with(require('./my-plugin'))
 ## IcedFrisby Development
 
 ### Code Coverage
+
 You can assess code coverage by running `npm run coverage`.
 
 ### Contributions
-Contributions are awesome! If you have an idea or code that you want to contribute, feel free to submit a pull request and I will gladly review it. I am open to pretty much anything.
+
+Contributions are awesome! If you have an idea or code that you want to
+contribute, feel free to open an issue or a pull request and we will gladly
+review it.
+
+The library is post-1.0 now, so there is backward compatibility and future
+maintainability to consider. If you are adding functionality, you can also
+write a [plugin](#icedfrisby-plugins) and add a link here.
+
+### Maintainers
+
+IcedFrisby is maintained by:
+
+* [cvega](https://github.com/cvega)
+* [MarkHerhold](https://github.com/MarkHerhold)
+* [paulmelnikow](https://github.com/paulmelnikow)
+
 
 ### Roadmap
+
 1. Make output errors more useful. It can be hard to track down which assertion is causing what error.
 1. Add a "stack trace" for paths to help discern why a path traversal failed
 1. Support [chained tests/promises](https://github.com/vlucas/frisby/issues/223). Related: [#127](https://github.com/vlucas/frisby/issues/127), [#154](https://github.com/vlucas/frisby/issues/154), [#200](https://github.com/vlucas/frisby/issues/200)
