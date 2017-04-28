@@ -39,11 +39,11 @@ Each set of unique sequences or API endpoint tests should be started with new `f
 
 ```javascript
 
-var frisby = require('icedfrisby')  // Get IcedFrisby with `npm install icedfrisby`.
-var Joi = require('joi') // Joi is installed along with IcedFrisby.
+const frisby = require('icedfrisby')  // Get IcedFrisby with `npm install icedfrisby`.
+const Joi = require('joi') // Joi is installed along with IcedFrisby.
 
-var URL = 'http://localhost:3000/'
-var URL_AUTH = 'http://username:password@localhost:3000/'
+const URL = 'http://localhost:3000/'
+const URL_AUTH = 'http://username:password@localhost:3000/'
 
 frisby.globalSetup({ // globalSetup is for ALL requests.
   request: {
@@ -70,7 +70,7 @@ frisby.create('GET user johndoe')
     is_admin: Joi.boolean()
   })
   // 'afterJSON' automatically parses response body as JSON and passes it as an argument
-  .afterJSON(function(user) {
+  .afterJSON(user => {
     // You can use any normal assertions here
     expect(1+1).to.equal(2)
 
