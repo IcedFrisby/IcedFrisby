@@ -95,6 +95,52 @@ Run tests as you normally would with [Mocha](https://github.com/mochajs/mocha).
     cd your/project
     mocha tests/someTest.js --reporter nyan
 
+
+IcedFrisby plugins
+------------------
+
+Plugins can provide custom assertions, setup and teardown logic, and
+additional functionality. Plugins can be implemented in an application's test
+code or as a library.
+
+- [icedfrisby-nock](https://github.com/paulmelnikow/icedfrisby-nock) &mdash;
+  Concise support for mock requests
+
+
+### Writing your own plugin
+
+Writing a plugin for IcedFrisby is easy. For compatibility with other plugins,
+use a [subclass factory][]:
+
+```js
+const factory = superclass => class MyPlugin extends superclass {
+  expectValidXML () {
+    this.after((err, res, body) => {
+      // ... assert something here ...
+    })
+    return this
+  }
+}
+module.exports = factory
+```
+
+To use the plugin, compose IcedFrisby with it:
+
+```js
+const frisby = require('./my-plugin')(require('icedfrisby'))
+```
+
+or, more semantically, using the delightful [mixwith][]:
+
+```js
+const { mix } = require('mixwith')
+
+const frisby = mix(require('icedfrisby')).with(require('./my-plugin'))
+```
+
+[subclass factory]: http://justinfagnani.com/2015/12/21/real-mixins-with-javascript-classes/
+[mixwith]: https://github.com/justinfagnani/mixwith.js
+
 ---
 
 ## IcedFrisby Development
@@ -109,7 +155,7 @@ Contributions are awesome! If you have an idea or code that you want to contribu
 1. Make output errors more useful. It can be hard to track down which assertion is causing what error.
 1. Add a "stack trace" for paths to help discern why a path traversal failed
 1. Support [chained tests/promises](https://github.com/vlucas/frisby/issues/223). Related: [#127](https://github.com/vlucas/frisby/issues/127), [#154](https://github.com/vlucas/frisby/issues/154), [#200](https://github.com/vlucas/frisby/issues/200)
-1. custom assertion plugin support
+1. ~~custom assertion plugin support~~ :rocket: [#27](https://github.com/MarkHerhold/icedfrisby/issues/27)
 
 ## License
 Licensed under the [MIT](http://opensource.org/licenses/MIT)/[BSD](http://opensource.org/licenses/BSD-3-Clause) license.
