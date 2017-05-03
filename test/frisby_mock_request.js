@@ -5,8 +5,8 @@ var fixtures = require('./fixtures/repetition_fixture.json')
 var frisby = require('../lib/icedfrisby')
 var mockRequest = require('mock-request')
 var Joi = require('joi')
-const AssertionError = require('chai').AssertionError
-const MultiError = require('verror').MultiError
+const { AssertionError } = require('chai')
+const { MultiError } = require('verror')
 
 // Built-in node.js
 var fs = require('fs')

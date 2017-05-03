@@ -34,7 +34,7 @@
     "lodash": "^4.16.6",
     "qs": "^6.3.0",
     "request": "^2.76.0",
-    "verror": "^1.9.0"
+    "verror": "^1.10.0"
   },
   "peerDependencies": {
     "mocha": "*"
