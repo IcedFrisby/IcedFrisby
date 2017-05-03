@@ -2,6 +2,13 @@
 
 ## [Unreleased][]
 
+## [1.2.0][]
+
+- Support extending via plugins. Frisby is an ES6 class, and plugins
+  themselves are implemented as subclass factories. After being
+  composed with plugins, `frisby.create()` will do the right thing.
+  For an example, see https://github.com/paulmelnikow/icedfrisby-nock
+
 ## [1.1.0][]
 
 - Added `finally()` hooks which run even after an error and can be used for
@@ -73,5 +80,6 @@
 * Uses [lodash](https://github.com/lodash/lodash) instead of underscore
 * Returns a 599 (network timeout error) response if a request times out or is unavailable instead of a 500
 
-[Unreleased]: https://github.com/MarkHerhold/IcedFrisby/compare/1.1.0...HEAD
+[Unreleased]: https://github.com/MarkHerhold/IcedFrisby/compare/1.2.0...HEAD
+[1.2.0]: https://github.com/MarkHerhold/IcedFrisby/compare/1.2.0...1.1.0
 [1.1.0]: https://github.com/MarkHerhold/IcedFrisby/compare/1.1.0...1.0.0
