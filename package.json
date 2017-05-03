@@ -57,7 +57,7 @@
     "API.md"
   ],
   "engines": {
-    "node": "4.x.x || 5.x.x || 6.x.x"
+    "node": ">= 6"
   },
   "scripts": {
     "coverage": "istanbul cover _mocha --report lcovonly",
