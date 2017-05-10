@@ -29,7 +29,7 @@ Install IcedFrisby and Mocha from NPM:
 
     npm install mocha icedfrisby --save-dev
 
-**Note:** IcedFrisby is built and tested against the latest stable versions of Node.js (4, 5, and 6)
+**Note:** IcedFrisby is built and tested against Node 6 and 7.
 
 ## Show me some code!
 
