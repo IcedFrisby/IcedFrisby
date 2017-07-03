@@ -217,9 +217,19 @@ describe('Frisby matchers', function() {
       }
 
       frisby.create(this.test.title)
-        .before((done) => { setTimeout(function() { sequence.push('before-one'); done(); }, 10) })
+        .before((done) => {
+          setTimeout(function() {
+            sequence.push('before-one')
+            done()
+          }, 10)
+        })
         .before(() => { sequence.push('before-two') })
-        .before((done) => { setTimeout(function() { sequence.push('before-three'); done(); }, 10) })
+        .before((done) => {
+          setTimeout(function() {
+            sequence.push('before-three')
+            done()
+          }, 10)
+        })
         .get('http://mock-request/test-object', {mock: requestFn})
         .after(() => {
           const expectedSequence = ['before-one', 'before-two', 'before-three', 'request']
@@ -993,10 +1003,20 @@ describe('Frisby matchers', function() {
         .get('http://mock-request/test-object', {mock: requestFn})
         .expectStatus(200)
         .after(() => { sequence.push('after-one') })
-        .finally((done) => { setTimeout(() => { sequence.push('finally-one'); done(); }, 10) })
+        .finally((done) => {
+          setTimeout(() => {
+            sequence.push('finally-one')
+            done()
+          }, 10)
+        })
         .finally(function() { this.finally(() => { sequence.push('finally-dynamic') }) }) // should be invoked even later, so it won't register below
         .finally(() => { sequence.push('finally-two') })
-        .finally((done) => { setTimeout(() => { sequence.push('finally-three'); done(); }, 10) })
+        .finally((done) => {
+          setTimeout(() => {
+            sequence.push('finally-three')
+            done()
+          }, 10)
+        })
         .finally(() => {
           const expectedSequence = ['request', 'after-one', 'finally-one', 'finally-two', 'finally-three']
           expect(sequence).to.deep.equal(expectedSequence)
