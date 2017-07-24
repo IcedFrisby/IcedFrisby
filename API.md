@@ -410,11 +410,11 @@ Callback function to run after test is completed successfully. Can be used to ru
 ```javascript
 frisby.create('First test')
   .get('http://httpbin.org/get?foo=bar')
-  .after(function(err, res, body, done) {
+  .after(function(err, res, body, headers, done) {
     // async, don't forget to invoke done()
     setImmediate(done)
   })
-  .after(function(err, res, body) {
+  .after(function(err, res, body, headers) {
 
     frisby.create('Second test, run after first is completed')
       .get('http://httpbin.org/get?bar=baz')
