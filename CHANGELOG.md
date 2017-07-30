@@ -2,6 +2,14 @@
 
 ## [Unreleased][]
 
+## [1.3.0][]
+
+- Async hooks for before(), after(), finally() ([PR #59][]).
+- Update chai assertion checking to ^4.0.1
+- Update chalk to ^2.0.1
+
+[PR #59]: https://github.com/MarkHerhold/IcedFrisby/pull/59
+
 ## [1.2.0][]
 
 - Support extending via plugins. Frisby is an ES6 class, and plugins
@@ -81,5 +89,6 @@
 * Returns a 599 (network timeout error) response if a request times out or is unavailable instead of a 500
 
 [Unreleased]: https://github.com/MarkHerhold/IcedFrisby/compare/1.2.0...HEAD
+[1.3.0]: https://github.com/MarkHerhold/IcedFrisby/compare/1.3.0...1.2.0
 [1.2.0]: https://github.com/MarkHerhold/IcedFrisby/compare/1.2.0...1.1.0
 [1.1.0]: https://github.com/MarkHerhold/IcedFrisby/compare/1.1.0...1.0.0
