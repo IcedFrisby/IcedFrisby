@@ -200,6 +200,65 @@ describe('Frisby matchers', function() {
     })
   })
 
+  describe('before callbacks (async)', function () {
+    it('should be invoked in sequence before the request', function() {
+      const sequence = []
+
+      const mockFn = mockRequest.mock()
+        .get('/test-object')
+        .respond({
+          statusCode: 200,
+          body: fixtures.singleObject
+        })
+        .run()
+      const requestFn = function () {
+        sequence.push('request')
+        return mockFn.apply(this, arguments)
+      }
+
+      frisby.create(this.test.title)
+        .before((done) => {
+          setTimeout(function() {
+            sequence.push('before-one')
+            done()
+          }, 10)
+        })
+        .before(() => { sequence.push('before-two') })
+        .before((done) => {
+          setTimeout(function() {
+            sequence.push('before-three')
+            done()
+          }, 10)
+        })
+        .get('http://mock-request/test-object', {mock: requestFn})
+        .after(() => {
+          const expectedSequence = ['before-one', 'before-two', 'before-three', 'request']
+          expect(sequence).to.deep.equal(expectedSequence)
+        })
+        .toss()
+    })
+
+    it('should respect the exception handler', function() {
+      const mockFn = mockRequest.mock()
+        .get('/test-object')
+        .respond({
+          statusCode: 200,
+          body: fixtures.singleObject
+        })
+        .run()
+
+      const message = 'this is the error'
+
+      frisby.create(this.test.title)
+        .before((done) => { throw new Error(message) })
+        .get('http://mock-request/test-object', {mock: mockFn})
+        .exceptionHandler(err => {
+          expect(err.message).to.equal(message)
+        })
+        .toss()
+    })
+  })
+
   it('expectJSON should test EQUALITY for a SINGLE object', function() {
       // Mock API
     var mockFn = mockRequest.mock()
@@ -759,9 +818,10 @@ describe('Frisby matchers', function() {
         .get('http://mock-request/test-object', {mock: requestFn})
         .expectStatus(200)
         .after(() => { sequence.push('after-one') })
+        .after(function() { this.after(() => { sequence.push('after-dynamic') }) })
         .after(() => { sequence.push('after-two') })
-        .after(() => {
-          const expectedSequence = ['request', 'after-one', 'after-two']
+        .finally(() => {
+          const expectedSequence = ['request', 'after-one', 'after-two', 'after-dynamic']
           expect(sequence).to.deep.equal(expectedSequence)
         })
         .toss()
@@ -799,6 +859,41 @@ describe('Frisby matchers', function() {
     it('TODO: should not be invoked after a test failure')
   })
 
+  describe('after() callbacks (async)', function() {
+    it('should be invoked in sequence after a successful request', function () {
+      const sequence = []
+      const mockFn = mockRequest.mock()
+        .get('/test-object')
+        .respond({
+          statusCode: 200,
+          body: fixtures.singleObject
+        })
+        .run()
+      const requestFn = function () {
+        sequence.push('request')
+        return mockFn.apply(this, arguments)
+      }
+
+      frisby.create(this.test.title)
+        .get('http://mock-request/test-object', {mock: requestFn})
+        .expectStatus(200)
+        .after(() => { sequence.push('after-one') })
+        .after(function(error, res, body, headers, done) {
+          setTimeout(() => {
+            sequence.push('after-two')
+            this.after(() => { sequence.push('after-dynamic') })
+            done()
+          }, 10)
+        })
+        .after(() => { sequence.push('after-three') })
+        .finally(() => {
+          const expectedSequence = ['request', 'after-one', 'after-two', 'after-three', 'after-dynamic']
+          expect(sequence).to.deep.equal(expectedSequence)
+        })
+        .toss()
+    })
+  })
+
   describe('finally() hooks', function() {
     it('should be invoked in sequence after after() hooks', function () {
       const sequence = []
@@ -819,6 +914,7 @@ describe('Frisby matchers', function() {
         .expectStatus(200)
         .after(() => { sequence.push('after-one') })
         .after(() => { sequence.push('after-two') })
+        .after(function() { this.finally(() => { sequence.push('finally-dynamic') }) }) // should be invoked even later, so it won't register below
         .finally(() => { sequence.push('finally-one') })
         .finally(() => { sequence.push('finally-two') })
         .finally(() => {
@@ -885,6 +981,47 @@ describe('Frisby matchers', function() {
       }
 
       test.toss()
+    })
+  })
+
+  describe('finally() hooks (async)', function() {
+    it('should be invoked in sequence after after() hooks', function () {
+      const sequence = []
+      const mockFn = mockRequest.mock()
+        .get('/test-object')
+        .respond({
+          statusCode: 200,
+          body: fixtures.singleObject
+        })
+        .run()
+      const requestFn = function () {
+        sequence.push('request')
+        return mockFn.apply(this, arguments)
+      }
+
+      frisby.create(this.test.title)
+        .get('http://mock-request/test-object', {mock: requestFn})
+        .expectStatus(200)
+        .after(() => { sequence.push('after-one') })
+        .finally((done) => {
+          setTimeout(() => {
+            sequence.push('finally-one')
+            done()
+          }, 10)
+        })
+        .finally(function() { this.finally(() => { sequence.push('finally-dynamic') }) }) // should be invoked even later, so it won't register below
+        .finally(() => { sequence.push('finally-two') })
+        .finally((done) => {
+          setTimeout(() => {
+            sequence.push('finally-three')
+            done()
+          }, 10)
+        })
+        .finally(() => {
+          const expectedSequence = ['request', 'after-one', 'finally-one', 'finally-two', 'finally-three']
+          expect(sequence).to.deep.equal(expectedSequence)
+        })
+        .toss()
     })
   })
 

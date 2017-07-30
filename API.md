@@ -27,7 +27,9 @@
 		- [useApp](#useapp-in-globalsetup)
 		- [Resetting `globalSetup`](#resetting-globalsetup)
 	- [Helpers](#helpers)
+		- [before()](#before)
 		- [after()](#after)
+		- [finally()](#finally)
 		- [afterJSON()](#afterjson)
 	- [Inspectors](#inspectors)
 		- [inspect(cb)](#inspectcb)
@@ -390,18 +392,50 @@ frisby.create('Request without the globalSetup options')
 
 ## Helpers
 
+### before()
+Callback function to run before the tested request is executed. Can be used to set up a test environment or even to launch a server. If an argument is provided, it is assumed to be a callback function, similar to Mocha's before(). Useful for writing plugins. Multiple registered functions are run in order of registration.
+
+```javascript
+frisby.create('Upcheck test')
+  .before(function() { this._pluginContext = 123 })
+  .before(function(done) { http.createServer().listen(80, done) })
+  .get('http://localhost/upCheck')
+  .expectStatus(200)
+  .toss()
+```
+
 ### after()
-Callback function to run after test is completed. Can be used to run tests sequentially.
+Callback function to run after test is completed successfully. Can be used to run tests sequentially. If an extra argument is provided, it is assumed to be a callback function, similar to Mocha's `after()`. Multiple registered functions are run in order of registration.
 
 ```javascript
 frisby.create('First test')
   .get('http://httpbin.org/get?foo=bar')
-  .after(function(err, res, body) {
+  .after(function(err, res, body, headers, done) {
+    // async, don't forget to invoke done()
+    setImmediate(done)
+  })
+  .after(function(err, res, body, headers) {
 
     frisby.create('Second test, run after first is completed')
       .get('http://httpbin.org/get?bar=baz')
     .toss()
 
+  })
+.toss()
+```
+
+### finally()
+Callback function to run after test is done, either successfully or not. Can be used to tear down a test context established with `before()`. If an extra argument is provided, it is assumed to be a callback function, similar to Mocha's `after()`. Useful for writing plugins. Multiple registered functions are run in order of registration.
+
+```javascript
+frisby.create('First test')
+  .get('http://httpbin.org/get?foo=bar')
+  .finally(function() {
+    // sync
+  })
+  .finally(function(done) {
+    // async, don't forget to invoke done()
+    setImmediate(done)
   })
 .toss()
 ```
