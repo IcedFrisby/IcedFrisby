@@ -184,5 +184,5 @@ The procedure for issuing a release is as follows:
 1. Edit `package.json` and `CHANGELOG.md`, updating the version and release notes. Ensure no other files have changes.
 1. Make a new commit `git commit -am 'RELEASE X.X.X'`
 1. Tag the commit `git tag X.X.X`
-1. Push `git push`
+1. Push commits and tags `git push && git push --tags`
 1. Publish to npm `npm publish`
