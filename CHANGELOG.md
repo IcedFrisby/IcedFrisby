@@ -2,6 +2,12 @@
 
 ## [Unreleased][]
 
+## [1.3.1][]
+
+- Add expectNoHeader() helper ([PR #63][]).
+
+[PR #63]: https://github.com/MarkHerhold/IcedFrisby/pull/63
+
 ## [1.3.0][]
 
 - Async hooks for before(), after(), finally() ([PR #59][]).
