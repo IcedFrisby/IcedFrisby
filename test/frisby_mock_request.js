@@ -1225,6 +1225,38 @@ describe('Frisby matchers', function() {
     })
   })
 
+  describe('expectNoHeader', function () {
+    it('should pass when a header is absent', function() {
+      nock('http://httpbin.org', { allowUnmocked: true })
+        .post('/path')
+        .once()
+        .reply(201, "The payload")
+
+      frisby.create(this.test.title)
+        .post('http://httpbin.org/path', {foo: 'bar'})
+        .expectStatus(201)
+        .expectNoHeader('Location')
+        .expectNoHeader('location')
+        .toss()
+    })
+
+    it('should fail when a header is present', function () {
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'The payload', {'Location': '/something-else/23'})
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectNoHeader('Location')
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(AssertionError)
+          expect(err.message).to.equal("expected { location: '/something-else/23' } to not have property 'location'")
+        })
+        .toss()
+    })
+  })
+
   it('afterJSON should be invoked with the body json', function () {
     nock('http://example.com')
       .get('/json')
