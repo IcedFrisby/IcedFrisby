@@ -30,7 +30,7 @@
     "chai-things": "^0.2.0",
     "chalk": "^2.0.1",
     "check-types": "^7.0.1",
-    "joi": "^10.4.1",
+    "joi": "^11.0.1",
     "lodash": "^4.16.6",
     "qs": "^6.3.0",
     "request": "^2.76.0",
@@ -41,12 +41,12 @@
   },
   "devDependencies": {
     "coveralls": "^2.11.14",
-    "eslint": "^3.19.0",
+    "eslint": "^4.7.0",
     "eslint-plugin-mocha": "^4.9.0",
     "express": "^4.14.0",
     "intercept-stdout": "^0.1.2",
     "istanbul": "^0.4.5",
-    "mocha": "^3.1.2",
+    "mocha": "^3.5.3",
     "mocha-lcov-reporter": "^1.2.0",
     "mock-request": "^0.1.2",
     "nock": "^9.0.2"

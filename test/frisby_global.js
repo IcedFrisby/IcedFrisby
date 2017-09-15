@@ -155,7 +155,7 @@ describe('Frisby object setup', function() {
       }
     })
 
-      // verify that the global config was set properly
+    // verify that the global config was set properly
     expect(frisby.globalSetup()).to.deep.equal({
       request: {
         headers: { 'X-Stuff': 'stuff header' },

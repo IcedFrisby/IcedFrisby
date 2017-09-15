@@ -22,7 +22,7 @@ var usersFixture = require('./fixtures/users_fixture.json')
 describe('Path traversal', function() {
   it('should fail on a bad path', function() {
     var fn = function() {
-            // apply path is not exposed, so we will just use matchJSON, which calls it
+      // apply path is not exposed, so we will just use matchJSON, which calls it
       pm.matchJSON({
         jsonBody: { a: { } },
         jsonTest: { },
@@ -34,7 +34,7 @@ describe('Path traversal', function() {
   })
 
   it('should not fail on a bad path with isNot specified (even though this is an anti-pattern)', function() {
-        // apply path is not exposed, so we will just use matchJSON, which calls it
+    // apply path is not exposed, so we will just use matchJSON, which calls it
     pm.matchJSON({
       jsonBody: { a: { } },
       jsonTest: { },
@@ -448,8 +448,8 @@ describe('Path match Contains JSON', function() {
 
   describe('real use case: users & passwords', function() {
 
-        // NOTE: the first user in usersFixture has the 'password' and 'salt' fields to represent leaked information.
-        // No other users in the fixture have this.
+    // NOTE: the first user in usersFixture has the 'password' and 'salt' fields to represent leaked information.
+    // No other users in the fixture have this.
 
     it('should match a user\'s first name', function() {
       pm.matchContainsJSON({
@@ -463,7 +463,7 @@ describe('Path match Contains JSON', function() {
 
     it('should match a user\'s email', function() {
 
-            // NOTE: the first user has a password and salt field. No other users do.
+      // NOTE: the first user has a password and salt field. No other users do.
 
       pm.matchContainsJSON({
         jsonBody: usersFixture.users[0],
@@ -495,7 +495,7 @@ describe('Path match Contains JSON', function() {
 
     it('should match a user\'s salt and throw an error when isNot is set', function() {
 
-            // NOTE: the first user has a password and salt field. No other users do.
+      // NOTE: the first user has a password and salt field. No other users do.
 
       var fn = function() {
         pm.matchContainsJSON({
@@ -512,7 +512,7 @@ describe('Path match Contains JSON', function() {
 
     it('should match a user\'s password and throw an error when isNot is set', function() {
 
-            // NOTE: the first user has a password and salt field. No other users do.
+      // NOTE: the first user has a password and salt field. No other users do.
 
       var fn = function() {
         pm.matchContainsJSON({

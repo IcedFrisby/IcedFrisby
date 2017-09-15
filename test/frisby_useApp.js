@@ -21,14 +21,14 @@ describe('IcedFrisby useApp(app)', function() {
     })
 
     frisby.create(this.test.title)
-            .useApp(app)
-            .get('/')
-            .expectStatus(200)
-            .expectBodyContains('^.^')
-            .after(function(err, res, body) {
-              expect(err).to.not.exist
-            })
-            .toss()
+      .useApp(app)
+      .get('/')
+      .expectStatus(200)
+      .expectBodyContains('^.^')
+      .after(function(err, res, body) {
+        expect(err).to.not.exist
+      })
+      .toss()
   })
 
   it('should work with an active http server', function() {
@@ -40,17 +40,17 @@ describe('IcedFrisby useApp(app)', function() {
 
     app.listen(4000, function() {
       frisby.create(this.test.title)
-                .useApp(app)
-                .get('/')
-                .expectStatus(200)
-                .expectBodyContains('^.^')
-                .toss()
+        .useApp(app)
+        .get('/')
+        .expectStatus(200)
+        .expectBodyContains('^.^')
+        .toss()
     })
   })
 
   it('should start the https server on an ephemeral port', function() {
-        // disable rejecting self signed certs for testing purposes
-        // Attn Everyone: DO NOT USE THIS IN PRODUCTION
+    // disable rejecting self signed certs for testing purposes
+    // Attn Everyone: DO NOT USE THIS IN PRODUCTION
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 
     var app = express()
@@ -66,16 +66,16 @@ describe('IcedFrisby useApp(app)', function() {
     }, app)
 
     frisby.create(this.test.title)
-            .useApp(server)
-            .get('/')
-            .expectStatus(200)
-            .expectBodyContains('^.^')
-            .toss()
+      .useApp(server)
+      .get('/')
+      .expectStatus(200)
+      .expectBodyContains('^.^')
+      .toss()
   })
 
   it('should work with an active https server', function() {
-        // disable rejecting self signed certs for testing purposes
-        // Attn Everyone: DO NOT USE THIS IN PRODUCTION
+    // disable rejecting self signed certs for testing purposes
+    // Attn Everyone: DO NOT USE THIS IN PRODUCTION
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 
     var app = express()
@@ -91,11 +91,11 @@ describe('IcedFrisby useApp(app)', function() {
     }, app).listen()
 
     frisby.create(this.test.title)
-            .useApp(server)
-            .get('/')
-            .expectStatus(200)
-            .expectBodyContains('^.^')
-            .toss()
+      .useApp(server)
+      .get('/')
+      .expectStatus(200)
+      .expectBodyContains('^.^')
+      .toss()
   })
 
   it('should throw an exception if app is not defined', function() {
@@ -103,8 +103,8 @@ describe('IcedFrisby useApp(app)', function() {
 
     var fn = function() {
       frisby.create(self.test.title)
-                .useApp(undefined)
-                .toss()
+        .useApp(undefined)
+        .toss()
     }
 
     expect(fn).to.throw('No app provided')

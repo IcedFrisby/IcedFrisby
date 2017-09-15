@@ -33,13 +33,11 @@ describe('console output', function() {
   afterEach(restoreGlobalSetup)
 
   it('should warn developers if there is a header with \'json\' but the body type is not JSON', function() {
-        // Mock API
-    nock('http://mock-request/', {
-      allowUnmocked: true
-    })
-            .post('/test-object')
-            .once()
-            .reply(201)
+    // Mock API
+    nock('http://mock-request/', {allowUnmocked: true})
+      .post('/test-object')
+      .once()
+      .reply(201)
 
     mockGlobalSetup()
 
@@ -49,26 +47,24 @@ describe('console output', function() {
     })
 
     frisby.create(this.test.title)
-            .post('http://mock-request/test-object', {
-              isSomeObj: true
-            })
-            .expectStatus(201)
-            .toss()
+      .post('http://mock-request/test-object', {
+        isSomeObj: true
+      })
+      .expectStatus(201)
+      .toss()
 
     unhook()
     chai.assert.equal(warning, stdout, 'expect stdout to have a specific warning')
   })
 
   it('should NOT warn developers that "there is a header with \'json\' but the body type is not JSON" because there is no body provided', function() {
-        // Mock API
-    nock('http://mock-request/', {
-      allowUnmocked: true
-    })
-            .post('/test-object')
-            .once()
-            .reply(201, function(uri, requestBody) {
-              return requestBody
-            })
+    // Mock API
+    nock('http://mock-request/', {allowUnmocked: true})
+      .post('/test-object')
+      .once()
+      .reply(201, function(uri, requestBody) {
+        return requestBody
+      })
 
     var stdout = ""
     var unhook = intercept(function(txt) {
@@ -76,9 +72,9 @@ describe('console output', function() {
     })
 
     frisby.create(this.test.title)
-            .post('http://mock-request/test-object')
-            .expectStatus(201)
-            .toss()
+      .post('http://mock-request/test-object')
+      .expectStatus(201)
+      .toss()
 
     unhook()
     chai.assert.equal("", stdout, 'expect stdout to be empty')
