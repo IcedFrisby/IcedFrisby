@@ -54,7 +54,7 @@ describe('Frisby matchers', function() {
       .respond({
         statusCode: 404
       })
-    .run()
+      .run()
 
     frisby.create(this.test.title)
       .get('http://mock-request/not-found', {mock: mockFn})
@@ -72,12 +72,12 @@ describe('Frisby matchers', function() {
   it('globalSetup should set local request headers', function() {
     // Mock API
     var mockFn = mockRequest.mock()
-    .get('/test-object-array')
+      .get('/test-object-array')
       .respond({
         statusCode: 200,
         body: fixtures.arrayOfObjects
       })
-    .run()
+      .run()
 
     mockGlobalSetup()
     frisby.create(this.test.title)
@@ -93,12 +93,12 @@ describe('Frisby matchers', function() {
   it('addHeaders should override globalSetup request headers', function() {
     // Mock API
     var mockFn = mockRequest.mock()
-    .get('/test-object-array')
+      .get('/test-object-array')
       .respond({
         statusCode: 200,
         body: fixtures.arrayOfObjects
       })
-    .run()
+      .run()
 
     mockGlobalSetup()
     frisby.create(this.test.title)
@@ -115,19 +115,20 @@ describe('Frisby matchers', function() {
   it('addHeaders should override globalSetup request headers and not taint other Frisby tests', function() {
     // Mock API
     var mockFn = mockRequest.mock()
-    .get('/test-object-array-ex')
+      .get('/test-object-array-ex')
       .respond({
         statusCode: 200,
         body: fixtures.arrayOfObjects
       })
-    .run()
+      .run()
+
     var mockFn2 = mockRequest.mock()
-    .get('/test-object-array-ex2')
+      .get('/test-object-array-ex2')
       .respond({
         statusCode: 200,
         body: fixtures.arrayOfObjects
       })
-    .run()
+      .run()
 
     mockGlobalSetup()
 
@@ -138,7 +139,7 @@ describe('Frisby matchers', function() {
         // Local addHeaders should override global
         expect(this.current.outgoing.headers['test']).to.equal('Two')
       })
-    .toss()
+      .toss()
 
     frisby.create(this.test.title + ' - mock test two')
       .get('http://mock-request/test-object-array-ex2', {mock: mockFn2})
@@ -147,7 +148,7 @@ describe('Frisby matchers', function() {
         // Local addHeaders should override global
         expect(this.current.outgoing.headers['test']).to.equal('Three')
       })
-    .toss()
+      .toss()
 
     restoreGlobalSetup()
   })
@@ -260,7 +261,7 @@ describe('Frisby matchers', function() {
   })
 
   it('expectJSON should test EQUALITY for a SINGLE object', function() {
-      // Mock API
+    // Mock API
     var mockFn = mockRequest.mock()
       .get('/test-object')
       .respond({
@@ -281,7 +282,7 @@ describe('Frisby matchers', function() {
   })
 
   it('expectJSON should test INEQUALITY for a SINGLE object', function() {
-      // Mock API
+    // Mock API
     var mockFn = mockRequest.mock()
       .get('/test-object')
       .respond({
@@ -302,7 +303,7 @@ describe('Frisby matchers', function() {
   })
 
   it('expectJSON should test EQUALITY for EACH object in an array with an asterisk path', function() {
-      // Mock API
+    // Mock API
     var mockFn = mockRequest.mock()
       .get('/test-array')
       .respond({
@@ -318,7 +319,7 @@ describe('Frisby matchers', function() {
   })
 
   it('expectJSON should test INEQUALITY for EACH object in an array with an asterisk path', function() {
-      // Mock API
+    // Mock API
     var mockFn = mockRequest.mock()
       .get('/test-array')
       .respond({
@@ -336,12 +337,12 @@ describe('Frisby matchers', function() {
   it('expectJSON should test EACH object in an array with path ending with asterisk', function() {
     // Mock API
     var mockFn = mockRequest.mock()
-    .get('/test-object-array')
+      .get('/test-object-array')
       .respond({
         statusCode: 200,
         body: fixtures.arrayOfObjects
       })
-    .run()
+      .run()
 
     frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
@@ -357,12 +358,12 @@ describe('Frisby matchers', function() {
   it('expectJSON should match ONE object in an array with path ending with question mark', function() {
     // Mock API
     var mockFn = mockRequest.mock()
-    .get('/test-object-array')
+      .get('/test-object-array')
       .respond({
         statusCode: 200,
         body: fixtures.arrayOfObjects
       })
-    .run()
+      .run()
 
     frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
@@ -378,12 +379,12 @@ describe('Frisby matchers', function() {
   it('expectJSON should NOT match ONE object in an array with path ending with question mark', function() {
     // Mock API
     var mockFn = mockRequest.mock()
-    .get('/test-object-array')
+      .get('/test-object-array')
       .respond({
         statusCode: 200,
         body: fixtures.arrayOfObjects
       })
-    .run()
+      .run()
 
     frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
@@ -395,7 +396,7 @@ describe('Frisby matchers', function() {
   })
 
   it('expectContainsJSON should MATCH fields for a SINGLE object', function() {
-      // Mock API
+    // Mock API
     var mockFn = mockRequest.mock()
       .get('/test-object')
       .respond({
@@ -408,7 +409,7 @@ describe('Frisby matchers', function() {
       .get('http://mock-request/test-object', {mock: mockFn})
       .expectContainsJSON({
         test_str: "Hey Hai Hello",
-          // test_str_same: "I am the same...", // leave this out of the orig object, should still match
+        // test_str_same: "I am the same...", // leave this out of the orig object, should still match
         test_int: 1,
         test_optional: null
       })
@@ -416,7 +417,7 @@ describe('Frisby matchers', function() {
   })
 
   it('expectContainsJSON should NOT MATCH for a SINGLE object', function() {
-      // Mock API
+    // Mock API
     var mockFn = mockRequest.mock()
       .get('/test-object')
       .respond({
@@ -437,7 +438,7 @@ describe('Frisby matchers', function() {
   })
 
   it('expectContainsJSON should NOT MATCH for a SINGLE object with a single field', function() {
-      // Mock API
+    // Mock API
     var mockFn = mockRequest.mock()
       .get('/test-object')
       .respond({
@@ -450,15 +451,15 @@ describe('Frisby matchers', function() {
       .get('http://mock-request/test-object', {mock: mockFn})
       .not().expectContainsJSON({
         test_str: "Bye bye bye!",
-          // test_str_same: "I am not the same...",
-          // test_int: 9,
-          // test_optional: true
+        // test_str_same: "I am not the same...",
+        // test_int: 9,
+        // test_optional: true
       })
       .toss()
   })
 
   it('expectContainsJSON should MATCH for EACH object in an array with an asterisk path', function() {
-      // Mock API
+    // Mock API
     var mockFn = mockRequest.mock()
       .get('/test-array')
       .respond({
@@ -474,7 +475,7 @@ describe('Frisby matchers', function() {
   })
 
   it('expectContainsJSON should NOT MATCH for EACH object in an array with an asterisk path', function() {
-      // Mock API
+    // Mock API
     var mockFn = mockRequest.mock()
       .get('/test-array')
       .respond({
@@ -490,7 +491,7 @@ describe('Frisby matchers', function() {
   })
 
   it('expectContainsJSON should MATCH for EACH object in an array with path ending with asterisk', function() {
-      // Mock API
+    // Mock API
     var mockFn = mockRequest.mock()
       .get('/test-object-array')
       .respond({
@@ -508,7 +509,7 @@ describe('Frisby matchers', function() {
   })
 
   it('expectContainsJSON should MATCH ONE object in an array with path ending with question mark', function() {
-      // Mock API
+    // Mock API
     var mockFn = mockRequest.mock()
       .get('/test-object-array')
       .respond({
@@ -526,7 +527,7 @@ describe('Frisby matchers', function() {
   })
 
   it('expectContainsJSON should NOT MATCH ONE object in an array with path ending with question mark', function() {
-      // Mock API
+    // Mock API
     var mockFn = mockRequest.mock()
       .get('/test-object-array')
       .respond({
@@ -540,18 +541,18 @@ describe('Frisby matchers', function() {
       .not().expectContainsJSON('test_subjects.?', { // ? == ONE object in 'test_subjects' array
         test_str: "I am a string two nonsense!",
       })
-     .toss()
+      .toss()
   })
 
   it('expectJSONTypes should NOT match ONE object in an array with path ending with question mark', function() {
     // Mock API
     var mockFn = mockRequest.mock()
-    .get('/test-object-array')
+      .get('/test-object-array')
       .respond({
         statusCode: 200,
         body: fixtures.arrayOfObjects
       })
-    .run()
+      .run()
 
     frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
@@ -565,12 +566,12 @@ describe('Frisby matchers', function() {
   it('expectJSONLength should properly count arrays, strings, and objects', function() {
     // Mock API
     var mockFn = mockRequest.mock()
-    .get('/test-object-array')
+      .get('/test-object-array')
       .respond({
         statusCode: 200,
         body: fixtures.arrayOfObjects
       })
-    .run()
+      .run()
 
     frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
@@ -583,12 +584,12 @@ describe('Frisby matchers', function() {
   it('expectJSONLength should support an asterisk in the path to test all elements of an array', function() {
     // Mock API
     var mockFn = mockRequest.mock()
-    .get('/test-object-array')
+      .get('/test-object-array')
       .respond({
         statusCode: 200,
         body: fixtures.arrayOfObjects
       })
-    .run()
+      .run()
 
     frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
@@ -599,12 +600,12 @@ describe('Frisby matchers', function() {
   it('expectJSONLength should support an asterisk in the path to test that all elements of an array do NOT have a specified length', function() {
     // Mock API
     var mockFn = mockRequest.mock()
-    .get('/test-object-array')
+      .get('/test-object-array')
       .respond({
         statusCode: 200,
         body: fixtures.arrayOfObjects
       })
-    .run()
+      .run()
 
     frisby.create(this.test.title)
       .not()
@@ -617,12 +618,12 @@ describe('Frisby matchers', function() {
   it('expectJSONLength should properly count arrays, strings, and objects using <=', function() {
     // Mock API
     var mockFn = mockRequest.mock()
-    .get('/test-object-array')
+      .get('/test-object-array')
       .respond({
         statusCode: 200,
         body: fixtures.arrayOfObjects
       })
-    .run()
+      .run()
 
     frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
@@ -635,12 +636,12 @@ describe('Frisby matchers', function() {
   it('expectJSONLength should support an asterisk in the path to test all elements of an array using <=', function() {
     // Mock API
     var mockFn = mockRequest.mock()
-    .get('/test-object-array')
+      .get('/test-object-array')
       .respond({
         statusCode: 200,
         body: fixtures.arrayOfObjects
       })
-    .run()
+      .run()
 
     frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
@@ -651,12 +652,12 @@ describe('Frisby matchers', function() {
   it('expectJSONLength should properly count arrays, strings, and objects using <', function() {
     // Mock API
     var mockFn = mockRequest.mock()
-    .get('/test-object-array')
+      .get('/test-object-array')
       .respond({
         statusCode: 200,
         body: fixtures.arrayOfObjects
       })
-    .run()
+      .run()
 
     frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
@@ -669,12 +670,12 @@ describe('Frisby matchers', function() {
   it('expectJSONLength should support an asterisk in the path to test all elements of an array using <', function() {
     // Mock API
     var mockFn = mockRequest.mock()
-    .get('/test-object-array')
+      .get('/test-object-array')
       .respond({
         statusCode: 200,
         body: fixtures.arrayOfObjects
       })
-    .run()
+      .run()
 
     frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
@@ -685,12 +686,12 @@ describe('Frisby matchers', function() {
   it('expectJSONLength should properly count arrays, strings, and objects using >=', function() {
     // Mock API
     var mockFn = mockRequest.mock()
-    .get('/test-object-array')
+      .get('/test-object-array')
       .respond({
         statusCode: 200,
         body: fixtures.arrayOfObjects
       })
-    .run()
+      .run()
 
     frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
@@ -703,12 +704,12 @@ describe('Frisby matchers', function() {
   it('expectJSONLength should support an asterisk in the path to test all elements of an array using >=', function() {
     // Mock API
     var mockFn = mockRequest.mock()
-    .get('/test-object-array')
+      .get('/test-object-array')
       .respond({
         statusCode: 200,
         body: fixtures.arrayOfObjects
       })
-    .run()
+      .run()
 
     frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
@@ -719,12 +720,12 @@ describe('Frisby matchers', function() {
   it('expectJSONLength should properly count arrays, strings, and objects using >', function() {
     // Mock API
     var mockFn = mockRequest.mock()
-    .get('/test-object-array')
+      .get('/test-object-array')
       .respond({
         statusCode: 200,
         body: fixtures.arrayOfObjects
       })
-    .run()
+      .run()
 
     frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
@@ -737,12 +738,12 @@ describe('Frisby matchers', function() {
   it('expectJSONLength should support an asterisk in the path to test all elements of an array using >', function() {
     // Mock API
     var mockFn = mockRequest.mock()
-    .get('/test-object-array')
+      .get('/test-object-array')
       .respond({
         statusCode: 200,
         body: fixtures.arrayOfObjects
       })
-    .run()
+      .run()
 
     frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
@@ -753,12 +754,12 @@ describe('Frisby matchers', function() {
   it('expectJSONLength should properly count arrays, strings, and objects testing string number', function() {
     // Mock API
     var mockFn = mockRequest.mock()
-    .get('/test-object-array')
+      .get('/test-object-array')
       .respond({
         statusCode: 200,
         body: fixtures.arrayOfObjects
       })
-    .run()
+      .run()
 
     frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
@@ -771,12 +772,12 @@ describe('Frisby matchers', function() {
   it('expectJSONLength should support an asterisk in the path to test all elements of an array testing string number', function() {
     // Mock API
     var mockFn = mockRequest.mock()
-    .get('/test-object-array')
+      .get('/test-object-array')
       .respond({
         statusCode: 200,
         body: fixtures.arrayOfObjects
       })
-    .run()
+      .run()
 
     frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
@@ -787,11 +788,11 @@ describe('Frisby matchers', function() {
   it('expectStatus for mock request should return 404', function() {
     // Mock API
     var mockFn = mockRequest.mock()
-    .get('/not-found')
+      .get('/not-found')
       .respond({
         statusCode: 404
       })
-    .run()
+      .run()
 
     frisby.create(this.test.title)
       .get('http://mock-request/not-found', {mock: mockFn})
@@ -1029,14 +1030,14 @@ describe('Frisby matchers', function() {
 
     // Mock API
     var mockFn = mockRequest.mock()
-    .get('/basic-auth')
+      .get('/basic-auth')
       .respond({
         statusCode: 200,
         headers: {
           Authorization: 'Basic ZnJpc2J5OnBhc3N3ZA=='
         }
       })
-    .run()
+      .run()
 
     frisby.create(this.test.title)
       .get('http://mock-request/basic-auth', {mock: mockFn})
@@ -1049,26 +1050,24 @@ describe('Frisby matchers', function() {
 
         // Check to ensure response headers contain basic auth header
         expect(this.current.response.headers.authorization).to.equal('Basic ZnJpc2J5OnBhc3N3ZA==')
-
       })
-    .toss()
-
+      .toss()
   })
 
   // reference: https://github.com/vlucas/frisby/issues/213 (does not appear to be an issue in IcedFrisby)
   it('should work with a HTTP 204 responses', function() {
-      // Mock API
+    // Mock API
     var mockFn = mockRequest.mock()
-          .get('/no-content')
-          .respond({
-            statusCode: 204
-          })
-          .run()
+      .get('/no-content')
+      .respond({
+        statusCode: 204
+      })
+      .run()
 
     frisby.create(this.test.title)
-          .get('http://mock-request/no-content', {mock: mockFn})
-          .expectStatus(204)
-          .toss()
+      .get('http://mock-request/no-content', {mock: mockFn})
+      .expectStatus(204)
+      .toss()
 
   })
 
@@ -1081,7 +1080,7 @@ describe('Frisby matchers', function() {
       .exceptionHandler(function(e) {
         expect(e.message).to.contain('Destination URL may be down or URL is invalid')
       })
-    .toss()
+      .toss()
 
   })
 
@@ -1098,7 +1097,7 @@ describe('Frisby matchers', function() {
         file: fs.createReadStream(path.join(__dirname, 'logo-frisby.png'))
       }, { form: true })
       .expectStatus(200)
-    .toss()
+      .toss()
   })
 
   it('should allow for passing raw request body', function() {
@@ -1114,7 +1113,7 @@ describe('Frisby matchers', function() {
       })
       .expectStatus(200)
       .expectBodyContains('some body here')
-    .toss()
+      .toss()
   })
 
   it('should allow for passing raw request body and preserve json:true option', function() {
@@ -1133,7 +1132,7 @@ describe('Frisby matchers', function() {
         expect(this.current.outgoing.headers['content-type']).to.equal('application/json')
         expect(this.current.outgoing.body).to.deep.equal({})
       })
-    .toss()
+      .toss()
   })
 
   it('preserves a custom json header with json:true option', function() {
@@ -1154,7 +1153,7 @@ describe('Frisby matchers', function() {
         expect(this.current.outgoing.headers['content-type']).to.equal(customContentType)
         expect(this.current.outgoing.body).to.deep.equal({})
       })
-    .toss()
+      .toss()
   })
 
   describe('expectBodyContains', function () {
@@ -1274,11 +1273,11 @@ describe('Frisby matchers', function() {
 
   it('globalSetup should be able to set baseURI', function () {
     nock('http://httpbin.org', { allowUnmocked: true })
-     .post('/test')
-     .once()
-     .reply(200, function(uri, requestBody) {
-       return requestBody
-     })
+      .post('/test')
+      .once()
+      .reply(200, function(uri, requestBody) {
+        return requestBody
+      })
 
     frisby.globalSetup({
       request: {
@@ -1295,16 +1294,16 @@ describe('Frisby matchers', function() {
       .after(function() {
         expect(this.current.outgoing.uri).to.equal('http://httpbin.org/test')
       })
-    .toss()
+      .toss()
 
     restoreGlobalSetup()
   })
 
   it('baseUri should be able to override global setup', function() {
     nock('http://httpbin.org', { allowUnmocked: true })
-     .post('/test')
-     .once()
-     .reply(200, (uri, requestBody) => requestBody)
+      .post('/test')
+      .once()
+      .reply(200, (uri, requestBody) => requestBody)
 
     frisby.globalSetup({
       request: {
@@ -1322,7 +1321,7 @@ describe('Frisby matchers', function() {
       .after(function() {
         expect(this.current.outgoing.uri).to.equal('http://httpbin.org/test')
       })
-    .toss()
+      .toss()
 
     restoreGlobalSetup()
   })
@@ -1330,9 +1329,9 @@ describe('Frisby matchers', function() {
   describe('Other HTTP methods', function () {
     it('delete', function () {
       nock('http://example.com')
-       .delete('/test')
-       .query({ name: 'sally' })
-       .reply(204, (uri, requestBody) => requestBody)
+        .delete('/test')
+        .query({ name: 'sally' })
+        .reply(204, (uri, requestBody) => requestBody)
 
       frisby.create(this.test.title)
         .delete('http://example.com/test', {}, {
@@ -1346,9 +1345,9 @@ describe('Frisby matchers', function() {
 
     it('head', function () {
       nock('http://example.com')
-       .head('/test')
-       .query({ name: 'sally' })
-       .reply(204, (uri, requestBody) => requestBody)
+        .head('/test')
+        .query({ name: 'sally' })
+        .reply(204, (uri, requestBody) => requestBody)
 
       frisby.create(this.test.title)
         .head('http://example.com/test', {
@@ -1360,9 +1359,9 @@ describe('Frisby matchers', function() {
 
     it('options', function () {
       nock('http://example.com')
-       .options('/test')
-       .query({ name: 'sally' })
-       .reply(204, (uri, requestBody) => requestBody)
+        .options('/test')
+        .query({ name: 'sally' })
+        .reply(204, (uri, requestBody) => requestBody)
 
       frisby.create(this.test.title)
         .options('http://example.com/test', {
