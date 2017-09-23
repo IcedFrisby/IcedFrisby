@@ -105,6 +105,8 @@ code or as a library.
 
 - [icedfrisby-nock](https://github.com/paulmelnikow/icedfrisby-nock) &mdash;
   Concise support for mock requests
+- [icedfrisby-jsonrefchecks](https://github.com/Fishbowler/icedfrisby-jsonrefchecks) &mdash;
+  Check referential integrity between different sections of an API response
 
 
 ### Writing your own plugin
