@@ -49,7 +49,8 @@
     "mocha": "^3.5.3",
     "mocha-lcov-reporter": "^1.2.0",
     "mock-request": "^0.1.2",
-    "nock": "^9.0.2"
+    "nock": "^9.0.2",
+    "sinon": "^4.0.0"
   },
   "main": "lib/icedfrisby",
   "files": [
