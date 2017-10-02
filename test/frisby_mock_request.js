@@ -1392,7 +1392,7 @@ describe('Frisby matchers', function() {
       sandbox = sinon.sandbox.create()
       globalMock = sandbox.mock(global, 'describe')
       globalMock.expects('describe').never()
-      describeMock = sandbox.mock(global.describe);
+      describeMock = sandbox.mock(global.describe)
       describeMock.expects('only').once()
     })
     afterEach(function () {
