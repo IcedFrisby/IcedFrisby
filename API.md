@@ -457,6 +457,10 @@ frisby.create('First test')
 .toss()
 ```
 
+### only()
+Exclusively run this test. When `toss()` is invoked, the test is wrapped in a
+Mocha `describe.only` block instead of a `describe` block.
+
 ## Inspectors
 Inspectors are useful for viewing details about HTTP requests and responses in the console.
 

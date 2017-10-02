@@ -7,6 +7,7 @@ var mockRequest = require('mock-request')
 var Joi = require('joi')
 const { AssertionError } = require('chai')
 const { MultiError } = require('verror')
+const sinon = require('sinon')
 
 // Built-in node.js
 var fs = require('fs')
@@ -1384,4 +1385,28 @@ describe('Frisby matchers', function() {
     util.inspect(test)
     expect(test.current.inspections).to.have.lengthOf(1)
   })
+
+  describe('exclusive tests', function () {
+    let sandbox, globalMock, describeMock
+    beforeEach(function () {
+      sandbox = sinon.sandbox.create()
+      globalMock = sandbox.mock(global, 'describe')
+      globalMock.expects('describe').never()
+      describeMock = sandbox.mock(global.describe)
+      describeMock.expects('only').once()
+    })
+    afterEach(function () {
+      globalMock.verify()
+      describeMock.verify()
+    })
+    afterEach(function () { sandbox.restore() })
+
+    it('should register exclusive tests', function () {
+      frisby.create(this.test.title)
+        .get('http://example.com/test')
+        .only()
+        .toss()
+    })
+  })
+
 })
