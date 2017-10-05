@@ -10,7 +10,7 @@
 		- [expectJSONTypes([path], schema)](#expectjsontypespath-schema)
 		- [expectBodyContains(content)](#expectbodycontainscontent)
 		- [expectJSONLength([path], length)](#expectjsonlengthpath-length)
-    - [expectMaxResponseTime(ms)](#expectmaxresponsetimems)
+		- [expectMaxResponseTime(ms)](#expectmaxresponsetimems)
 		- [Using Paths](#using-paths)
 			- [Testing Nested Objects](#testing-nested-objects)
 			- [Testing All Objects in an Array](#testing-all-objects-in-an-array)
