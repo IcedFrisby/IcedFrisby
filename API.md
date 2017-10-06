@@ -75,7 +75,7 @@ key and content comparisons are case-insensitive.
 * Defaults: `none`
 
 ```javascript
-frisby.create('Ensure response has a Content-Type header')
+frisby.create('Ensure response has a proper JSON Content-Type header')
   .get('http://httpbin.org/get')
   .expectHeader('Content-Type', 'application/json')
 .toss();
@@ -114,7 +114,7 @@ Tests that a names HTTP response header [matches](http://chaijs.com/api/bdd/#met
 * Defaults: `none`
 
 ```javascript
-frisby.create('Ensure response has JSON somewhere in the Content-Type header')
+frisby.create('Ensure response has JSON somewhere in the Content-Type header via regex')
   .get('http://httpbin.org/get')
   .expectHeadertoMatch('Content-Type', /.*json.*/)
 .toss();
