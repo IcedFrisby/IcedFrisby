@@ -75,7 +75,7 @@ key and content comparisons are case-insensitive.
 * Defaults: `none`
 
 ```javascript
-frisby.create('Ensure response has a proper JSON Content-Type header')
+frisby.create('Ensure response has a Content-Type header')
   .get('http://httpbin.org/get')
   .expectHeader('Content-Type', 'application/json')
 .toss();
@@ -88,7 +88,7 @@ Tests that a specific HTTP header was not received in the response
 * Defaults: `none`
 
 ```javascript
-frisby.create('Ensure response has a proper JSON Content-Type header')
+frisby.create('Ensure response has no Set-Cookie header')
   .get('http://httpbin.org/get')
   .expectNoHeader('Set-Cookie')
 .toss();
