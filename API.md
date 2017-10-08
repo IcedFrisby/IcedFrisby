@@ -108,7 +108,7 @@ frisby.create('Ensure response has JSON somewhere in the Content-Type header')
 ```
 
 ### expectHeaderToMatch(key, pattern)
-Tests that a names HTTP response header [matches](http://chaijs.com/api/bdd/#method_match) the specified regular expression. Key is case-insensitive.
+Tests that a HTTP response header [matches](http://chaijs.com/api/bdd/#method_match) the specified regular expression. Key is case-insensitive.
 
 * Types: `key`: `string`, `pattern`: `regex`
 * Defaults: `none`
