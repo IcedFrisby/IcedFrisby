@@ -6,7 +6,7 @@
 		- [expectHeader(key, content)](#expectheaderkey-content)
 		- [expectNoHeader(key)](#expectnoheaderkey)
 		- [expectHeaderContains(key, content)](#expectheadercontainskey-content)
-		- [expectHeaderToMatch(key, pattern)](#expectheadertomatch-pattern)
+		- [expectHeaderToMatch(key, pattern)](#expectheadertomatchkey-pattern)
 		- [expectJSON([path], json)](#expectjsonpath-json)
 		- [expectContainsJSON([path], json)](#expectcontainsjsonpath-json)
 		- [expectJSONTypes([path], schema)](#expectjsontypespath-schema)
