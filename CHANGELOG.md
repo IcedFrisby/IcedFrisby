@@ -2,6 +2,13 @@
 
 ## [Unreleased][]
 
+## [1.4.0][]
+
+- Add only() helper ([PR #70][]).
+- Improve documentation
+
+[PR #70]: https://github.com/MarkHerhold/IcedFrisby/pull/70
+
 ## [1.3.1][]
 
 - Add expectNoHeader() helper ([PR #63][]).
@@ -94,7 +101,9 @@
 * Uses [lodash](https://github.com/lodash/lodash) instead of underscore
 * Returns a 599 (network timeout error) response if a request times out or is unavailable instead of a 500
 
-[Unreleased]: https://github.com/MarkHerhold/IcedFrisby/compare/1.2.0...HEAD
+[Unreleased]: https://github.com/MarkHerhold/IcedFrisby/compare/1.4.0...HEAD
+[1.4.0]: https://github.com/MarkHerhold/IcedFrisby/compare/1.4.0...1.3.0
+[1.3.1]: https://github.com/MarkHerhold/IcedFrisby/compare/1.4.0...1.3.0
 [1.3.0]: https://github.com/MarkHerhold/IcedFrisby/compare/1.3.0...1.2.0
 [1.2.0]: https://github.com/MarkHerhold/IcedFrisby/compare/1.2.0...1.1.0
 [1.1.0]: https://github.com/MarkHerhold/IcedFrisby/compare/1.1.0...1.0.0
