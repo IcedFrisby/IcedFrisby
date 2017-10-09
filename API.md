@@ -12,6 +12,7 @@
 		- [expectJSONTypes([path], schema)](#expectjsontypespath-schema)
 		- [expectBodyContains(content)](#expectbodycontainscontent)
 		- [expectJSONLength([path], length)](#expectjsonlengthpath-length)
+		- [expectMaxResponseTime(ms)](#expectmaxresponsetimems)
 		- [Using Paths](#using-paths)
 			- [Testing Nested Objects](#testing-nested-objects)
 			- [Testing All Objects in an Array](#testing-all-objects-in-an-array)
@@ -206,6 +207,19 @@ frisby.create('Ensure "bar" really is only 3 characters... because you never kno
   .get('http://httpbin.org/get?foo=bar&bar=baz')
     .expectJSONLength('args.foo', 3)
 .toss()
+```
+
+### expectMaxResponseTime(ms)
+Tests that the HTTP response arrives within a given number of milliseconds
+
+* Types: `ms`: `integer`
+* Defaults: `none`
+
+```javascript
+frisby.create('Ensure response arrives within two seconds')
+  .get('http://httpbin.org/get')
+  .expectMaxResponseTime(2000)
+  .toss()
 ```
 
 ### Using Paths
