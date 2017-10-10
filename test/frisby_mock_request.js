@@ -1178,7 +1178,45 @@ describe('Frisby matchers', function() {
     // Not sure how to reach the else block in `expectBodyContains`.
   })
 
-  describe('expectHeaderToMatch', function () {
+  describe('Aliased functions backwards compatibility', function(){
+    it('should allow the use of expectHeaderToMatch as an alias for expectOneHeader', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, "The payload", {'myheader': 'myvalue'})
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectStatus(201)
+        .expectHeaderToMatch('myheader', /myvalue/)
+        .toss()
+    })
+
+    it('should allow the use of expectHeaderContains as an alias for expectOneHeaderContains', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, "The payload", {'myheader': 'myvalue'})
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectStatus(201)
+        .expectHeaderContains('myheader', 'valu')
+        .toss()
+    })
+
+    it('should allow the use of expectHeader as an alias for expectOneHeader', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, "The payload", {'myheader': 'myvalue'})
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectStatus(201)
+        .expectHeader('myheader', 'myvalue')
+        .toss()
+    })
+  })
+
+  describe('expectOneHeader with regex', function () {
     it('should pass when regex matches', function() {
       nock('http://httpbin.org', { allowUnmocked: true })
         .post('/path')
@@ -1188,7 +1226,7 @@ describe('Frisby matchers', function() {
       frisby.create(this.test.title)
         .post('http://httpbin.org/path', {foo: 'bar'})
         .expectStatus(201)
-        .expectHeaderToMatch('location', /^\/path\/\d+$/)
+        .expectOneHeader('location', /^\/path\/\d+$/)
         .toss()
     })
 
@@ -1199,7 +1237,7 @@ describe('Frisby matchers', function() {
 
       frisby.create(this.test.title)
         .post('http://example.com/path')
-        .expectHeaderToMatch('location', /^\/path\/\d+$/)
+        .expectOneHeader('location', /^\/path\/\d+$/)
         .exceptionHandler(err => {
           // TODO How can I assert that this method is called?
           expect(err).to.be.an.instanceof(AssertionError)
@@ -1215,12 +1253,96 @@ describe('Frisby matchers', function() {
 
       frisby.create(this.test.title)
         .post('http://example.com/path')
-        .expectHeaderToMatch('location', /^\/path\/\d+$/)
+        .expectOneHeader('location', /^\/path\/\d+$/)
         .exceptionHandler(err => {
           // TODO How can I assert that this method is called?
           expect(err).to.be.an.instanceof(Error)
-          expect(err.message).to.equal("Header 'location' does not match pattern '/^\\/path\\/\\d+$/' in HTTP response")
+          expect(err.message).to.equal("Header 'location' not present in HTTP response")
         })
+        .toss()
+    })
+
+    it('should fail when multiple same-name headers match', function () {
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectOneHeader('Set-Cookie',/123/)
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(Error)
+          expect(err.message).to.equal("Header 'set-cookie' present more than once in HTTP response")
+        })
+        .toss()
+    })
+  })
+
+  describe('expectAnyHeader with regex', function(){
+    it('should pass when one of multiple same-name headers matches', function () {
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectAnyHeader('Set-Cookie',/123/)
+        .expectAnyHeader('Set-Cookie',/456/)
+        .toss()
+    })
+  })
+
+  describe('expectOneHeaderContains', function () {
+    it('should pass when the header value passed exactly matches the content', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['content-type', 'application/json', 'content-length', '7'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectOneHeaderContains('content-type','application/json')
+        .toss()
+    })
+
+    it('should pass when the header value passed is a substring of the content', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['content-type', 'application/json', 'content-length', '7'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectOneHeaderContains('content-type','json')
+        .toss()
+    })
+
+    it('should fail when multiple same-name headers are found', function () {
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectOneHeaderContains('Set-Cookie','a=')
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(Error)
+          expect(err.message).to.equal("Header 'set-cookie' present more than once in HTTP response")
+        })
+        .toss()
+    })
+  })
+
+  describe('expectAnyHeaderContains', function(){
+    it('should pass when one of multiple same-name headers contains the string', function () {
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectAnyHeaderContains('Set-Cookie','a=')
+        .expectAnyHeaderContains('Set-Cookie','456')
         .toss()
     })
   })
@@ -1479,7 +1601,7 @@ describe('Frisby matchers', function() {
         .toss()
     })
 
-    it('expectHeaderToMatch should not match when the case is mismatched', function(){
+    it('expectHeader with regex should not match when the case is mismatched', function(){
       nock('http://example.com')
         .post('/path')
         .reply(201, "The payload", {'myHEADER': 'myVALUE'})
@@ -1487,7 +1609,7 @@ describe('Frisby matchers', function() {
       frisby.create(this.test.title)
         .post('http://example.com/path')
         .expectStatus(201)
-        .expectHeaderToMatch('MYheader', /MYvalue/)
+        .expectHeader('MYheader', /MYvalue/)
         .exceptionHandler(err => {
           // TODO How can I assert that this method is called?
           expect(err).to.be.an.instanceof(AssertionError)
@@ -1496,7 +1618,7 @@ describe('Frisby matchers', function() {
         .toss()
     })
 
-    it('expectHeaderToMatch should match when the case is mismatched and the regex is case-insensitive', function(){
+    it('expectHeader with regex should match when the case is mismatched and the regex is case-insensitive', function(){
       nock('http://example.com')
         .post('/path')
         .reply(201, "The payload", {'myHEADER': 'myVALUE'})
@@ -1504,11 +1626,11 @@ describe('Frisby matchers', function() {
       frisby.create(this.test.title)
         .post('http://example.com/path')
         .expectStatus(201)
-        .expectHeaderToMatch('MYheader', /MYvalue/i)
+        .expectHeader('MYheader', /MYvalue/i)
         .toss()
     })
 
-    it('expectHeaderToMatch should match when the case is matched', function(){
+    it('expectHeader with regex should match when the case is matched', function(){
       nock('http://example.com')
         .post('/path')
         .reply(201, "The payload", {'myHEADER': 'myVALUE'})
@@ -1516,7 +1638,7 @@ describe('Frisby matchers', function() {
       frisby.create(this.test.title)
         .post('http://example.com/path')
         .expectStatus(201)
-        .expectHeaderToMatch('MYheader', /myVALUE/)
+        .expectHeader('MYheader', /myVALUE/)
         .toss()
     })
   })
