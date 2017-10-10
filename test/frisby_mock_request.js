@@ -1437,4 +1437,87 @@ describe('Frisby matchers', function() {
     })
   })
 
+  describe('header checks should ignore case on field names and match case for values', function(){
+    it('expectHeader should match when the case is mismatched', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, "The payload", {'myHEADER': 'myVALUE'})
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectStatus(201)
+        .expectHeader('MYheader', 'MYvalue')
+        .toss()
+    })
+
+    it('expectNoHeader should detect header when the case is mismatched', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, "The payload", {'myHEADER': 'myVALUE'})
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectStatus(201)
+        .expectNoHeader('MYheader')
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(AssertionError)
+          expect(err.message).to.equal("expected { myheader: 'myVALUE' } to not have property 'myheader'")
+        })
+        .toss()
+    })
+
+    it('expectHeaderContains should match when the case is mismatched', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, "The payload", {'myHEADER': 'myVALUE'})
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectStatus(201)
+        .expectHeaderContains('MYheader', 'MYvalue')
+        .toss()
+    })
+
+    it('expectHeaderToMatch should not match when the case is mismatched', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, "The payload", {'myHEADER': 'myVALUE'})
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectStatus(201)
+        .expectHeaderToMatch('MYheader', /MYvalue/)
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(AssertionError)
+          expect(err.message).to.equal("expected 'myVALUE' to match /MYvalue/")
+        })
+        .toss()
+    })
+
+    it('expectHeaderToMatch should match when the case is mismatched and the regex is case-insensitive', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, "The payload", {'myHEADER': 'myVALUE'})
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectStatus(201)
+        .expectHeaderToMatch('MYheader', /MYvalue/i)
+        .toss()
+    })
+
+    it('expectHeaderToMatch should match when the case is matched', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, "The payload", {'myHEADER': 'myVALUE'})
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectStatus(201)
+        .expectHeaderToMatch('MYheader', /myVALUE/)
+        .toss()
+    })
+  })
 })
