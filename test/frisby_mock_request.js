@@ -1179,7 +1179,7 @@ describe('Frisby matchers', function() {
   })
 
   describe('Aliased functions backwards compatibility', function(){
-    it('should allow the use of expectHeaderToMatch as an alias for expectOneHeader', function(){
+    it('should allow the use of expectHeaderToMatch as an alias for expectHeader', function(){
       nock('http://example.com')
         .post('/path')
         .reply(201, "The payload", {'myheader': 'myvalue'})
@@ -1190,33 +1190,115 @@ describe('Frisby matchers', function() {
         .expectHeaderToMatch('myheader', /myvalue/)
         .toss()
     })
+  })
 
-    it('should allow the use of expectHeaderContains as an alias for expectOneHeaderContains', function(){
+  describe('expectHeader with string', function(){
+    //This feels like it's covered in other places, but not explicitly. Included for completeness
+    it('should pass when the header value passed exactly matches the content', function(){
       nock('http://example.com')
         .post('/path')
-        .reply(201, "The payload", {'myheader': 'myvalue'})
+        .reply(201, 'Payload', ['content-type', 'application/json', 'content-length', '7'])
 
       frisby.create(this.test.title)
         .post('http://example.com/path')
-        .expectStatus(201)
-        .expectHeaderContains('myheader', 'valu')
+        .expectHeader('content-type','application/json')
         .toss()
     })
 
-    it('should allow the use of expectHeader as an alias for expectOneHeader', function(){
+    it('should fail when the header value passed is a substring of the content', function(){
       nock('http://example.com')
         .post('/path')
-        .reply(201, "The payload", {'myheader': 'myvalue'})
+        .reply(201, 'Payload', ['content-type', 'application/json', 'content-length', '7'])
 
       frisby.create(this.test.title)
         .post('http://example.com/path')
-        .expectStatus(201)
-        .expectHeader('myheader', 'myvalue')
+        .expectHeader('content-type','json')
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(Error)
+          expect(err.message).to.equal("expected an element of [ 'application/json' ] to equal 'json'")
+        })
+        .toss()
+    })
+
+    it('should fail when the header is not present', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['content-type', 'application/json', 'content-length', '7'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeader('Host','example.com')
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(Error)
+          expect(err.message).to.equal("Header 'host' not present in HTTP response")
+        })
+        .toss()
+    })
+
+    it('should fail when the content is not a string or regex', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['content-type', 'application/json', 'content-length', '7'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeader('content-type',200)
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(Error)
+          expect(err.message).to.equal("Content '200' is neither a string or regex")
+        })
+        .toss()
+    })
+
+    it('should fail when multiple same-name headers match and the allowMultipleHeaders option is not passed', function () {
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeader('Set-Cookie','a=123')
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(Error)
+          expect(err.message).to.equal("Header 'set-cookie' present more than once in HTTP response. Pass {allowMultipleHeaders: true} in options if this is expected.")
+        })
+        .toss()
+    })
+
+    it('should fail when multiple same-name headers match and the allowMultipleHeaders option is false', function () {
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeader('Set-Cookie','a=123',{allowMultipleHeaders: false})
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(Error)
+          expect(err.message).to.equal("Header 'set-cookie' present more than once in HTTP response. Pass {allowMultipleHeaders: true} in options if this is expected.")
+        })
+        .toss()
+    })
+
+    it('should pass when one of multiple same-name headers matches and the allowMultipleHeaders option is true', function () {
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeader('Set-Cookie','a=123',{allowMultipleHeaders: true})
+        .expectHeader('Set-Cookie','b=456',{allowMultipleHeaders: true})
         .toss()
     })
   })
 
-  describe('expectOneHeader with regex', function () {
+  describe('expectHeader with regex', function () {
     it('should pass when regex matches', function() {
       nock('http://httpbin.org', { allowUnmocked: true })
         .post('/path')
@@ -1226,7 +1308,7 @@ describe('Frisby matchers', function() {
       frisby.create(this.test.title)
         .post('http://httpbin.org/path', {foo: 'bar'})
         .expectStatus(201)
-        .expectOneHeader('location', /^\/path\/\d+$/)
+        .expectHeader('location', /^\/path\/\d+$/)
         .toss()
     })
 
@@ -1237,11 +1319,11 @@ describe('Frisby matchers', function() {
 
       frisby.create(this.test.title)
         .post('http://example.com/path')
-        .expectOneHeader('location', /^\/path\/\d+$/)
+        .expectHeader('location', /^\/path\/\d+$/)
         .exceptionHandler(err => {
           // TODO How can I assert that this method is called?
           expect(err).to.be.an.instanceof(AssertionError)
-          expect(err.message).to.equal("expected '/something-else/23' to match /^\\/path\\/\\d+$/")
+          expect(err.message).to.equal("expected an element of [ '/something-else/23' ] to match /^\\/path\\/\\d+$/")
         })
         .toss()
     })
@@ -1253,7 +1335,7 @@ describe('Frisby matchers', function() {
 
       frisby.create(this.test.title)
         .post('http://example.com/path')
-        .expectOneHeader('location', /^\/path\/\d+$/)
+        .expectHeader('location', /^\/path\/\d+$/)
         .exceptionHandler(err => {
           // TODO How can I assert that this method is called?
           expect(err).to.be.an.instanceof(Error)
@@ -1262,38 +1344,52 @@ describe('Frisby matchers', function() {
         .toss()
     })
 
-    it('should fail when multiple same-name headers match', function () {
+    it('should fail when multiple same-name headers match and the allowMultipleHeaders option is not passed', function () {
       nock('http://example.com')
         .post('/path')
         .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
 
       frisby.create(this.test.title)
         .post('http://example.com/path')
-        .expectOneHeader('Set-Cookie',/123/)
+        .expectHeader('Set-Cookie',/123/)
         .exceptionHandler(err => {
           // TODO How can I assert that this method is called?
           expect(err).to.be.an.instanceof(Error)
-          expect(err.message).to.equal("Header 'set-cookie' present more than once in HTTP response")
+          expect(err.message).to.equal("Header 'set-cookie' present more than once in HTTP response. Pass {allowMultipleHeaders: true} in options if this is expected.")
         })
         .toss()
     })
-  })
 
-  describe('expectAnyHeader with regex', function(){
-    it('should pass when one of multiple same-name headers matches', function () {
+    it('should fail when multiple same-name headers match and the allowMultipleHeaders option is false', function () {
       nock('http://example.com')
         .post('/path')
         .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
 
       frisby.create(this.test.title)
         .post('http://example.com/path')
-        .expectAnyHeader('Set-Cookie',/123/)
-        .expectAnyHeader('Set-Cookie',/456/)
+        .expectHeader('Set-Cookie',/123/,{allowMultipleHeaders: false})
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(Error)
+          expect(err.message).to.equal("Header 'set-cookie' present more than once in HTTP response. Pass {allowMultipleHeaders: true} in options if this is expected.")
+        })
+        .toss()
+    })
+
+    it('should pass when one of multiple same-name headers matches and the allowMultipleHeaders option is true', function () {
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeader('Set-Cookie',/123/,{allowMultipleHeaders: true})
+        .expectHeader('Set-Cookie',/456/,{allowMultipleHeaders: true})
         .toss()
     })
   })
 
-  describe('expectOneHeaderContains', function () {
+  describe('expectHeaderContains', function () {
     it('should pass when the header value passed exactly matches the content', function(){
       nock('http://example.com')
         .post('/path')
@@ -1301,7 +1397,7 @@ describe('Frisby matchers', function() {
 
       frisby.create(this.test.title)
         .post('http://example.com/path')
-        .expectOneHeaderContains('content-type','application/json')
+        .expectHeaderContains('content-type','application/json')
         .toss()
     })
 
@@ -1312,37 +1408,51 @@ describe('Frisby matchers', function() {
 
       frisby.create(this.test.title)
         .post('http://example.com/path')
-        .expectOneHeaderContains('content-type','json')
+        .expectHeaderContains('content-type','json')
         .toss()
     })
 
-    it('should fail when multiple same-name headers are found', function () {
+    it('should fail when multiple same-name headers are found and the allowMultipleHeaders option is not passed', function () {
       nock('http://example.com')
         .post('/path')
         .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
 
       frisby.create(this.test.title)
         .post('http://example.com/path')
-        .expectOneHeaderContains('Set-Cookie','a=')
+        .expectHeaderContains('Set-Cookie','a=')
         .exceptionHandler(err => {
           // TODO How can I assert that this method is called?
           expect(err).to.be.an.instanceof(Error)
-          expect(err.message).to.equal("Header 'set-cookie' present more than once in HTTP response")
+          expect(err.message).to.equal("Header 'set-cookie' present more than once in HTTP response. Pass {allowMultipleHeaders: true} in options if this is expected.")
         })
         .toss()
     })
-  })
 
-  describe('expectAnyHeaderContains', function(){
-    it('should pass when one of multiple same-name headers contains the string', function () {
+    it('should fail when multiple same-name headers are found and the allowMultipleHeaders option is false', function () {
       nock('http://example.com')
         .post('/path')
         .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
 
       frisby.create(this.test.title)
         .post('http://example.com/path')
-        .expectAnyHeaderContains('Set-Cookie','a=')
-        .expectAnyHeaderContains('Set-Cookie','456')
+        .expectHeaderContains('Set-Cookie','a=',{allowMultipleHeaders: false})
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(Error)
+          expect(err.message).to.equal("Header 'set-cookie' present more than once in HTTP response. Pass {allowMultipleHeaders: true} in options if this is expected.")
+        })
+        .toss()
+    })
+
+    it('should pass when one of multiple same-name headers contains the string and the allowMultipleHeaders option is true', function () {
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeaderContains('Set-Cookie','a=',{allowMultipleHeaders: true})
+        .expectHeaderContains('Set-Cookie','456',{allowMultipleHeaders: true})
         .toss()
     })
   })
@@ -1613,7 +1723,7 @@ describe('Frisby matchers', function() {
         .exceptionHandler(err => {
           // TODO How can I assert that this method is called?
           expect(err).to.be.an.instanceof(AssertionError)
-          expect(err.message).to.equal("expected 'myVALUE' to match /MYvalue/")
+          expect(err.message).to.equal("expected an element of [ 'myVALUE' ] to match /MYvalue/")
         })
         .toss()
     })
