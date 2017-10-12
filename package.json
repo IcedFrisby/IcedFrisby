@@ -1,6 +1,6 @@
 {
   "name": "icedfrisby",
-  "version": "1.3.1",
+  "version": "1.4.0",
   "description": "IcedFrisby: REST API Endpoint Testing built on Mocha and Chai",
   "homepage": "https://github.com/RobertHerhold/IcedFrisby",
   "author": "Robert Herhold",

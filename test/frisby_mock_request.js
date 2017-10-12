@@ -1257,6 +1257,34 @@ describe('Frisby matchers', function() {
     })
   })
 
+  describe('expectMaxResponseTime', function () {
+    it('should pass when the time is less than the threshold', function() {
+      nock('http://example.com')
+        .post('/path')
+        .reply(200,'The payload')
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectMaxResponseTime(500)
+        .toss()
+    })
+
+    it('should fail when the time is more than the threshold', function() {
+      nock('http://example.com')
+        .post('/path')
+        .delay(501)
+        .reply(200,'The payload')
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectMaxResponseTime(500)
+        .exceptionHandler(err => {
+          expect(err).to.be.an.instanceof(AssertionError)
+        })
+        .toss()
+    })
+  })
+
   it('afterJSON should be invoked with the body json', function () {
     nock('http://example.com')
       .get('/json')
