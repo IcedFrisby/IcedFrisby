@@ -1390,7 +1390,7 @@ describe('Frisby matchers', function() {
   })
 
   describe('expectHeaderContains', function () {
-    it('should pass when the header value passed exactly matches the content', function(){
+    it('should pass when the value passed exactly matches the header content', function(){
       nock('http://example.com')
         .post('/path')
         .reply(201, 'Payload', ['content-type', 'application/json', 'content-length', '7'])
@@ -1401,7 +1401,7 @@ describe('Frisby matchers', function() {
         .toss()
     })
 
-    it('should pass when the header value passed is a substring of the content', function(){
+    it('should pass when the value passed is a substring of the header content', function(){
       nock('http://example.com')
         .post('/path')
         .reply(201, 'Payload', ['content-type', 'application/json', 'content-length', '7'])
@@ -1409,6 +1409,38 @@ describe('Frisby matchers', function() {
       frisby.create(this.test.title)
         .post('http://example.com/path')
         .expectHeaderContains('content-type','json')
+        .toss()
+    })
+
+    it('should fail when the value passed is not a substring of the header content', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['content-type', 'application/json', 'content-length', '7'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeaderContains('content-type','xml')
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(Error)
+          expect(err.message).to.equal("xml not found in application/json: expected an element of [ 'application/json' ] to satisfy [Function]")
+        })
+        .toss()
+    })
+
+    it('should fail when the header is not present', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['content-type', 'application/json', 'content-length', '7'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeaderContains('Host','example.com')
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(Error)
+          expect(err.message).to.equal("Header 'host' not present in HTTP response")
+        })
         .toss()
     })
 
@@ -1453,6 +1485,22 @@ describe('Frisby matchers', function() {
         .post('http://example.com/path')
         .expectHeaderContains('Set-Cookie','a=',{allowMultipleHeaders: true})
         .expectHeaderContains('Set-Cookie','456',{allowMultipleHeaders: true})
+        .toss()
+    })
+
+    it('should fail when none of multiple same-name headers contains the string', function () {
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeaderContains('Set-Cookie','789',{allowMultipleHeaders: true})
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(Error)
+          expect(err.message).to.equal("789 not found in a=123,b=456: expected an element of [ 'a=123', 'b=456' ] to satisfy [Function]")
+        })
         .toss()
     })
   })
@@ -1669,20 +1717,32 @@ describe('Frisby matchers', function() {
     })
   })
 
-  describe('header checks should ignore case on field names and match case for values', function(){
-    it('expectHeader should match when the case is mismatched', function(){
+  describe('header checks should ignore case for strings', function(){
+    it('expectHeader should pass when the header case is mismatched', function(){
       nock('http://example.com')
         .post('/path')
-        .reply(201, "The payload", {'myHEADER': 'myVALUE'})
+        .reply(201, "The payload", {'myHEADER': 'myvalue'})
 
       frisby.create(this.test.title)
         .post('http://example.com/path')
         .expectStatus(201)
-        .expectHeader('MYheader', 'MYvalue')
+        .expectHeader('MYheader', 'myvalue')
         .toss()
     })
 
-    it('expectNoHeader should detect header when the case is mismatched', function(){
+    it('expectHeader should pass when the content case is mismatched', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, "The payload", {'myheader': 'myVALUE'})
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectStatus(201)
+        .expectHeader('myheader', 'MYvalue')
+        .toss()
+    })
+
+    it('expectNoHeader should fail (detect the header) when the header case is mismatched', function(){
       nock('http://example.com')
         .post('/path')
         .reply(201, "The payload", {'myHEADER': 'myVALUE'})
@@ -1699,19 +1759,31 @@ describe('Frisby matchers', function() {
         .toss()
     })
 
-    it('expectHeaderContains should match when the case is mismatched', function(){
+    it('expectHeaderContains should pass when the header case is mismatched', function(){
       nock('http://example.com')
         .post('/path')
-        .reply(201, "The payload", {'myHEADER': 'myVALUE'})
+        .reply(201, "The payload", {'myHEADER': 'myvalue'})
 
       frisby.create(this.test.title)
         .post('http://example.com/path')
         .expectStatus(201)
-        .expectHeaderContains('MYheader', 'MYvalue')
+        .expectHeaderContains('MYheader', 'myvalue')
         .toss()
     })
 
-    it('expectHeader with regex should not match when the case is mismatched', function(){
+    it('expectHeaderContains should pass when the content case is mismatched', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, "The payload", {'myheader': 'myVALUE'})
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectStatus(201)
+        .expectHeaderContains('myheader', 'MYvalue')
+        .toss()
+    })
+
+    it('expectHeader with regex should fail when the content case is mismatched', function(){
       nock('http://example.com')
         .post('/path')
         .reply(201, "The payload", {'myHEADER': 'myVALUE'})
@@ -1728,7 +1800,7 @@ describe('Frisby matchers', function() {
         .toss()
     })
 
-    it('expectHeader with regex should match when the case is mismatched and the regex is case-insensitive', function(){
+    it('expectHeader with regex should pass when the case is mismatched and the regex is case-insensitive', function(){
       nock('http://example.com')
         .post('/path')
         .reply(201, "The payload", {'myHEADER': 'myVALUE'})
@@ -1740,7 +1812,7 @@ describe('Frisby matchers', function() {
         .toss()
     })
 
-    it('expectHeader with regex should match when the case is matched', function(){
+    it('expectHeader with regex should pass when the case is matched', function(){
       nock('http://example.com')
         .post('/path')
         .reply(201, "The payload", {'myHEADER': 'myVALUE'})
