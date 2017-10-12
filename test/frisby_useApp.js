@@ -44,7 +44,7 @@ describe('IcedFrisby useApp(app)', function() {
         .get('/')
         .expectStatus(200)
         .expectBodyContains('^.^')
-        .after(() => { server.close(); })
+        .after(() => { server.close() })
         .toss()
     })
   })
