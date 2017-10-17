@@ -1205,7 +1205,8 @@ describe('Frisby matchers', function() {
         .retry(1, 50)
         .expectStatus(200)
 
-      expect(test._mochaTimeout()).to.equal(75 + 50 + 75 + 100)
+      const gracePeriodMillis = 25
+      expect(test._mochaTimeout()).to.equal(75 + 50 + 75 + gracePeriodMillis)
 
       test.toss()
     })
