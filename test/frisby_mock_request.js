@@ -1171,7 +1171,6 @@ describe('Frisby matchers', function() {
         .get('http://example.com/fail-once')
         .retry(1, expectedBackoffMillis)
         .after(() => {
-          // TODO How can I assert that this method is called?
           const [seconds, nanoseconds] = secondRequestTime
           const timeBetweenRequestsMillis = 1e3 * seconds + 1e-6 * nanoseconds
 
