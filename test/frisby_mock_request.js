@@ -1098,7 +1098,7 @@ describe('Frisby matchers', function() {
 
       const requestTimeoutMillis = 123
 
-      const test = frisby.create(this.test.title)
+      frisby.create(this.test.title)
         .get('http://example.com/just-dont-come-back-1')
         .timeout(requestTimeoutMillis)
         .exceptionHandler(err => {
@@ -1116,11 +1116,7 @@ describe('Frisby matchers', function() {
             requestTimeoutMillis - assertionGracePeriodMillis[0],
             requestTimeoutMillis + assertionGracePeriodMillis[1])
         })
-
-      // Prevent Mocha from killing the test.
-      test._mochaTimeout = () => 5000
-
-      test.toss()
+        .toss()
     })
 
     it('should retry the expected number of times after a timeout', function () {
@@ -1136,19 +1132,15 @@ describe('Frisby matchers', function() {
 
       const retryCount = 4
 
-      const test = frisby.create(this.test.title)
+      frisby.create(this.test.title)
         .get('http://example.com/just-dont-come-back-2')
         .timeout(5)
-        .retry(retryCount)
+        .retry(retryCount, 0)
         .exceptionHandler(err => {
           // TODO How can I assert that this method is called?
           expect(actualRequestCount).to.equal(retryCount + 1)
         })
-
-      // Prevent Mocha from killing the test.
-      test._mochaTimeout = () => 5000
-
-      test.toss()
+        .toss()
     })
 
     it('should delay retries by the backoff amount', function () {
@@ -1159,17 +1151,15 @@ describe('Frisby matchers', function() {
       nock('http://example.com')
         .get('/fail-once')
         .twice()
-        .reply((uri, requestBody, callback) => {
+        .reply((uri, requestBody) => {
           actualRequestCount += 1
           switch (actualRequestCount) {
             case 1:
               firstRequestTime = process.hrtime()
-              callback(Error('Fake server error'))
-              break;
+              return [500, 'Fake server error']
             case 2:
               secondRequestTime = process.hrtime(firstRequestTime)
-              callback(null, [200])
-              break;
+              return [200]
             default:
               throw Error('Expected only two requests')
           }
@@ -1177,7 +1167,7 @@ describe('Frisby matchers', function() {
 
       const expectedBackoffMillis = 123
 
-      const test = frisby.create(this.test.title)
+      frisby.create(this.test.title)
         .get('http://example.com/fail-once')
         .retry(1, expectedBackoffMillis)
         .after(() => {
@@ -1190,11 +1180,7 @@ describe('Frisby matchers', function() {
             expectedBackoffMillis,
             expectedBackoffMillis + assertionGracePeriodMillis)
         })
-
-      // Prevent Mocha from killing the test.
-      test._mochaTimeout = () => 5000
-
-      test.toss()
+        .toss()
     })
 
     it('should pass the expected timeout to mocha, and not cause mocha to time out', function () {
@@ -1204,17 +1190,12 @@ describe('Frisby matchers', function() {
         .get('/fail-four-times')
         .delay(50)
         .twice()
-        .reply((uri, requestBody, callback) => {
+        .reply((uri, requestBody) => {
           requestCount += 1
           switch (requestCount) {
-            case 1:
-              callback(Error('Fake server error'))
-              break;
-            case 2:
-              callback(null, [200])
-              break;
-            default:
-              throw Error('Expected only two requests')
+            case 1: return [500, 'Fake server error']
+            case 2: return [200]
+            default: throw Error('Expected only two requests')
           }
         })
 
