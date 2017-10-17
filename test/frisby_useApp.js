@@ -1,20 +1,20 @@
 'use strict'
 
-var fs = require('fs')
-var https = require('https')
-var path = require('path')
-var frisby = require('./../lib/icedfrisby')
-var express = require('express')
+const fs = require('fs')
+const https = require('https')
+const path = require('path')
+const frisby = require('./../lib/icedfrisby')
+const express = require('express')
 
-var chai = require('chai')
-var expect = chai.expect
+const chai = require('chai')
+const expect = chai.expect
 
 // The following tests were adapted from:
 // https://github.com/visionmedia/supertest/blob/master/test/supertest.js
 
 describe('IcedFrisby useApp(app)', function() {
   it('should start the http server on an ephemeral port', function() {
-    var app = express()
+    const app = express()
 
     app.get('/', function(req, res) {
       res.send('^.^')
@@ -32,7 +32,7 @@ describe('IcedFrisby useApp(app)', function() {
   })
 
   it('should work with an active http server', function() {
-    var app = express()
+    const app = express()
 
     app.get('/', function(req, res) {
       res.send('^.^')
@@ -53,14 +53,14 @@ describe('IcedFrisby useApp(app)', function() {
     // Attn Everyone: DO NOT USE THIS IN PRODUCTION
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 
-    var app = express()
+    const app = express()
 
     app.get('/', function(req, res) {
       res.send('^.^')
     })
 
-    var fixtures = path.join(__dirname, '../', 'test', 'fixtures')
-    var server = https.createServer({
+    const fixtures = path.join(__dirname, '../', 'test', 'fixtures')
+    const server = https.createServer({
       key: fs.readFileSync(path.join(fixtures, 'test_key.pem')),
       cert: fs.readFileSync(path.join(fixtures, 'test_cert.pem'))
     }, app)
@@ -78,14 +78,14 @@ describe('IcedFrisby useApp(app)', function() {
     // Attn Everyone: DO NOT USE THIS IN PRODUCTION
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 
-    var app = express()
+    const app = express()
 
     app.get('/', function(req, res) {
       res.send('^.^')
     })
 
-    var fixtures = path.join(__dirname, '../', 'test', 'fixtures')
-    var server = https.createServer({
+    const fixtures = path.join(__dirname, '../', 'test', 'fixtures')
+    const server = https.createServer({
       key: fs.readFileSync(path.join(fixtures, 'test_key.pem')),
       cert: fs.readFileSync(path.join(fixtures, 'test_cert.pem'))
     }, app).listen()
@@ -99,9 +99,9 @@ describe('IcedFrisby useApp(app)', function() {
   })
 
   it('should throw an exception if app is not defined', function() {
-    var self = this
+    const self = this
 
-    var fn = function() {
+    const fn = function() {
       frisby.create(self.test.title)
         .useApp(undefined)
         .toss()

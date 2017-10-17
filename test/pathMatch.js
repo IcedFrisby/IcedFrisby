@@ -1,10 +1,10 @@
 'use strict'
 
-var pm = require('../lib/pathMatch')
+const pm = require('../lib/pathMatch')
 
-var Joi = require('joi')
+const Joi = require('joi')
 
-var chai = require('chai')
+const chai = require('chai')
 chai.should() // setup should assertions
 chai.use(require('chai-things'))
 // chai.config.includeStack = true;
@@ -12,8 +12,8 @@ global.expect = chai.expect
 
 
 // JSON to use in mock tests
-var fixtures = require('./fixtures/repetition_fixture.json')
-var usersFixture = require('./fixtures/users_fixture.json')
+const fixtures = require('./fixtures/repetition_fixture.json')
+const usersFixture = require('./fixtures/users_fixture.json')
 
 
 //
@@ -21,7 +21,7 @@ var usersFixture = require('./fixtures/users_fixture.json')
 //
 describe('Path traversal', function() {
   it('should fail on a bad path', function() {
-    var fn = function() {
+    const fn = function() {
       // apply path is not exposed, so we will just use matchJSON, which calls it
       pm.matchJSON({
         jsonBody: { a: { } },
@@ -51,14 +51,14 @@ describe('Path match JSON', function() {
 
   describe('Sanity error checking', function() {
     it('should fail if nothing is provided', function() {
-      var fn = function() {
+      const fn = function() {
         pm.matchJSON()
       }
       expect(fn).to.throw('Data to match is not defined')
     })
 
     it('should fail if no jsonBody is provided', function() {
-      var fn = function() {
+      const fn = function() {
         pm.matchJSON({
           jsonBody: undefined,
           jsonTest: {}
@@ -68,7 +68,7 @@ describe('Path match JSON', function() {
     })
 
     it('should fail if no jsonTest is provided', function() {
-      var fn = function() {
+      const fn = function() {
         pm.matchJSON({
           jsonBody: {},
           jsonTest: undefined
@@ -90,7 +90,7 @@ describe('Path match JSON', function() {
   })
 
   it('should detect a mismatching object', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchJSON({
         jsonBody: {},
         jsonTest: true
@@ -123,7 +123,7 @@ describe('Path match JSON', function() {
   })
 
   it('should not match any objects in an array with a \'?\' path', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchJSON({
         jsonBody: fixtures.differentNumbers,
         jsonTest: {
@@ -145,7 +145,7 @@ describe('Path match JSON', function() {
   })
 
   it('should not match any objects in an array with a \'*\' path', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchJSON({
         jsonBody: fixtures.sameNumbers,
         jsonTest: {
@@ -167,7 +167,7 @@ describe('Path match JSON', function() {
   })
 
   it('should not match one object in an array with an \'array.?\' path', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchJSON({
         jsonBody: fixtures,
         jsonTest: {
@@ -189,7 +189,7 @@ describe('Path match JSON', function() {
   })
 
   it('should not match any objects in an array with an \'array.*\' path', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchJSON({
         jsonBody: fixtures,
         jsonTest: {
@@ -203,7 +203,7 @@ describe('Path match JSON', function() {
   })
 
   it('should not allow an empty array with a \'?\' path', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchJSON({
         jsonBody: [],
         jsonTest: {
@@ -224,14 +224,14 @@ describe('Path match JSON', function() {
 describe('Path match Contains JSON', function() {
   describe('Sanity error checking', function() {
     it('should fail if nothing is provided', function() {
-      var fn = function() {
+      const fn = function() {
         pm.matchContainsJSON()
       }
       expect(fn).to.throw('Data to match is not defined')
     })
 
     it('should fail if no jsonBody is provided', function() {
-      var fn = function() {
+      const fn = function() {
         pm.matchContainsJSON({
           jsonBody: undefined,
           jsonTest: {}
@@ -241,7 +241,7 @@ describe('Path match Contains JSON', function() {
     })
 
     it('should fail if no jsonTest is provided', function() {
-      var fn = function() {
+      const fn = function() {
         pm.matchContainsJSON({
           jsonBody: {},
           jsonTest: undefined
@@ -263,7 +263,7 @@ describe('Path match Contains JSON', function() {
   })
 
   it('should not match a simple json object', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchContainsJSON({
         jsonBody: {},
         jsonTest: { bad: true }
@@ -281,7 +281,7 @@ describe('Path match Contains JSON', function() {
   })
 
   it('should not match a non-Array/Object in the body field', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchContainsJSON({
         jsonBody: true,
         jsonTest: {}
@@ -291,7 +291,7 @@ describe('Path match Contains JSON', function() {
   })
 
   it('should not match a non-Array/Object in the body field', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchContainsJSON({
         jsonBody: 111,
         jsonTest: {}
@@ -301,7 +301,7 @@ describe('Path match Contains JSON', function() {
   })
 
   it('should not match a non-Array/Object in the test field', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchContainsJSON({
         jsonBody: {},
         jsonTest: true
@@ -311,7 +311,7 @@ describe('Path match Contains JSON', function() {
   })
 
   it('should not match a non-Array/Object in the test field', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchContainsJSON({
         jsonBody: {},
         jsonTest: 111
@@ -330,7 +330,7 @@ describe('Path match Contains JSON', function() {
   })
 
   it('should not match any objects in an array with a \'?\' path', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchContainsJSON({
         jsonBody: fixtures.differentNumbers,
         jsonTest: {
@@ -344,7 +344,7 @@ describe('Path match Contains JSON', function() {
   })
 
   it('should not match any objects in a single element array with a \'?\' path', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchContainsJSON({
         jsonBody: [{ num: 6 }],
         jsonTest: {
@@ -366,7 +366,7 @@ describe('Path match Contains JSON', function() {
   })
 
   it('should not match any objects in an array with a \'*\' path', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchContainsJSON({
         jsonBody: fixtures.sameNumbers,
         jsonTest: {
@@ -388,7 +388,7 @@ describe('Path match Contains JSON', function() {
   })
 
   it('should not match one object in an array with an \'array.?\' path', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchContainsJSON({
         jsonBody: fixtures,
         jsonTest: {
@@ -419,7 +419,7 @@ describe('Path match Contains JSON', function() {
   })
 
   it('should not match any objects in an array with an \'array.*\' path', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchContainsJSON({
         jsonBody: fixtures,
         jsonTest: {
@@ -433,7 +433,7 @@ describe('Path match Contains JSON', function() {
   })
 
   it('should not match an empty array with a \'?\' path', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchContainsJSON({
         jsonBody: [],
         jsonTest: {
@@ -497,7 +497,7 @@ describe('Path match Contains JSON', function() {
 
       // NOTE: the first user has a password and salt field. No other users do.
 
-      var fn = function() {
+      const fn = function() {
         pm.matchContainsJSON({
           jsonBody: usersFixture.users[0],
           jsonTest: {
@@ -514,7 +514,7 @@ describe('Path match Contains JSON', function() {
 
       // NOTE: the first user has a password and salt field. No other users do.
 
-      var fn = function() {
+      const fn = function() {
         pm.matchContainsJSON({
           jsonBody: usersFixture.users[0],
           jsonTest: {
@@ -551,14 +551,14 @@ describe('Path match JSON Types', function() {
 
   describe('Sanity error checking', function() {
     it('should fail if nothing is provided', function() {
-      var fn = function() {
+      const fn = function() {
         pm.matchJSON()
       }
       expect(fn).to.throw('Data to match is not defined')
     })
 
     it('should fail if no jsonBody is provided', function() {
-      var fn = function() {
+      const fn = function() {
         pm.matchJSON({
           jsonBody: undefined,
           jsonTest: {}
@@ -568,7 +568,7 @@ describe('Path match JSON Types', function() {
     })
 
     it('should fail if no jsonTest is provided', function() {
-      var fn = function() {
+      const fn = function() {
         pm.matchJSON({
           jsonBody: {},
           jsonTest: undefined
@@ -595,7 +595,7 @@ describe('Path match JSON Types', function() {
   })
 
   it('should disallow an invalid simple object', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchJSONTypes({
         jsonBody: fixtures.singleObject,
         jsonTest: {
@@ -636,7 +636,7 @@ describe('Path match JSON Types', function() {
   })
 
   it('should not allow any objects in an array with a \'?\' path', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchJSONTypes({
         jsonBody: fixtures.differentNumbers,
         jsonTest: {
@@ -660,7 +660,7 @@ describe('Path match JSON Types', function() {
   })
 
   it('should not allow any objects with a \'*\' path', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchJSONTypes({
         jsonBody: fixtures.differentNumbers,
         jsonTest: {
@@ -684,7 +684,7 @@ describe('Path match JSON Types', function() {
   })
 
   it('should not allow any objects in an array with an \'array.?\' path', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchJSONTypes({
         jsonBody: fixtures,
         jsonTest: {
@@ -708,7 +708,7 @@ describe('Path match JSON Types', function() {
   })
 
   it('should not allow any objects in an array with an \'array.*\' path', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchJSONTypes({
         jsonBody: fixtures,
         jsonTest: {
@@ -733,7 +733,7 @@ describe('Path match JSON Types', function() {
   })
 
   it('should not allow any object in an array with an \'array.*\' path when isNot is set', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchJSONTypes({
         jsonBody: fixtures,
         jsonTest: {
@@ -748,7 +748,7 @@ describe('Path match JSON Types', function() {
   })
 
   it('should not allow an empty array with a \'?\' path', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchJSONTypes({
         jsonBody: [],
         jsonTest: {
@@ -769,14 +769,14 @@ describe('Path match JSON Types', function() {
 describe('Path match JSON Length', function() {
   describe('Sanity error checking', function() {
     it('should fail if nothing is provided', function() {
-      var fn = function() {
+      const fn = function() {
         pm.matchJSONLength()
       }
       expect(fn).to.throw('Data to match is not defined')
     })
 
     it('should fail if no jsonBody is provided', function() {
-      var fn = function() {
+      const fn = function() {
         pm.matchJSONLength({
           jsonBody: undefined,
           jsonTest: {}
@@ -786,7 +786,7 @@ describe('Path match JSON Length', function() {
     })
 
     it('should fail if no jsonTest is provided', function() {
-      var fn = function() {
+      const fn = function() {
         pm.matchJSONLength({
           jsonBody: {},
           jsonTest: undefined
@@ -842,7 +842,7 @@ describe('Path match JSON Length', function() {
     })
 
     it('should not length match a simple string object with the \'<=\' sign', function() {
-      var fn = function() {
+      const fn = function() {
         pm.matchJSONLength({
           jsonBody: 'hello',
           jsonTest: {
@@ -876,7 +876,7 @@ describe('Path match JSON Length', function() {
     })
 
     it('should not length match a simple string object with the \'<\' sign', function() {
-      var fn = function() {
+      const fn = function() {
         pm.matchJSONLength({
           jsonBody: 'hello',
           jsonTest: {
@@ -900,7 +900,7 @@ describe('Path match JSON Length', function() {
     })
 
     it('should not length match a simple string object with the \'>=\' sign', function() {
-      var fn = function() {
+      const fn = function() {
         pm.matchJSONLength({
           jsonBody: 'hello',
           jsonTest: {
@@ -945,7 +945,7 @@ describe('Path match JSON Length', function() {
     })
 
     it('should not length match a simple string object with the \'>\' sign', function() {
-      var fn = function() {
+      const fn = function() {
         pm.matchJSONLength({
           jsonBody: 'hello',
           jsonTest: {
@@ -980,7 +980,7 @@ describe('Path match JSON Length', function() {
   })
 
   it('should not length match a simple json object', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchJSONLength({
         jsonBody: {},
         jsonTest: {
@@ -992,7 +992,7 @@ describe('Path match JSON Length', function() {
   })
 
   it('should not length match a simple string object', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchJSONLength({
         jsonBody: 'bad',
         jsonTest: {
@@ -1024,7 +1024,7 @@ describe('Path match JSON Length', function() {
   })
 
   it('should not length match any objects in an array with a \'?\' path', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchJSONLength({
         jsonBody: fixtures.differentSizeObjects,
         jsonTest: {
@@ -1038,7 +1038,7 @@ describe('Path match JSON Length', function() {
   })
 
   it('should not length match any objects in a single element array with a \'?\' path', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchJSONLength({
         jsonBody: [{ num: 6 }],
         jsonTest: {
@@ -1062,7 +1062,7 @@ describe('Path match JSON Length', function() {
   })
 
   it('should not length match any objects in an array with a \'*\' path', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchJSONLength({
         jsonBody: fixtures.sameNumbers,
         jsonTest: {
@@ -1086,7 +1086,7 @@ describe('Path match JSON Length', function() {
   })
 
   it('should not length match one object in an array with an \'array.?\' path', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchJSONLength({
         jsonBody: fixtures,
         jsonTest: {
@@ -1121,7 +1121,7 @@ describe('Path match JSON Length', function() {
   })
 
   it('should not length match any objects in an array with an \'array.*\' path', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchJSONLength({
         jsonBody: fixtures,
         jsonTest: {
@@ -1135,7 +1135,7 @@ describe('Path match JSON Length', function() {
   })
 
   it('should not length match all objects in an array with a \'*\' path and isNot set', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchJSONLength({
         jsonBody: fixtures.sameNumbers,
         jsonTest: {
@@ -1150,7 +1150,7 @@ describe('Path match JSON Length', function() {
   })
 
   it('should not length match an empty array with a \'?\' path', function() {
-    var fn = function() {
+    const fn = function() {
       pm.matchJSONLength({
         jsonBody: [],
         jsonTest: {

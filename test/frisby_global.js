@@ -1,7 +1,7 @@
 'use strict'
 
-var path = require('path')
-var frisby = require('../lib/icedfrisby')
+const path = require('path')
+const frisby = require('../lib/icedfrisby')
 
 describe('Frisby object setup', function() {
 
@@ -17,7 +17,7 @@ describe('Frisby object setup', function() {
   })
 
   it('should have empty request properties on creation', function() {
-    var f1 = frisby.create('test 1')
+    const f1 = frisby.create('test 1')
 
     expect(f1.current.request).to.deep.equal({
       headers: {},
@@ -28,8 +28,8 @@ describe('Frisby object setup', function() {
   })
 
   it('should be independent of other Frisby objects', function() {
-    var f1 = frisby.create('test 1')
-    var f2 = frisby.create('test 2')
+    const f1 = frisby.create('test 1')
+    const f2 = frisby.create('test 2')
 
     // Equal setup
     expect(f1.current.request).to.deep.equal(f2.current.request)
@@ -69,7 +69,7 @@ describe('Frisby object setup', function() {
   })
 
   it('should be able to add and remove headers', function() {
-    var f1 = frisby.create('test 1')
+    const f1 = frisby.create('test 1')
 
     // Add header only to f1
     f1.addHeaders({
@@ -89,7 +89,7 @@ describe('Frisby object setup', function() {
   })
 
   it('should be overrite headers with the same key', function() {
-    var f1 = frisby.create('test 1')
+    const f1 = frisby.create('test 1')
 
     // Add header only to f1
     f1.addHeaders({

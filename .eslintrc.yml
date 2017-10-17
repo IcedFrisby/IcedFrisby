@@ -19,6 +19,7 @@ rules:
   no-trailing-spaces: "error"
   eol-last: "error"
   prefer-const: "error"
+  no-var: "error"
 
   # Disable a couple rules from eslint:recommended.
   no-unused-vars: ["error", {"args": "none"}]

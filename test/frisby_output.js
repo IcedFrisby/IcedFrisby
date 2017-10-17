@@ -10,8 +10,8 @@ const frisby = require('../lib/icedfrisby')
 //
 
 // Test global setup
-var defaultGlobalSetup = frisby.globalSetup()
-var mockGlobalSetup = function() {
+const defaultGlobalSetup = frisby.globalSetup()
+const mockGlobalSetup = function() {
   frisby.globalSetup({
     timeout: 3000,
     request: {
@@ -23,12 +23,12 @@ var mockGlobalSetup = function() {
     }
   })
 }
-var restoreGlobalSetup = function() {
+const restoreGlobalSetup = function() {
   frisby.globalSetup(defaultGlobalSetup)
 }
 
 describe('console output', function() {
-  var warning = '\u001b[33m\u001b[1mWARNING - content-type is json but body type is not set\u001b[22m\u001b[39m\n'
+  const warning = '\u001b[33m\u001b[1mWARNING - content-type is json but body type is not set\u001b[22m\u001b[39m\n'
 
   afterEach(restoreGlobalSetup)
 
@@ -41,8 +41,8 @@ describe('console output', function() {
 
     mockGlobalSetup()
 
-    var stdout = ""
-    var unhook = intercept(function(txt) {
+    let stdout = ""
+    const unhook = intercept(function(txt) {
       stdout += txt
     })
 
@@ -66,8 +66,8 @@ describe('console output', function() {
         return requestBody
       })
 
-    var stdout = ""
-    var unhook = intercept(function(txt) {
+    let stdout = ""
+    const unhook = intercept(function(txt) {
       stdout += txt
     })
 
