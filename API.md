@@ -3,10 +3,9 @@
 - [IcedFrisby API Guide](#icedfrisby-api-guide)
 	- [Expectations](#expectations)
 		- [expectStatus(code)](#expectstatuscode)
-		- [expectHeader(key, content)](#expectheaderkey-content)
+		- [expectHeader(key, content, options)](#expectheaderkey-content-options)
 		- [expectNoHeader(key)](#expectnoheaderkey)
-		- [expectHeaderContains(key, content)](#expectheadercontainskey-content)
-		- [expectHeaderToMatch(key, pattern)](#expectheadertomatchkey-pattern)
+		- [expectHeaderContains(key, content, options)](#expectheadercontainskey-content-options)
 		- [expectJSON([path], json)](#expectjsonpath-json)
 		- [expectContainsJSON([path], json)](#expectcontainsjsonpath-json)
 		- [expectJSONTypes([path], schema)](#expectjsontypespath-schema)
@@ -68,17 +67,29 @@ frisby.create('Ensure we are dealing with a teapot')
 .toss()
 ```
 
-### expectHeader(key, content)
-Tests that a single HTTP response header matches the [exact content](http://chaijs.com/api/bdd/#equal). Both
-key and content comparisons are case-insensitive.
+### expectHeader(key, content, options)
+Tests that a single HTTP response header has the [exact content](http://chaijs.com/api/bdd/#equal) or [matches](http://chaijs.com/api/bdd/#method_match) a regex. Key comparisons are case-insensitive. Content comparisons are case-insensitive for strings, case-sensitive for regular expressions.
 
-* Types: `key`: `string`, `content`: `string`
-* Defaults: `none`
+* Types: `key`: `string`, `content`: `string | regex`, `options`: `object` (optional)
+* Defaults: `options`: `{allowMultipleHeaders: false}`
+
+
+String example:
 
 ```javascript
 frisby.create('Ensure response has a proper JSON Content-Type header')
   .get('http://httpbin.org/get')
   .expectHeader('Content-Type', 'application/json')
+.toss();
+
+frisby.create('Ensure response has JSON somewhere in the Content-Type header via regex')
+  .get('http://httpbin.org/get')
+  .expectHeader('Content-Type', /.*json.*/)
+.toss();
+
+frisby.create('Ensure response returns one cookie called "auth"')
+  .post('http://example.com/login', {username: admin, password: example})
+  .expectHeader('Set-Cookie', /^auth=/, {allowMultipleHeaders: true})
 .toss();
 ```
 
@@ -95,32 +106,23 @@ frisby.create('Ensure response has no Set-Cookie header')
 .toss();
 ```
 
-### expectHeaderContains(key, content)
+### expectHeaderContains(key, content, options)
 Tests that a single HTTP response header [contains](http://chaijs.com/api/bdd/#method_include) the specified content. Both key and content comparisons are case-insensitive.
 
-* Types: `key`: `string`, `content`: `string`
-* Defaults: `none`
+* Types: `key`: `string`, `content`: `string`, `options`: `object` (optional)
+* Defaults: `options`: `{allowMultipleHeaders: false}`
 
 ```javascript
 frisby.create('Ensure response has JSON somewhere in the Content-Type header')
   .get('http://httpbin.org/get')
   .expectHeaderContains('Content-Type', 'json')
 .toss();
-```
 
-### expectHeaderToMatch(key, pattern)
-Tests that a HTTP response header [matches](http://chaijs.com/api/bdd/#method_match) the specified regular expression. Key is case-insensitive.
-
-* Types: `key`: `string`, `pattern`: `regex`
-* Defaults: `none`
-
-```javascript
-frisby.create('Ensure response has JSON somewhere in the Content-Type header via regex')
-  .get('http://httpbin.org/get')
-  .expectHeadertoMatch('Content-Type', /.*json.*/)
+frisby.create('Ensure response returns one cookie called "auth"')
+  .post('http://example.com/login', {username: admin, password: example})
+  .expectHeader('Set-Cookie', 'auth=', {allowMultipleHeaders: true})
 .toss();
 ```
-
 
 ### expectJSON([path], json)
 Tests that response body is JSON and [deeply equals](http://chaijs.com/api/bdd/#deep) the provided JSON.
