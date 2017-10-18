@@ -1,6 +1,27 @@
 # IcedFrisby Changelog
 
+[Unreleased]: https://github.com/MarkHerhold/IcedFrisby/compare/1.5.0...HEAD
+[1.5.0]: https://github.com/MarkHerhold/IcedFrisby/compare/1.5.0...1.4.0
+[1.4.0]: https://github.com/MarkHerhold/IcedFrisby/compare/1.4.0...1.3.0
+[1.3.1]: https://github.com/MarkHerhold/IcedFrisby/compare/1.4.0...1.3.0
+[1.3.0]: https://github.com/MarkHerhold/IcedFrisby/compare/1.3.0...1.2.0
+[1.2.0]: https://github.com/MarkHerhold/IcedFrisby/compare/1.2.0...1.1.0
+[1.1.0]: https://github.com/MarkHerhold/IcedFrisby/compare/1.1.0...1.0.0
+
 ## [Unreleased][]
+
+## [1.5.0][]
+
+- Support header checks when multiple same-name headers exist ([PR #73][])
+    - Invoke `expectHeader` or `expectHeaderContains` with a third argument
+      `{ allowMultipleHeaders: true }` to use this functionality.
+- `expectHeader` accepts regexes. `expectHeaderToMatch` is an alias.
+  ([PR #73][])
+- Upgrade Joi to 12.0.0.
+- Drop support for Node 7. Continue support for Node 6 and 8.
+- Improve documentation.
+
+[PR #73]: https://github.com/MarkHerhold/IcedFrisby/pull/70
 
 ## [1.4.0][]
 
@@ -100,10 +121,3 @@
 * Adds expectContainsJSON(...)! Test JSON responses without knowing every field.
 * Uses [lodash](https://github.com/lodash/lodash) instead of underscore
 * Returns a 599 (network timeout error) response if a request times out or is unavailable instead of a 500
-
-[Unreleased]: https://github.com/MarkHerhold/IcedFrisby/compare/1.4.0...HEAD
-[1.4.0]: https://github.com/MarkHerhold/IcedFrisby/compare/1.4.0...1.3.0
-[1.3.1]: https://github.com/MarkHerhold/IcedFrisby/compare/1.4.0...1.3.0
-[1.3.0]: https://github.com/MarkHerhold/IcedFrisby/compare/1.3.0...1.2.0
-[1.2.0]: https://github.com/MarkHerhold/IcedFrisby/compare/1.2.0...1.1.0
-[1.1.0]: https://github.com/MarkHerhold/IcedFrisby/compare/1.1.0...1.0.0
