@@ -29,7 +29,11 @@ Install IcedFrisby and Mocha from NPM:
 
     npm install mocha icedfrisby --save-dev
 
-**Note:** IcedFrisby is built and tested against Node 6 and 7.
+If you are using [Joi][] (i.e. `expectJSONTypes`) install that too:
+
+    npm install joi --save-dev
+
+**Note:** IcedFrisby is built and tested against Node 6 and 8.
 
 ## Show me some code!
 
@@ -39,8 +43,8 @@ Each set of unique sequences or API endpoint tests should be started with new `f
 
 ```javascript
 
-const frisby = require('icedfrisby')  // Get IcedFrisby with `npm install icedfrisby`.
-const Joi = require('joi') // Get Joi with `npm install joi`.
+const frisby = require('icedfrisby')
+const Joi = require('joi')
 
 const URL = 'http://localhost:3000/'
 const URL_AUTH = 'http://username:password@localhost:3000/'
