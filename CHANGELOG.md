@@ -14,7 +14,7 @@
 
 - Support header checks when multiple same-name headers exist ([PR #73][])
     - Invoke `expectHeader` or `expectHeaderContains` with a third argument
-      `{ allowMultipleHeaders: true }` to use this functionality.
+      `{ allowMultipleHeaders: true }`.
 - `expectHeader` accepts regexes. `expectHeaderToMatch` is an alias.
   ([PR #73][])
 - Upgrade Joi to 12.0.0.
