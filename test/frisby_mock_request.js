@@ -1087,57 +1087,51 @@ describe('Frisby matchers', function() {
 
   describe('timeouts and retries', function () {
     it('should fail when timeout() value elapses', function () {
-      let startTime
+      const timeout = 10
 
       nock('http://example.com')
         .get('/just-dont-come-back-1')
-        .reply((uri, requestBody, callback) => {
-          startTime = process.hrtime()
-          // To simulate a timeout, do not invoke the callback.
-        })
+        .delayBody(50) // delay 50ms
+        .reply(200, '<html></html>')
 
-      const requestTimeoutMillis = 123
+      const spy = sinon.spy()
 
       frisby.create(this.test.title)
         .get('http://example.com/just-dont-come-back-1')
-        .timeout(requestTimeoutMillis)
-        .exceptionHandler(err => {
-          // TODO How can I assert that this method is called?
-
-          // Confidence check
-          expect(startTime).to.be.an('array')
-
-          // Assertion
-          const [seconds, nanoseconds] = process.hrtime(startTime)
-          const endTimeMillis = 1e3 * seconds + 1e-6 * nanoseconds
-
-          const assertionGracePeriodMillis = [5, 50]
-          expect(endTimeMillis).to.be.within(
-            requestTimeoutMillis - assertionGracePeriodMillis[0],
-            requestTimeoutMillis + assertionGracePeriodMillis[1])
+        .timeout(timeout)
+        .exceptionHandler((err) => {
+          spy()
+          expect(err.message).to.equal(`Request timed out after ${timeout} ms`)
+          expect(spy.calledOnce).to.equal(true)
         })
         .toss()
     })
 
     it('should retry the expected number of times after a timeout', function () {
+      const retryCount = 4
       let actualRequestCount = 0
+      const timeout = 5
 
       nock('http://example.com')
         .get('/just-dont-come-back-2')
+        .delayBody(50) // delay 50ms
         .times(5)
         .reply((uri, requestBody, callback) => {
           actualRequestCount += 1
-          // To simulate a timeout, do not invoke the callback.
+          return 200, '<html></html>'
         })
 
-      const retryCount = 4
+      const spy = sinon.spy()
 
       frisby.create(this.test.title)
         .get('http://example.com/just-dont-come-back-2')
-        .timeout(5)
+        .timeout(timeout)
         .retry(retryCount, 0)
         .exceptionHandler(err => {
-          // TODO How can I assert that this method is called?
+          spy()
+          expect(err.message).to.equal(`Request timed out after ${timeout} ms (${retryCount + 1} attempts)`)
+          expect(spy.calledOnce).to.equal(true)
+
           expect(actualRequestCount).to.equal(retryCount + 1)
         })
         .toss()
