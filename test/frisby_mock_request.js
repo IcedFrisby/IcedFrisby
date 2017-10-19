@@ -1085,6 +1085,128 @@ describe('Frisby matchers', function() {
 
   })
 
+  describe('timeouts and retries', function () {
+    it('should fail with the expected timeout message', function () {
+      const timeout = 10
+
+      nock('http://example.com')
+        .get('/just-dont-come-back-1')
+        .delayBody(50) // delay 50ms
+        .reply(200, '<html></html>')
+
+      const spy = sinon.spy()
+
+      frisby.create(this.test.title)
+        .get('http://example.com/just-dont-come-back-1')
+        .timeout(timeout)
+        .exceptionHandler((err) => {
+          // TODO How can I assert that this method is called?
+          spy()
+          expect(err.message).to.equal(`Request timed out after ${timeout} ms`)
+          expect(spy.calledOnce).to.equal(true)
+        })
+        .toss()
+    })
+
+    it('should retry the expected number of times after a timeout', function () {
+      const retryCount = 4
+      let actualRequestCount = 0
+      const timeout = 5
+
+      nock('http://example.com')
+        .get('/just-dont-come-back-2')
+        .delayBody(50) // delay 50ms
+        .times(5)
+        .reply((uri, requestBody) => {
+          actualRequestCount += 1
+          return 200, '<html></html>'
+        })
+
+      const spy = sinon.spy()
+
+      frisby.create(this.test.title)
+        .get('http://example.com/just-dont-come-back-2')
+        .timeout(timeout)
+        .retry(retryCount, 0)
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          spy()
+          expect(err.message).to.equal(`Request timed out after ${timeout} ms (${retryCount + 1} attempts)`)
+          expect(spy.calledOnce).to.equal(true)
+
+          expect(actualRequestCount).to.equal(retryCount + 1)
+        })
+        .toss()
+    })
+
+    it('should delay retries by the backoff amount', function () {
+      let actualRequestCount = 0
+      let firstRequestTime
+      let secondRequestTime
+
+      nock('http://example.com')
+        .get('/fail-once')
+        .twice()
+        .reply((uri, requestBody) => {
+          actualRequestCount += 1
+          switch (actualRequestCount) {
+            case 1:
+              firstRequestTime = process.hrtime()
+              return [500, 'Fake server error']
+            case 2:
+              secondRequestTime = process.hrtime(firstRequestTime)
+              return [200]
+            default:
+              throw Error('Expected only two requests')
+          }
+        })
+
+      const expectedBackoffMillis = 123
+
+      frisby.create(this.test.title)
+        .get('http://example.com/fail-once')
+        .retry(1, expectedBackoffMillis)
+        .after(() => {
+          const [seconds, nanoseconds] = secondRequestTime
+          const timeBetweenRequestsMillis = 1e3 * seconds + 1e-6 * nanoseconds
+
+          const assertionGracePeriodMillis = 25
+          expect(timeBetweenRequestsMillis).to.be.within(
+            expectedBackoffMillis,
+            expectedBackoffMillis + assertionGracePeriodMillis)
+        })
+        .toss()
+    })
+
+    it('should pass the expected timeout to mocha, and not cause mocha to time out', function () {
+      let requestCount = 0
+
+      nock('http://example.com')
+        .get('/fail-four-times')
+        .delay(50)
+        .twice()
+        .reply((uri, requestBody) => {
+          requestCount += 1
+          switch (requestCount) {
+            case 1: return [500, 'Fake server error']
+            case 2: return [200]
+            default: throw Error('Expected only two requests')
+          }
+        })
+
+      const test = frisby.create(this.test.title)
+        .get('http://example.com/fail-four-times')
+        .timeout(75)
+        .retry(1, 50)
+        .expectStatus(200)
+
+      const gracePeriodMillis = 25
+      expect(test._mochaTimeout()).to.equal(75 + 50 + 75 + gracePeriodMillis)
+
+      test.toss()
+    })
+  })
+
   it('should handle file uploads', function() {
     nock('http://httpbin.org', { allowUnmocked: true })
       .post('/file-upload')
