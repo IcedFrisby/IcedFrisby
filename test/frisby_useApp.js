@@ -38,12 +38,13 @@ describe('IcedFrisby useApp(app)', function() {
       res.send('^.^')
     })
 
-    app.listen(4000, function() {
+    const server = app.listen(4000, () => {
       frisby.create(this.test.title)
         .useApp(app)
         .get('/')
         .expectStatus(200)
         .expectBodyContains('^.^')
+        .after(() => { server.close() })
         .toss()
     })
   })
