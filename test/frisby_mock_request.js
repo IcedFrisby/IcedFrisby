@@ -1086,7 +1086,7 @@ describe('Frisby matchers', function() {
   })
 
   describe('timeouts and retries', function () {
-    it('should fail when timeout() value elapses', function () {
+    it('should fail with the expected timeout message', function () {
       const timeout = 10
 
       nock('http://example.com')
@@ -1100,6 +1100,7 @@ describe('Frisby matchers', function() {
         .get('http://example.com/just-dont-come-back-1')
         .timeout(timeout)
         .exceptionHandler((err) => {
+          // TODO How can I assert that this method is called?
           spy()
           expect(err.message).to.equal(`Request timed out after ${timeout} ms`)
           expect(spy.calledOnce).to.equal(true)
@@ -1116,7 +1117,7 @@ describe('Frisby matchers', function() {
         .get('/just-dont-come-back-2')
         .delayBody(50) // delay 50ms
         .times(5)
-        .reply((uri, requestBody, callback) => {
+        .reply((uri, requestBody) => {
           actualRequestCount += 1
           return 200, '<html></html>'
         })
@@ -1128,6 +1129,7 @@ describe('Frisby matchers', function() {
         .timeout(timeout)
         .retry(retryCount, 0)
         .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
           spy()
           expect(err.message).to.equal(`Request timed out after ${timeout} ms (${retryCount + 1} attempts)`)
           expect(spy.calledOnce).to.equal(true)
