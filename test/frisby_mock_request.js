@@ -8,6 +8,7 @@ const Joi = require('joi')
 const { AssertionError } = require('chai')
 const { MultiError } = require('verror')
 const sinon = require('sinon')
+const proxyquire = require('proxyquire').noPreserveCache()
 
 // Built-in node.js
 const fs = require('fs')
@@ -373,6 +374,30 @@ describe('Frisby matchers', function() {
         test_int: Joi.number().valid(43),
         test_str: Joi.string().valid("I am a string two!"),
         test_optional: Joi.any().optional()
+      })
+      .toss()
+  })
+
+  it('expectJSONTypes should fail with a helpful message', function() {
+    const frisbyWithoutJoi = proxyquire('../lib/icedfrisby', {
+      './pathMatch': proxyquire('../lib/pathMatch', { joi: null })
+    })
+
+    const mockFn = mockRequest.mock()
+      .get('/joi-test')
+      .respond({
+        statusCode: 200,
+        body: fixtures.singleObject
+      })
+      .run()
+
+    frisbyWithoutJoi.create(this.test.title)
+      .get('http://mock-request/joi-test', {mock: mockFn})
+      .expectStatus(200)
+      .expectJSONTypes({ foo: 'bar' })
+      .exceptionHandler(err => {
+        // TODO How can I assert that this method is called?
+        expect(err.message).to.equal('Joi is required to use expectJSONTypes, and must be installed separately')
       })
       .toss()
   })
