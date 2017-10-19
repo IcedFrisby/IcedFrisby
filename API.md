@@ -3,13 +3,15 @@
 - [IcedFrisby API Guide](#icedfrisby-api-guide)
 	- [Expectations](#expectations)
 		- [expectStatus(code)](#expectstatuscode)
-		- [expectHeader(key, content)](#expectheaderkey-content)
-		- [expectHeaderContains(key, content)](#expectheadercontainskey-content)
+		- [expectHeader(key, content, options)](#expectheaderkey-content-options)
+		- [expectNoHeader(key)](#expectnoheaderkey)
+		- [expectHeaderContains(key, content, options)](#expectheadercontainskey-content-options)
 		- [expectJSON([path], json)](#expectjsonpath-json)
 		- [expectContainsJSON([path], json)](#expectcontainsjsonpath-json)
 		- [expectJSONTypes([path], schema)](#expectjsontypespath-schema)
 		- [expectBodyContains(content)](#expectbodycontainscontent)
 		- [expectJSONLength([path], length)](#expectjsonlengthpath-length)
+		- [expectMaxResponseTime(ms)](#expectmaxresponsetimems)
 		- [Using Paths](#using-paths)
 			- [Testing Nested Objects](#testing-nested-objects)
 			- [Testing All Objects in an Array](#testing-all-objects-in-an-array)
@@ -61,34 +63,64 @@ Tests the HTTP response Status code.
 ```javascript
 frisby.create('Ensure we are dealing with a teapot')
   .get('http://httpbin.org/status/418')
-    .expectStatus(418)
+  .expectStatus(418)
 .toss()
 ```
 
-### expectHeader(key, content)
-Tests that a single HTTP response header matches the [exact content](http://chaijs.com/api/bdd/#equal). Both
-key and content comparisons are case-insensitive.
+### expectHeader(key, content, options)
+Tests that a single HTTP response header has the [exact content](http://chaijs.com/api/bdd/#equal) or [matches](http://chaijs.com/api/bdd/#method_match) a regex. Key comparisons are case-insensitive. Content comparisons are case-insensitive for strings, case-sensitive for regular expressions.
 
-* Types: `key`: `string`, `content`: `string`
-* Defaults: `none`
+* Types: `key`: `string`, `content`: `string | regex`, `options`: `object` (optional)
+* Defaults: `options`: `{allowMultipleHeaders: false}`
+
+
+String example:
 
 ```javascript
 frisby.create('Ensure response has a proper JSON Content-Type header')
   .get('http://httpbin.org/get')
-    .expectHeader('Content-Type', 'application/json')
+  .expectHeader('Content-Type', 'application/json')
+.toss();
+
+frisby.create('Ensure response has JSON somewhere in the Content-Type header via regex')
+  .get('http://httpbin.org/get')
+  .expectHeader('Content-Type', /.*json.*/)
+.toss();
+
+frisby.create('Ensure response returns one cookie called "auth"')
+  .post('http://example.com/login', {username: admin, password: example})
+  .expectHeader('Set-Cookie', /^auth=/, {allowMultipleHeaders: true})
 .toss();
 ```
 
-### expectHeaderContains(key, content)
-Tests that a single HTTP response header [contains](http://chaijs.com/api/bdd/#include) the specified content. Both key and content comparisons are case-insensitive.
+### expectNoHeader(key)
+Tests that a specific HTTP header was not received in the response
 
-* Types: `key`: `string`, `content`: `string, regex`
+* Types: `key`: `string`
 * Defaults: `none`
+
+```javascript
+frisby.create('Ensure response has no Set-Cookie header')
+  .get('http://httpbin.org/get')
+  .expectNoHeader('Set-Cookie')
+.toss();
+```
+
+### expectHeaderContains(key, content, options)
+Tests that a single HTTP response header [contains](http://chaijs.com/api/bdd/#method_include) the specified content. Both key and content comparisons are case-insensitive.
+
+* Types: `key`: `string`, `content`: `string`, `options`: `object` (optional)
+* Defaults: `options`: `{allowMultipleHeaders: false}`
 
 ```javascript
 frisby.create('Ensure response has JSON somewhere in the Content-Type header')
   .get('http://httpbin.org/get')
-    .expectHeaderContains('Content-Type', 'json')
+  .expectHeaderContains('Content-Type', 'json')
+.toss();
+
+frisby.create('Ensure response returns one cookie called "auth"')
+  .post('http://example.com/login', {username: admin, password: example})
+  .expectHeader('Set-Cookie', 'auth=', {allowMultipleHeaders: true})
 .toss();
 ```
 
@@ -177,6 +209,19 @@ frisby.create('Ensure "bar" really is only 3 characters... because you never kno
   .get('http://httpbin.org/get?foo=bar&bar=baz')
     .expectJSONLength('args.foo', 3)
 .toss()
+```
+
+### expectMaxResponseTime(ms)
+Tests that the HTTP response arrives within a given number of milliseconds
+
+* Types: `ms`: `integer`
+* Defaults: `none`
+
+```javascript
+frisby.create('Ensure response arrives within two seconds')
+  .get('http://httpbin.org/get')
+  .expectMaxResponseTime(2000)
+  .toss()
 ```
 
 ### Using Paths

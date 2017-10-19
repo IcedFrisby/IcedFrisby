@@ -1,7 +1,7 @@
 'use strict'
 
-var frisby = require('./../lib/icedfrisby')
-var app = require('./app_integration_express/expressApp')
+const frisby = require('./../lib/icedfrisby')
+const app = require('./app_integration_express/expressApp')
 
 describe('Example Express app integration', function() {
   frisby.create('should start the app on an ephemeral port and request')

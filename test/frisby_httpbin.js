@@ -1,11 +1,11 @@
 'use strict'
 
-var frisby = require('../lib/icedfrisby')
-var Joi = require('joi')
-var fs = require('fs')
-var path = require('path')
-var util = require('util')
-var Readable = require('stream').Readable
+const frisby = require('../lib/icedfrisby')
+const Joi = require('joi')
+const fs = require('fs')
+const path = require('path')
+const util = require('util')
+const Readable = require('stream').Readable
 
 function StringStream(string, options) {
   Readable.call(this, options)
@@ -72,9 +72,9 @@ describe('Frisby live running httpbin tests', function() {
   })
 
   it('sending binary data via put or post requests using Buffer objects should work', function() {
-    var data = []
+    const data = []
 
-    for(var i=0; i< 1024; i++)
+    for(let i=0; i< 1024; i++)
       data.push(Math.round(Math.random()*256))
 
     frisby.create('POST random binary data via Buffer object')
@@ -135,7 +135,7 @@ describe('Frisby live running httpbin tests', function() {
   })
 
   it('PATCH requests with Buffer and Stream objects should work.', function() {
-    var patchCommand = 'Patch me!'
+    const patchCommand = 'Patch me!'
 
     frisby.create('PATCH via Buffer object')
       .patch('http://httpbin.org/patch', new Buffer(patchCommand), {
@@ -196,9 +196,9 @@ describe('Frisby live running httpbin tests', function() {
   })
 
   it('sending binary data via put or post requests using Stream objects should work', function() {
-    var filePath = path.resolve(__dirname, './logo-frisby.png')
-    var fileSize = fs.statSync(filePath).size
-    var fileContent = fs.readFileSync(filePath)
+    const filePath = path.resolve(__dirname, './logo-frisby.png')
+    const fileSize = fs.statSync(filePath).size
+    const fileContent = fs.readFileSync(filePath)
 
     /*
      * NOTE: Using a Stream with httpbin.org requires to set the Content-Length

@@ -1,13 +1,13 @@
 'use strict'
 
-var frisby = require('../lib/icedfrisby')
-var expect = require('chai').expect
-var nock = require('nock')
+const frisby = require('../lib/icedfrisby')
+const expect = require('chai').expect
+const nock = require('nock')
 
 describe('IcedFrisby inspect methods', function() {
 
   it('should perform no action if null is provided to the inspect() callback', function() {
-    var inspectNock = nock('http://inspect-null.httpbin.org')
+    const inspectNock = nock('http://inspect-null.httpbin.org')
       .get('/get')
       .once()
       .reply(200, {
@@ -30,7 +30,7 @@ describe('IcedFrisby inspect methods', function() {
   })
 
   it('should allow a call to inspect the request and response', function() {
-    var inspectNock = nock('http://inspect.httpbin.org')
+    const inspectNock = nock('http://inspect.httpbin.org')
       .get('/get')
       .reply(200, {
         "args": {},
@@ -57,7 +57,7 @@ describe('IcedFrisby inspect methods', function() {
   })
 
   it('- inspectRequest should work', function() {
-    var inspectNock = nock('http://inspectRequest.httpbin.org')
+    const inspectNock = nock('http://inspectRequest.httpbin.org')
       .get('/get')
       .reply(200, {
         "args": {},
@@ -79,7 +79,7 @@ describe('IcedFrisby inspect methods', function() {
   })
 
   it('- inspectResponse should work', function() {
-    var inspectNock = nock('http://inspectResponse.httpbin.org')
+    const inspectNock = nock('http://inspectResponse.httpbin.org')
       .get('/get')
       .reply(200, {
         "args": {},
@@ -101,7 +101,7 @@ describe('IcedFrisby inspect methods', function() {
   })
 
   it('- inspectHeaders should work', function() {
-    var inspectNock = nock('http://inspectHeaders.httpbin.org')
+    const inspectNock = nock('http://inspectHeaders.httpbin.org')
       .get('/get')
       .reply(200, {
         "args": {},
@@ -123,7 +123,7 @@ describe('IcedFrisby inspect methods', function() {
   })
 
   it('- inspectBody should work', function() {
-    var inspectNock = nock('http://inspectBody.httpbin.org')
+    const inspectNock = nock('http://inspectBody.httpbin.org')
       .get('/get')
       .reply(200, {
         "args": {},
@@ -145,7 +145,7 @@ describe('IcedFrisby inspect methods', function() {
   })
 
   it('- inspectJSON should work', function() {
-    var inspectNock = nock('http://inspectJSON.httpbin.org')
+    const inspectNock = nock('http://inspectJSON.httpbin.org')
       .get('/get')
       .reply(200, {
         "args": {},
@@ -167,7 +167,7 @@ describe('IcedFrisby inspect methods', function() {
   })
 
   it('- inspectStatus should work', function() {
-    var inspectNock = nock('http://inspectStatus.httpbin.org')
+    const inspectNock = nock('http://inspectStatus.httpbin.org')
       .get('/get')
       .reply(200, {
         "args": {},

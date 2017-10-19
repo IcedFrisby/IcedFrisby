@@ -1,17 +1,17 @@
 'use strict'
 
-var nock = require('nock')
-var fixtures = require('./fixtures/repetition_fixture.json')
-var frisby = require('../lib/icedfrisby')
-var mockRequest = require('mock-request')
-var Joi = require('joi')
+const nock = require('nock')
+const fixtures = require('./fixtures/repetition_fixture.json')
+const frisby = require('../lib/icedfrisby')
+const mockRequest = require('mock-request')
+const Joi = require('joi')
 const { AssertionError } = require('chai')
 const { MultiError } = require('verror')
 const sinon = require('sinon')
 
 // Built-in node.js
-var fs = require('fs')
-var path = require('path')
+const fs = require('fs')
+const path = require('path')
 const util = require('util')
 
 // enable real connections for localhost otherwise useApp() tests won't work
@@ -19,7 +19,7 @@ nock.enableNetConnect('127.0.0.1')
 
 // Test global setup
 
-var mockGlobalSetup = function() {
+const mockGlobalSetup = function() {
   frisby.globalSetup({
     timeout: 3000,
     request: {
@@ -31,7 +31,7 @@ var mockGlobalSetup = function() {
   })
 }
 
-var restoreGlobalSetup = function() {
+const restoreGlobalSetup = function() {
   frisby.globalSetup({
     request: {
       headers: {},
@@ -50,7 +50,7 @@ describe('Frisby matchers', function() {
 
   it('expectStatus for mock request should return 404', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/not-found')
       .respond({
         statusCode: 404
@@ -65,14 +65,14 @@ describe('Frisby matchers', function() {
 
   it('globalSetup should set timeout to 3000', function() {
     mockGlobalSetup()
-    var f1 = frisby.create(this.test.title)
+    const f1 = frisby.create(this.test.title)
     expect(f1.timeout()).to.equal(3000)
     restoreGlobalSetup()
   })
 
   it('globalSetup should set local request headers', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-object-array')
       .respond({
         statusCode: 200,
@@ -93,7 +93,7 @@ describe('Frisby matchers', function() {
 
   it('addHeaders should override globalSetup request headers', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-object-array')
       .respond({
         statusCode: 200,
@@ -115,7 +115,7 @@ describe('Frisby matchers', function() {
 
   it('addHeaders should override globalSetup request headers and not taint other Frisby tests', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-object-array-ex')
       .respond({
         statusCode: 200,
@@ -123,7 +123,7 @@ describe('Frisby matchers', function() {
       })
       .run()
 
-    var mockFn2 = mockRequest.mock()
+    const mockFn2 = mockRequest.mock()
       .get('/test-object-array-ex2')
       .respond({
         statusCode: 200,
@@ -263,7 +263,7 @@ describe('Frisby matchers', function() {
 
   it('expectJSON should test EQUALITY for a SINGLE object', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-object')
       .respond({
         statusCode: 200,
@@ -284,7 +284,7 @@ describe('Frisby matchers', function() {
 
   it('expectJSON should test INEQUALITY for a SINGLE object', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-object')
       .respond({
         statusCode: 200,
@@ -305,7 +305,7 @@ describe('Frisby matchers', function() {
 
   it('expectJSON should test EQUALITY for EACH object in an array with an asterisk path', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-array')
       .respond({
         statusCode: 200,
@@ -321,7 +321,7 @@ describe('Frisby matchers', function() {
 
   it('expectJSON should test INEQUALITY for EACH object in an array with an asterisk path', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-array')
       .respond({
         statusCode: 200,
@@ -337,7 +337,7 @@ describe('Frisby matchers', function() {
 
   it('expectJSON should test EACH object in an array with path ending with asterisk', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-object-array')
       .respond({
         statusCode: 200,
@@ -358,7 +358,7 @@ describe('Frisby matchers', function() {
 
   it('expectJSON should match ONE object in an array with path ending with question mark', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-object-array')
       .respond({
         statusCode: 200,
@@ -379,7 +379,7 @@ describe('Frisby matchers', function() {
 
   it('expectJSON should NOT match ONE object in an array with path ending with question mark', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-object-array')
       .respond({
         statusCode: 200,
@@ -398,7 +398,7 @@ describe('Frisby matchers', function() {
 
   it('expectContainsJSON should MATCH fields for a SINGLE object', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-object')
       .respond({
         statusCode: 200,
@@ -419,7 +419,7 @@ describe('Frisby matchers', function() {
 
   it('expectContainsJSON should NOT MATCH for a SINGLE object', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-object')
       .respond({
         statusCode: 200,
@@ -440,7 +440,7 @@ describe('Frisby matchers', function() {
 
   it('expectContainsJSON should NOT MATCH for a SINGLE object with a single field', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-object')
       .respond({
         statusCode: 200,
@@ -461,7 +461,7 @@ describe('Frisby matchers', function() {
 
   it('expectContainsJSON should MATCH for EACH object in an array with an asterisk path', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-array')
       .respond({
         statusCode: 200,
@@ -477,7 +477,7 @@ describe('Frisby matchers', function() {
 
   it('expectContainsJSON should NOT MATCH for EACH object in an array with an asterisk path', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-array')
       .respond({
         statusCode: 200,
@@ -493,7 +493,7 @@ describe('Frisby matchers', function() {
 
   it('expectContainsJSON should MATCH for EACH object in an array with path ending with asterisk', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-object-array')
       .respond({
         statusCode: 200,
@@ -511,7 +511,7 @@ describe('Frisby matchers', function() {
 
   it('expectContainsJSON should MATCH ONE object in an array with path ending with question mark', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-object-array')
       .respond({
         statusCode: 200,
@@ -529,7 +529,7 @@ describe('Frisby matchers', function() {
 
   it('expectContainsJSON should NOT MATCH ONE object in an array with path ending with question mark', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-object-array')
       .respond({
         statusCode: 200,
@@ -547,7 +547,7 @@ describe('Frisby matchers', function() {
 
   it('expectJSONTypes should NOT match ONE object in an array with path ending with question mark', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-object-array')
       .respond({
         statusCode: 200,
@@ -566,7 +566,7 @@ describe('Frisby matchers', function() {
 
   it('expectJSONLength should properly count arrays, strings, and objects', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-object-array')
       .respond({
         statusCode: 200,
@@ -584,7 +584,7 @@ describe('Frisby matchers', function() {
 
   it('expectJSONLength should support an asterisk in the path to test all elements of an array', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-object-array')
       .respond({
         statusCode: 200,
@@ -600,7 +600,7 @@ describe('Frisby matchers', function() {
 
   it('expectJSONLength should support an asterisk in the path to test that all elements of an array do NOT have a specified length', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-object-array')
       .respond({
         statusCode: 200,
@@ -618,7 +618,7 @@ describe('Frisby matchers', function() {
 
   it('expectJSONLength should properly count arrays, strings, and objects using <=', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-object-array')
       .respond({
         statusCode: 200,
@@ -636,7 +636,7 @@ describe('Frisby matchers', function() {
 
   it('expectJSONLength should support an asterisk in the path to test all elements of an array using <=', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-object-array')
       .respond({
         statusCode: 200,
@@ -652,7 +652,7 @@ describe('Frisby matchers', function() {
 
   it('expectJSONLength should properly count arrays, strings, and objects using <', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-object-array')
       .respond({
         statusCode: 200,
@@ -670,7 +670,7 @@ describe('Frisby matchers', function() {
 
   it('expectJSONLength should support an asterisk in the path to test all elements of an array using <', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-object-array')
       .respond({
         statusCode: 200,
@@ -686,7 +686,7 @@ describe('Frisby matchers', function() {
 
   it('expectJSONLength should properly count arrays, strings, and objects using >=', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-object-array')
       .respond({
         statusCode: 200,
@@ -704,7 +704,7 @@ describe('Frisby matchers', function() {
 
   it('expectJSONLength should support an asterisk in the path to test all elements of an array using >=', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-object-array')
       .respond({
         statusCode: 200,
@@ -720,7 +720,7 @@ describe('Frisby matchers', function() {
 
   it('expectJSONLength should properly count arrays, strings, and objects using >', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-object-array')
       .respond({
         statusCode: 200,
@@ -738,7 +738,7 @@ describe('Frisby matchers', function() {
 
   it('expectJSONLength should support an asterisk in the path to test all elements of an array using >', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-object-array')
       .respond({
         statusCode: 200,
@@ -754,7 +754,7 @@ describe('Frisby matchers', function() {
 
   it('expectJSONLength should properly count arrays, strings, and objects testing string number', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-object-array')
       .respond({
         statusCode: 200,
@@ -772,7 +772,7 @@ describe('Frisby matchers', function() {
 
   it('expectJSONLength should support an asterisk in the path to test all elements of an array testing string number', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/test-object-array')
       .respond({
         statusCode: 200,
@@ -788,7 +788,7 @@ describe('Frisby matchers', function() {
 
   it('expectStatus for mock request should return 404', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/not-found')
       .respond({
         statusCode: 404
@@ -1030,7 +1030,7 @@ describe('Frisby matchers', function() {
   it('Frisby basicAuth should set the correct HTTP Authorization header', function() {
 
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/basic-auth')
       .respond({
         statusCode: 200,
@@ -1058,7 +1058,7 @@ describe('Frisby matchers', function() {
   // reference: https://github.com/vlucas/frisby/issues/213 (does not appear to be an issue in IcedFrisby)
   it('should work with a HTTP 204 responses', function() {
     // Mock API
-    var mockFn = mockRequest.mock()
+    const mockFn = mockRequest.mock()
       .get('/no-content')
       .respond({
         statusCode: 204
@@ -1300,7 +1300,127 @@ describe('Frisby matchers', function() {
     // Not sure how to reach the else block in `expectBodyContains`.
   })
 
-  describe('expectHeaderToMatch', function () {
+  describe('Aliased functions backwards compatibility', function(){
+    it('should allow the use of expectHeaderToMatch as an alias for expectHeader', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, "The payload", {'myheader': 'myvalue'})
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectStatus(201)
+        .expectHeaderToMatch('myheader', /myvalue/)
+        .toss()
+    })
+  })
+
+  describe('expectHeader with string', function(){
+    //This feels like it's covered in other places, but not explicitly. Included for completeness
+    it('should pass when the header value passed exactly matches the content', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['content-type', 'application/json', 'content-length', '7'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeader('content-type','application/json')
+        .toss()
+    })
+
+    it('should fail when the header value passed is a substring of the content', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['content-type', 'application/json', 'content-length', '7'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeader('content-type','json')
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(Error)
+          expect(err.message).to.equal("expected an element of [ 'application/json' ] to equal 'json'")
+        })
+        .toss()
+    })
+
+    it('should fail when the header is not present', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['content-type', 'application/json', 'content-length', '7'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeader('Host','example.com')
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(Error)
+          expect(err.message).to.equal("Header 'host' not present in HTTP response")
+        })
+        .toss()
+    })
+
+    it('should fail when the content is not a string or regex', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['content-type', 'application/json', 'content-length', '7'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeader('content-type',200)
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(Error)
+          expect(err.message).to.equal("Content '200' is neither a string or regex")
+        })
+        .toss()
+    })
+
+    it('should fail when multiple same-name headers match and the allowMultipleHeaders option is not passed', function () {
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeader('Set-Cookie','a=123')
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(Error)
+          expect(err.message).to.equal("Header 'set-cookie' present more than once in HTTP response. Pass {allowMultipleHeaders: true} in options if this is expected.")
+        })
+        .toss()
+    })
+
+    it('should fail when multiple same-name headers match and the allowMultipleHeaders option is false', function () {
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeader('Set-Cookie','a=123',{allowMultipleHeaders: false})
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(Error)
+          expect(err.message).to.equal("Header 'set-cookie' present more than once in HTTP response. Pass {allowMultipleHeaders: true} in options if this is expected.")
+        })
+        .toss()
+    })
+
+    it('should pass when one of multiple same-name headers matches and the allowMultipleHeaders option is true', function () {
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeader('Set-Cookie','a=123',{allowMultipleHeaders: true})
+        .expectHeader('Set-Cookie','b=456',{allowMultipleHeaders: true})
+        .toss()
+    })
+  })
+
+  describe('expectHeader with regex', function () {
     it('should pass when regex matches', function() {
       nock('http://httpbin.org', { allowUnmocked: true })
         .post('/path')
@@ -1310,7 +1430,7 @@ describe('Frisby matchers', function() {
       frisby.create(this.test.title)
         .post('http://httpbin.org/path', {foo: 'bar'})
         .expectStatus(201)
-        .expectHeaderToMatch('location', /^\/path\/\d+$/)
+        .expectHeader('location', /^\/path\/\d+$/)
         .toss()
     })
 
@@ -1321,11 +1441,11 @@ describe('Frisby matchers', function() {
 
       frisby.create(this.test.title)
         .post('http://example.com/path')
-        .expectHeaderToMatch('location', /^\/path\/\d+$/)
+        .expectHeader('location', /^\/path\/\d+$/)
         .exceptionHandler(err => {
           // TODO How can I assert that this method is called?
           expect(err).to.be.an.instanceof(AssertionError)
-          expect(err.message).to.equal("expected '/something-else/23' to match /^\\/path\\/\\d+$/")
+          expect(err.message).to.equal("expected an element of [ '/something-else/23' ] to match /^\\/path\\/\\d+$/")
         })
         .toss()
     })
@@ -1337,11 +1457,171 @@ describe('Frisby matchers', function() {
 
       frisby.create(this.test.title)
         .post('http://example.com/path')
-        .expectHeaderToMatch('location', /^\/path\/\d+$/)
+        .expectHeader('location', /^\/path\/\d+$/)
         .exceptionHandler(err => {
           // TODO How can I assert that this method is called?
           expect(err).to.be.an.instanceof(Error)
-          expect(err.message).to.equal("Header 'location' does not match pattern '/^\\/path\\/\\d+$/' in HTTP response")
+          expect(err.message).to.equal("Header 'location' not present in HTTP response")
+        })
+        .toss()
+    })
+
+    it('should fail when multiple same-name headers match and the allowMultipleHeaders option is not passed', function () {
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeader('Set-Cookie',/123/)
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(Error)
+          expect(err.message).to.equal("Header 'set-cookie' present more than once in HTTP response. Pass {allowMultipleHeaders: true} in options if this is expected.")
+        })
+        .toss()
+    })
+
+    it('should fail when multiple same-name headers match and the allowMultipleHeaders option is false', function () {
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeader('Set-Cookie',/123/,{allowMultipleHeaders: false})
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(Error)
+          expect(err.message).to.equal("Header 'set-cookie' present more than once in HTTP response. Pass {allowMultipleHeaders: true} in options if this is expected.")
+        })
+        .toss()
+    })
+
+    it('should pass when one of multiple same-name headers matches and the allowMultipleHeaders option is true', function () {
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeader('Set-Cookie',/123/,{allowMultipleHeaders: true})
+        .expectHeader('Set-Cookie',/456/,{allowMultipleHeaders: true})
+        .toss()
+    })
+  })
+
+  describe('expectHeaderContains', function () {
+    it('should pass when the value passed exactly matches the header content', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['content-type', 'application/json', 'content-length', '7'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeaderContains('content-type','application/json')
+        .toss()
+    })
+
+    it('should pass when the value passed is a substring of the header content', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['content-type', 'application/json', 'content-length', '7'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeaderContains('content-type','json')
+        .toss()
+    })
+
+    it('should fail when the value passed is not a substring of the header content', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['content-type', 'application/json', 'content-length', '7'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeaderContains('content-type','xml')
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(Error)
+          expect(err.message).to.equal("xml not found in application/json: expected an element of [ 'application/json' ] to satisfy [Function]")
+        })
+        .toss()
+    })
+
+    it('should fail when the header is not present', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['content-type', 'application/json', 'content-length', '7'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeaderContains('Host','example.com')
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(Error)
+          expect(err.message).to.equal("Header 'host' not present in HTTP response")
+        })
+        .toss()
+    })
+
+    it('should fail when multiple same-name headers are found and the allowMultipleHeaders option is not passed', function () {
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeaderContains('Set-Cookie','a=')
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(Error)
+          expect(err.message).to.equal("Header 'set-cookie' present more than once in HTTP response. Pass {allowMultipleHeaders: true} in options if this is expected.")
+        })
+        .toss()
+    })
+
+    it('should fail when multiple same-name headers are found and the allowMultipleHeaders option is false', function () {
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeaderContains('Set-Cookie','a=',{allowMultipleHeaders: false})
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(Error)
+          expect(err.message).to.equal("Header 'set-cookie' present more than once in HTTP response. Pass {allowMultipleHeaders: true} in options if this is expected.")
+        })
+        .toss()
+    })
+
+    it('should pass when one of multiple same-name headers contains the string and the allowMultipleHeaders option is true', function () {
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeaderContains('Set-Cookie','a=',{allowMultipleHeaders: true})
+        .expectHeaderContains('Set-Cookie','456',{allowMultipleHeaders: true})
+        .toss()
+    })
+
+    it('should fail when none of multiple same-name headers contains the string', function () {
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectHeaderContains('Set-Cookie','789',{allowMultipleHeaders: true})
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(Error)
+          expect(err.message).to.equal("789 not found in a=123,b=456: expected an element of [ 'a=123', 'b=456' ] to satisfy [Function]")
         })
         .toss()
     })
@@ -1374,6 +1654,34 @@ describe('Frisby matchers', function() {
           // TODO How can I assert that this method is called?
           expect(err).to.be.an.instanceof(AssertionError)
           expect(err.message).to.equal("expected { location: '/something-else/23' } to not have property 'location'")
+        })
+        .toss()
+    })
+  })
+
+  describe('expectMaxResponseTime', function () {
+    it('should pass when the time is less than the threshold', function() {
+      nock('http://example.com')
+        .post('/path')
+        .reply(200,'The payload')
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectMaxResponseTime(500)
+        .toss()
+    })
+
+    it('should fail when the time is more than the threshold', function() {
+      nock('http://example.com')
+        .post('/path')
+        .delay(501)
+        .reply(200,'The payload')
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectMaxResponseTime(500)
+        .exceptionHandler(err => {
+          expect(err).to.be.an.instanceof(AssertionError)
         })
         .toss()
     })
@@ -1531,4 +1839,111 @@ describe('Frisby matchers', function() {
     })
   })
 
+  describe('header checks should ignore case for strings', function(){
+    it('expectHeader should pass when the header case is mismatched', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, "The payload", {'myHEADER': 'myvalue'})
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectStatus(201)
+        .expectHeader('MYheader', 'myvalue')
+        .toss()
+    })
+
+    it('expectHeader should pass when the content case is mismatched', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, "The payload", {'myheader': 'myVALUE'})
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectStatus(201)
+        .expectHeader('myheader', 'MYvalue')
+        .toss()
+    })
+
+    it('expectNoHeader should fail (detect the header) when the header case is mismatched', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, "The payload", {'myHEADER': 'myVALUE'})
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectStatus(201)
+        .expectNoHeader('MYheader')
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(AssertionError)
+          expect(err.message).to.equal("expected { myheader: 'myVALUE' } to not have property 'myheader'")
+        })
+        .toss()
+    })
+
+    it('expectHeaderContains should pass when the header case is mismatched', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, "The payload", {'myHEADER': 'myvalue'})
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectStatus(201)
+        .expectHeaderContains('MYheader', 'myvalue')
+        .toss()
+    })
+
+    it('expectHeaderContains should pass when the content case is mismatched', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, "The payload", {'myheader': 'myVALUE'})
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectStatus(201)
+        .expectHeaderContains('myheader', 'MYvalue')
+        .toss()
+    })
+
+    it('expectHeader with regex should fail when the content case is mismatched', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, "The payload", {'myHEADER': 'myVALUE'})
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectStatus(201)
+        .expectHeader('MYheader', /MYvalue/)
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(AssertionError)
+          expect(err.message).to.equal("expected an element of [ 'myVALUE' ] to match /MYvalue/")
+        })
+        .toss()
+    })
+
+    it('expectHeader with regex should pass when the case is mismatched and the regex is case-insensitive', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, "The payload", {'myHEADER': 'myVALUE'})
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectStatus(201)
+        .expectHeader('MYheader', /MYvalue/i)
+        .toss()
+    })
+
+    it('expectHeader with regex should pass when the case is matched', function(){
+      nock('http://example.com')
+        .post('/path')
+        .reply(201, "The payload", {'myHEADER': 'myVALUE'})
+
+      frisby.create(this.test.title)
+        .post('http://example.com/path')
+        .expectStatus(201)
+        .expectHeader('MYheader', /myVALUE/)
+        .toss()
+    })
+  })
 })
