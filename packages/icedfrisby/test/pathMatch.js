@@ -1,6 +1,6 @@
 'use strict'
 
-const pm = require('../lib/pathMatch')
+const pm = require('../path-match')
 
 const Joi = require('joi')
 

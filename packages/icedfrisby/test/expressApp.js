@@ -1,6 +1,6 @@
 'use strict'
 
-const frisby = require('./../lib/icedfrisby')
+const frisby = require('../icedfrisby')
 const app = require('./app_integration_express/expressApp')
 
 describe('Example Express app integration', function() {

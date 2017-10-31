@@ -1,6 +1,6 @@
 'use strict'
 
-const frisby = require('../lib/icedfrisby')
+const frisby = require('../icedfrisby')
 const expect = require('chai').expect
 const nock = require('nock')
 

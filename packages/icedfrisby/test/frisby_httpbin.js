@@ -1,6 +1,6 @@
 'use strict'
 
-const frisby = require('../lib/icedfrisby')
+const frisby = require('../icedfrisby')
 const Joi = require('joi')
 const fs = require('fs')
 const path = require('path')

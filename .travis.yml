@@ -13,4 +13,4 @@ before_script:
 after_script:
   # Only the first Node version listed will upload the lock file.
   - greenkeeper-lockfile-upload
-  - npm run coverage && coveralls < coverage/lcov.info && rm -rf coverage
+  - npm run coverage && npm run coveralls

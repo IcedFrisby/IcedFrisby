@@ -2,7 +2,7 @@
 
 const nock = require('nock')
 const fixtures = require('./fixtures/repetition_fixture.json')
-const frisby = require('../lib/icedfrisby')
+const frisby = require('../icedfrisby')
 const mockRequest = require('mock-request')
 const Joi = require('joi')
 const { AssertionError } = require('chai')
@@ -379,8 +379,8 @@ describe('Frisby matchers', function() {
   })
 
   it('expectJSONTypes should fail with a helpful message', function() {
-    const frisbyWithoutJoi = proxyquire('../lib/icedfrisby', {
-      './pathMatch': proxyquire('../lib/pathMatch', { joi: null })
+    const frisbyWithoutJoi = proxyquire('../icedfrisby', {
+      './path-match': proxyquire('../path-match', { joi: null })
     })
 
     const mockFn = mockRequest.mock()

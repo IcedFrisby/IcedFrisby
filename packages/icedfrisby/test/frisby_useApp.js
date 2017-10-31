@@ -3,7 +3,7 @@
 const fs = require('fs')
 const https = require('https')
 const path = require('path')
-const frisby = require('./../lib/icedfrisby')
+const frisby = require('../icedfrisby')
 const express = require('express')
 
 const chai = require('chai')

@@ -1,7 +1,7 @@
 'use strict'
 
 const path = require('path')
-const frisby = require('../lib/icedfrisby')
+const frisby = require('../icedfrisby')
 
 describe('Frisby object setup', function() {
 
