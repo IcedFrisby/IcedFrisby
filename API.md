@@ -1,47 +1,191 @@
 # IcedFrisby API Guide
 
 - [IcedFrisby API Guide](#icedfrisby-api-guide)
-	- [Expectations](#expectations)
-		- [expectStatus(code)](#expectstatuscode)
-		- [expectHeader(key, content, options)](#expectheaderkey-content-options)
-		- [expectNoHeader(key)](#expectnoheaderkey)
-		- [expectHeaderContains(key, content, options)](#expectheadercontainskey-content-options)
-		- [expectJSON([path], json)](#expectjsonpath-json)
-		- [expectContainsJSON([path], json)](#expectcontainsjsonpath-json)
-		- [expectJSONTypes([path], schema)](#expectjsontypespath-schema)
-		- [expectBodyContains(content)](#expectbodycontainscontent)
-		- [expectJSONLength([path], length)](#expectjsonlengthpath-length)
-		- [expectMaxResponseTime(ms)](#expectmaxresponsetimems)
-		- [Using Paths](#using-paths)
-			- [Testing Nested Objects](#testing-nested-objects)
-			- [Testing All Objects in an Array](#testing-all-objects-in-an-array)
-			- [Testing One Object in an Array](#testing-one-object-in-an-array)
-	- [useApp()](#useapp)
-		- [Example Use:](#example-use)
-			- [Express Application:](#express-application)
-			- [IcedFrisby Test:](#icedfrisby-test)
-	- [Global Setup](#global-setup)
-		- [request.baseUri](#requestbaseuri)
-		- [request.headers](#requestheaders)
-		- [request.json](#requestjson)
-		- [request.inspectOnFailure](#requestinspectonfailure)
-		- [failOnMultiSetup](#failonmultisetup)
-		- [useApp](#useapp-in-globalsetup)
-		- [Resetting `globalSetup`](#resetting-globalsetup)
-	- [Helpers](#helpers)
-		- [before()](#before)
-		- [after()](#after)
-		- [finally()](#finally)
-		- [afterJSON()](#afterjson)
-	- [Inspectors](#inspectors)
-		- [inspect(cb)](#inspectcb)
-		- [inspectRequest(message)](#inspectrequestmessage)
-		- [inspectResponse(message)](#inspectresponsemessage)
-		- [inspectHeaders(message)](#inspectheadersmessage)
-		- [inspectJSON(message)](#inspectjsonmessage)
-		- [inspectBody(message)](#inspectbodymessage)
-		- [inspectStatus(message)](#inspectstatusmessage)
-		- [Send Raw JSON or POST Body](#send-raw-json-or-post-body)
+  - [The Basics](#thebasics)
+    - [create(msg)](#createmsg)
+    - [toss()](#toss)
+  - [Commands](#commands)
+    - [get(uri,params)](#geturi-params)
+    - [head(uri,params)](#headuri-params)
+    - [options(uri,params)](#optionsuri-params)
+    - [post(uri,data,params)](#posturi-data-params)
+    - [put(uri,data,params)](#puturi-data-params)
+    - [patch(uri,data,params)](#patchuri-data-params)
+    - [delete(uri,data,params)](#deleteuri-data-params)
+    - [addHeader(header,content)](#addheaderheader-content)
+    - [addHeaders(headers)](#addheadersheaders)
+  - [Expectations](#expectations)
+    - [expectStatus(code)](#expectstatuscode)
+    - [expectHeader(key, content, options)](#expectheaderkey-content-options)
+    - [expectNoHeader(key)](#expectnoheaderkey)
+    - [expectHeaderContains(key, content, options)](#expectheadercontainskey-content-options)
+    - [expectJSON([path], json)](#expectjsonpath-json)
+    - [expectContainsJSON([path], json)](#expectcontainsjsonpath-json)
+    - [expectJSONTypes([path], schema)](#expectjsontypespath-schema)
+    - [expectBodyContains(content)](#expectbodycontainscontent)
+    - [expectJSONLength([path], length)](#expectjsonlengthpath-length)
+    - [expectMaxResponseTime(ms)](#expectmaxresponsetimems)
+    - [Using Paths](#using-paths)
+      - [Testing Nested Objects](#testing-nested-objects)
+      - [Testing All Objects in an Array](#testing-all-objects-in-an-array)
+      - [Testing One Object in an Array](#testing-one-object-in-an-array)
+  - [useApp()](#useapp)
+    - [Example Use:](#example-use)
+      - [Express Application:](#express-application)
+      - [IcedFrisby Test:](#icedfrisby-test)
+  - [Global Setup](#global-setup)
+    - [request.baseUri](#requestbaseuri)
+    - [request.headers](#requestheaders)
+    - [request.json](#requestjson)
+    - [request.inspectOnFailure](#requestinspectonfailure)
+    - [failOnMultiSetup](#failonmultisetup)
+    - [useApp](#useapp-in-globalsetup)
+    - [Resetting `globalSetup`](#resetting-globalsetup)
+  - [Helpers](#helpers)
+    - [before()](#before)
+    - [after()](#after)
+    - [finally()](#finally)
+    - [afterJSON()](#afterjson)
+  - [Inspectors](#inspectors)
+    - [inspect(cb)](#inspectcb)
+    - [inspectRequest(message)](#inspectrequestmessage)
+    - [inspectResponse(message)](#inspectresponsemessage)
+    - [inspectHeaders(message)](#inspectheadersmessage)
+    - [inspectJSON(message)](#inspectjsonmessage)
+    - [inspectBody(message)](#inspectbodymessage)
+    - [inspectStatus(message)](#inspectstatusmessage)
+    - [Send Raw JSON or POST Body](#send-raw-json-or-post-body)
+
+## The Basics
+
+Every frisby request begins with `create(..)` and ends with a `toss()`.
+
+### create(msg)
+* Types: `msg`: `string`
+* Default: `none`
+Used to create an instance of IcedFrisby that is used to send 1 request and receive the response.
+The `msg` is used to name the test when it's wrapped in mocha for execution at runtime.
+```javascript
+frisby.create('a test')
+    .get('http://example.com')
+    .expectStatus(200)
+    // any number of additional expect statements here
+    .toss();
+```
+
+### toss()
+Used to complete the list of commands and issue the request.
+```javascript
+frisby.create('a test')
+    .get('http://example.com')
+    .expectStatus(200)
+    // any number of additional expect statements here
+    .toss();
+```
+
+## Commands
+
+These are the commands you'll need to get IcedFrisby talking HTTP.
+
+An optional parameters object is accepted in all of these methods, but aren't _useful_ for every verb. All object parameters are optional.
+```javascript
+{
+  json: 'boolean',         //Whether this will be a JSON body. Overrides value set in globalSetup().
+  body: 'string'|'object', //The body to include in the outbound request. This overrides "data" if provided in method call.
+  mock: 'function',        //A mock runner to use. When not provided, uses "request" (i.e. does it for real).
+  form: 'boolean'          //Use the object in the body to create a form-encoded request.
+}
+```
+
+### get(uri, params)
+* Types: `uri`: `string`, `params`: `object` (optional)
+* Default: `none`
+
+Perform an HTTP GET on the specified URI.
+```javascript
+frisby.create('a test')
+    .get('http://example.com/login')
+    .expectStatus(200)
+    // any number of additional expect statements here
+    .toss();
+```
+
+### head(uri, params)
+Identical to [get](#geturi-params), using an HTTP HEAD request.
+
+### options(uri, params)
+Identical to [get](#geturi-params), using an HTTP OPTIONS request.
+
+### post(uri, data, params)
+* Types: `uri`: `string`, `data`:`object` `params`: `object` (optional)
+* Default: `none`
+
+Perform an HTTP POST to the specified URI.
+```javascript
+frisby.create('a test')
+    .post('http://example.com/login', {
+      username: 'joe@example.com',
+      password: 'J0£_£x@mpl£'
+    })
+    .expectStatus(200)
+    // any number of additional expect statements here
+    .toss();
+
+frisby.create('another test')
+    .post('http://example.com/contact-us', {
+      name: 'Test Person',
+      comment: 'What a lovely test'
+    }, {form: true})
+    .expectStatus(200)
+    // any number of additional expect statements here
+    .toss();
+
+```
+
+### put(uri, data, params)
+Identical to [post](#posturi-params), using an HTTP PUT request.
+
+### patch(uri, data, params)
+Identical to [post](#posturi-params), using an HTTP PATCH request.
+
+### delete(uri, data, params)
+Identical to [post](#posturi-params), using an HTTP DELETE request.
+
+### addHeader(header, content)
+Adds an HTTP header to your request
+* Types: `header`: `string`, `content`: `string`
+* Default: `none`
+
+Note that `content` is always a string, regardless of whether the data it would represent is something else (an integer or GUID for example).
+
+```javascript
+frisby.create('a test')
+    .get('http://example.com')
+    .addHeader('Accept', 'text/html')
+    .expectStatus(200)
+    // any number of additional expect statements here
+    .toss();
+```
+
+### addHeaders(headers)
+Adds a collection of headers to your request
+* Types: `headers`: `object`
+* Default: `none`
+
+A flat object where each key becomes a header name and each corresponding value becomes that header's value in the request.
+
+```javascript
+frisby.create('a test')
+    .get('http://example.com')
+    .addHeaders({
+      accept: 'text/html',
+      referer: 'http://www.test.net'
+    })
+    .expectStatus(200)
+    // any number of additional expect statements here
+    .toss();
+```
+
 
 ## Expectations
 
@@ -50,6 +194,7 @@ IcedFrisby provides a lot of helper functions to help you check the most common 
 Use the expect functions after create() and before toss().
 ```javascript
 frisby.create('a test')
+    .get('http://example.com')
     .expectStatus(200)
     // any number of additional expect statements here
     .toss();
