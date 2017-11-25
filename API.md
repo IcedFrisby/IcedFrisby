@@ -54,6 +54,7 @@
     - [retry(count, backoff)](#retrycount-backoff)
     - [baseUri(uri)](#baseuriuri)
     - [waits(ms)](#waitsms)
+    - [exceptionHandler(function)](#exceptionhandlerfunction)
   - [Inspectors](#inspectors)
     - [inspect(cb)](#inspectcb)
     - [inspectRequest(message)](#inspectrequestmessage)
@@ -448,7 +449,7 @@ Negates an expect, inverting the logic to expect the opposite, e.g. JSON doesn't
 ```javascript
 frisby.create('Check deleted item no longer exists')
   .get('http://example.com/things/list')
-    .not().expectContainsJSON('*', { name: 'Jane Doe' })
+  .not().expectContainsJSON('*', { name: 'Jane Doe' })
 .toss()
 ```
 
@@ -760,7 +761,7 @@ Mocha `describe.only` block instead of a `describe` block.
 Sets the timeout for this request.
 
 - Types: `ms`: `string`
-- Defaults: `none
+- Defaults: `none`
 
 ```javascript
 frisby.create('Long-running request')
@@ -827,7 +828,7 @@ frisby.create('Expecting something from nothing')
     .expectBodyContains('foo')
     .exceptionHandler(err => {
         expect(err).to.be.an.instanceof(AssertionError) //Asserts that this came from a failing "expect" function
-        expect(e  rr.message).to.equal("expected '' to include 'foo'")
+        expect(err.message).to.equal("expected '' to include 'foo'")
     })
     .toss()
 ```
