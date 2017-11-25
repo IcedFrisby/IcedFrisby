@@ -275,6 +275,8 @@ frisby.create('Ensure response returns one cookie called "auth"')
 .toss();
 ```
 
+For backwards compatibility, `expectHeaderToMatch(key, pattern)` is an alias for this function (but does not accept the options parameter).
+
 ### expectNoHeader(key)
 Tests that a specific HTTP header was not received in the response
 
@@ -439,7 +441,7 @@ frisby.create('Ensure response has proper JSON types in specified keys')
 This example returns a REST response with `{ args: { json: { answer: 42 } } }`. Using a path of `args.json` allows testing of a nested JSON object, `{ answer: 42 }`. This is useful when you don't care about other parts of the response.
 
 #### Testing All Objects in an Array
-To test all objects in an array, use an asterisk character, so the path looks like `'args.path.myarray.*'` if the array is at the root level, use `'*'` as the path.
+To test all objects in an array, use an asterisk character, so the path looks like `'args.path.myarray.*'`. If the array is at the root level, use `'*'` as the path.
 
 This path mode is often combined with expectJSONTypes to ensure each item in an array contains all required keys and types.
 
@@ -463,7 +465,7 @@ This path mode is often combined with expectJSONTypes to ensure each item in an 
 .toss();
 ```
 #### Testing One Object in an Array
-To test a single object in an array, use an asterisk character, so the path looks like `'args.path.myarray.?'` if the array is at the root level, use `'?'` as the path.
+To test a single object in an array, use a question mark character, so the path looks like `'args.path.myarray.?'`. If the array is at the root level, use `'?'` as the path.
 
 ```javascript
 // some request that returns:
