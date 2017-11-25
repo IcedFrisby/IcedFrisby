@@ -14,6 +14,8 @@
     - [delete(uri,data,params)](#deleteuri-data-params)
     - [addHeader(header,content)](#addheaderheader-content)
     - [addHeaders(headers)](#addheadersheaders)
+    - [removeHeader(header)](#removeheaderheader)
+    - [auth(username,password,isDigest)](#authusername-password-isdigest)
   - [Expectations](#expectations)
     - [expectStatus(code)](#expectstatuscode)
     - [expectHeader(key, content, options)](#expectheaderkey-content-options)
@@ -25,6 +27,7 @@
     - [expectBodyContains(content)](#expectbodycontainscontent)
     - [expectJSONLength([path], length)](#expectjsonlengthpath-length)
     - [expectMaxResponseTime(ms)](#expectmaxresponsetimems)
+    - [not()](#not)
     - [Using Paths](#using-paths)
       - [Testing Nested Objects](#testing-nested-objects)
       - [Testing All Objects in an Array](#testing-all-objects-in-an-array)
@@ -46,6 +49,11 @@
     - [after()](#after)
     - [finally()](#finally)
     - [afterJSON()](#afterjson)
+    - [only()](#only)
+    - [timeout(ms)](#timeoutms)
+    - [retry(count, backoff)](#retrycount-backoff)
+    - [baseUri(uri)](#baseuriuri)
+    - [waits(ms)](#waitsms)
   - [Inspectors](#inspectors)
     - [inspect(cb)](#inspectcb)
     - [inspectRequest(message)](#inspectrequestmessage)
@@ -186,6 +194,35 @@ frisby.create('a test')
     .toss();
 ```
 
+### removeHeader(header)
+Removes a given header from the outgoing request
+* Types: `header`: `string`
+* Default: `none`
+
+```javascript
+frisby.create('Request with stripped headers')
+    .get('http://example.com')
+    .removeHeader('Content-Type')
+    .toss()
+```
+
+### auth(username,password,isDigest)
+Sets the basic auth header for the request.
+
+* Types: `username`: `string`, `password`: `string`, `isDigest`: `boolean`
+* Default: `isDigest`: `false`
+
+```javascript
+frisby.create('Get secret things')
+   .get('http://example.com/secret/things')
+   .auth('bob','letmein')
+   .expectStatus(200)
+   .toss()
+```
+
+The `isDigest` flag will configure IcedFrisby to send the request initially without the auth header, then repeat the request with the auth header when challenged with an HTTP/401 that has a `WWW-Authenticate` header.
+
+As an alternative, you can use `http://username:password@example.com`.
 
 ## Expectations
 
@@ -367,6 +404,16 @@ frisby.create('Ensure response arrives within two seconds')
   .get('http://httpbin.org/get')
   .expectMaxResponseTime(2000)
   .toss()
+```
+
+### not()
+Negates an expect, inverting the logic to expect the opposite, e.g. JSON doesn't match.
+
+```javascript
+frisby.create('Check deleted item no longer exists')
+  .get('http://example.com/things/list')
+    .not().expectContainsJSON('*', { name: 'Jane Doe' })
+.toss()
 ```
 
 ### Using Paths
@@ -650,6 +697,78 @@ frisby.create('First test')
 ### only()
 Exclusively run this test. When `toss()` is invoked, the test is wrapped in a
 Mocha `describe.only` block instead of a `describe` block.
+
+### timeout(ms)
+Sets the timeout for this request.
+
+* Types: `ms`: `string`
+* Defaults: `none
+
+```javascript
+frisby.create('Long-running request')
+    .get('http://example.com/slowthing')
+    .timeout(5000)
+    .expectStatus(200)
+    .toss()
+```
+
+This function can also be called with no parameter to return the current configured timeout (either by default, by global setup or having used this function with a parameter previously).
+
+### retry(count, backoff)
+Set the number of (and additional backoff between) retries for this test. Each retry will be the configured timeout plus (retry number x backoff) apart.
+
+* Types: `count`: `integer`, `backoff`: `integer`
+* Defaults: `backoff`: 1000
+
+```javascript
+frisby.create('Get a flaky thing')
+    .get('http://example.com/thing-that-sometimes-responds')
+    .expectStatus(200)
+    .retry(2, 250)
+    .toss()
+```
+
+### baseUri(uri)
+Set the root URI/URL that will be prepended to every request, replacing anything set by `request.baseUri` in global setup.
+
+```javascript
+frisby.create('Simple Get')
+  .baseUri('http://httpbin.org')
+  .get('/get?foo=bar')
+  .expectStatus(200)
+.toss()
+```
+
+### waits(ms)
+Sets a period of time in milliseconds to wait after `toss()` before the request is sent
+
+```javascript
+const myUser = {name: 'Jane Doe'}
+frisby.create('Create Item')
+    .post('http://example.com/users/create', myUser)
+    .after(function(err, res, body, headers) {
+        frisby.create('Check Item Exists')
+            .get('http://example.com/users/list')
+            .waits(500) //Allow time for extra server-side processing of the user
+            .expectJSON('?', myUser)
+            .toss()
+    })
+    .toss()
+```
+
+### exceptionHandler(function)
+Sets a function to run if an error is raised. Can be used to output additional debug info not covered by the [inspectors](#inspectors), or perhaps to add validation to a non-deterministic result.
+
+```javascript
+frisby.create('Expecting something from nothing')
+    .get('http://example.com/empty')
+    .expectBodyContains('foo')
+    .exceptionHandler(err => {
+        expect(err).to.be.an.instanceof(AssertionError) //Asserts that this came from a failing "expect" function
+        expect(err.message).to.equal("expected '' to include 'foo'")
+    })
+    .toss()
+```
 
 ## Inspectors
 Inspectors are useful for viewing details about HTTP requests and responses in the console.
