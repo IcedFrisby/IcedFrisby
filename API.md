@@ -222,7 +222,7 @@ frisby.create('a test')
 
 ### removeHeader(header)
 
-Removes a given header from the outgoing request
+Removes a given header from the outgoing request.
 
 | Parameter | Description | Required |
 | --------- | ----------- | -------- |
@@ -234,6 +234,8 @@ frisby.create('Request with stripped headers')
     .removeHeader('Content-Type')
     .toss()
 ```
+
+In this example, the Content-Type is always set by IcedFrisby, but the test developer doesn't want to send it so they can validate whether their API is resilient to such things.
 
 ### auth(username,password,isDigest)
 
