@@ -101,7 +101,7 @@ frisby.create('a test')
 
 These are the commands you'll need to get IcedFrisby talking HTTP.
 
-An optional parameters object is accepted in all of these methods, but aren't _useful_ for every verb. All object parameters are optional.
+An optional parameters object is accepted by each of these methods. All object parameters are optional.
 
 ```javascript
 {
@@ -144,7 +144,7 @@ Perform an HTTP POST to the specified URI.
 
 ```javascript
 frisby.create('a test')
-    .post('http://example.com/login', {
+    .post('http://example.com/account', {
       username: 'joe@example.com',
       password: 'J0£_£x@mpl£'
     })
@@ -200,7 +200,7 @@ Adds a collection of headers to your request
 - Types: `headers`: `object`
 - Default: `none`
 
-A flat object where each key becomes a header name and each corresponding value becomes that header's value in the request.
+A flat object where each key becomes a header name and each corresponding value becomes that header's value in the request. As per HTTP spec, all header names are case-insensitive.
 
 ```javascript
 frisby.create('a test')
@@ -343,6 +343,8 @@ Tests that response body is JSON and [deeply equals](http://chaijs.com/api/bdd/#
 - Types: `path`: `string`, `json`: `JSON`
 - Defaults: `none`
 
+For info on the path parameter, see [Using Paths](#using-paths).
+
 ```javascript
 frisby.create('Ensure test has foo and bar')
   .get('http://httpbin.org/get?foo=bar&bar=baz')
@@ -362,6 +364,8 @@ Tests that response body is JSON and [contains a subset](http://chaijs.com/plugi
 - Types: `path`: `string`, `json`: `JSON`
 - Defaults: `none`
 
+For info on the path parameter, see [Using Paths](#using-paths).
+
 ```javascript
 frisby.create('Ensure test has foo and bar')
   .get('http://httpbin.org/get?foo=bar&bar=baz')
@@ -377,6 +381,8 @@ Validates the response body against the provided [Joi](https://github.com/hapijs
 
 - Types: `path`: `string`, `schema`: [`Joi schema`](https://github.com/hapijs/joi)
 - Defaults: `none`
+
+For info on the path parameter, see [Using Paths](#using-paths).
 
 ```javascript
 frisby.create('Ensure response has proper JSON types in specified keys')
@@ -802,7 +808,7 @@ frisby.create('Simple Get')
 
 ### waits(ms)
 
-Sets a period of time in milliseconds to wait after `toss()` before the request is sent
+Sets a period of time in milliseconds to wait after `toss()` before the request is sent. This can allow time for server-side processing between chained requests.
 
 ```javascript
 const myUser = {name: 'Jane Doe'}
@@ -811,7 +817,7 @@ frisby.create('Create Item')
     .after(function(err, res, body, headers) {
         frisby.create('Check Item Exists')
             .get('http://example.com/users/list')
-            .waits(500) //Allow time for extra server-side processing of the user
+            .waits(500)
             .expectJSON('?', myUser)
             .toss()
     })
@@ -903,7 +909,7 @@ frisby.create('Just a quick inspection of the JSON HTTP response')
 
 Console output:
 
-```json
+```text
 { server: 'nginx',
   date: 'Sun, 17 May 2015 02:38:21 GMT',
   'content-type': 'application/json',
