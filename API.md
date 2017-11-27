@@ -884,6 +884,7 @@ Provides access to request and response data before expectations are executed. T
 | cb | Function to be called before expects. <br>Signature: `function(err, req, res, body, headers){..} | Yes |
 
 Callback Parameters:
+
 | Parameter | Description |
 | --------- | ----------- |
 | err | `Error` object if there was an error making the request. Will be `null` if no error is present. |
