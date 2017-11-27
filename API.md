@@ -87,7 +87,7 @@ frisby.create('a test')
 
 ### toss()
 
-Used to complete the list of commands and issue the request.
+Complete the list of commands and register the test with Mocha.
 
 ```javascript
 frisby.create('a test')
@@ -190,6 +190,8 @@ Adds an HTTP header to your request
 | content | String giving the value of the given header. Case sensitive. | Yes |
 
 Note that `content` is always a string, regardless of whether the data it would represent is something else (an integer or GUID for example).
+
+This method can be repeated for the same `header` value, replacing (not duplicating) the header on each successive call.
 
 ```javascript
 frisby.create('a test')
@@ -475,7 +477,7 @@ frisby.create('Ensure response arrives within two seconds')
 
 ### not()
 
-Negates an expect, inverting the logic to expect the opposite, e.g. JSON doesn't match.
+Negates all `expectJSON`, `expectJSONTypes`, `expectContainsJSON` and `expectJSONLength` expects in this test, inverting the logic to expect the opposite, e.g. JSON doesn't contain this.
 
 ```javascript
 frisby.create('Check deleted item no longer exists')
@@ -793,7 +795,7 @@ Sets the timeout for this request.
 
 | Parameter | Description | Required |
 | --------- | ----------- | -------- |
-| ms | Integer. Sets the mocha timeout for this request. | Yes |
+| ms | Integer. Sets the timeout for this individual request. | Yes |
 
 ```javascript
 frisby.create('Long-running request')
@@ -803,9 +805,11 @@ frisby.create('Long-running request')
     .toss()
 ```
 
-This function can also be called with no parameter to return the current configured timeout (either by default, by global setup or having used this function with a parameter previously).
+When a timeout occurs, the test will be aborted. The expectations and inspections may or may not run and will not be printed. If you want to run all the expectations and inspections even when the response is slow, use [expectMaxResponseTime](#expectmaxresponsetimems) instead.
 
-This is different from [expectMaxResponseTime](#expectmaxresponsetimems) in that expectMaxResponseTime will await the request to complete then test the amount of time that the request took (after any preceeding expect functions). This will abort the request and so not run any developer-defined expect functions on the response.
+If this were used in conjunction with retries, each retry would have this configured timeout.
+
+This function can also be called with no parameter to return the current configured timeout (either by default, by global setup or having used this function with a parameter previously).
 
 ### retry(count, backoff)
 
@@ -824,7 +828,7 @@ frisby.create('Get a flaky thing')
     .toss()
 ```
 
-In this above example, the first request would wait 2000ms for a response (the default), then the first retry would begin 250ms later, allow another 2000ms for this to perhaps complete, then wait 500ms (2 x 250ms) before beginning the second retry.
+In this above example, this makes two retries, for a total of three attempts, waiting 250 ms between them. For each attempt, the timeout resets to 5000 ms (the default).
 
 ### baseUri(uri)
 
@@ -840,7 +844,7 @@ frisby.create('Simple Get')
 
 ### waits(ms)
 
-Sets a period of time in milliseconds to wait after `toss()` before the request is sent. This can allow time for server-side processing between chained requests.
+Sets a period of time in milliseconds to wait after the test starts (and any [before()](#before) hook processing) until the request is sent. This can allow time for server-side processing between chained requests.
 
 ```javascript
 const myUser = {name: 'Jane Doe'}
