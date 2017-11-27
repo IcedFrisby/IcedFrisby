@@ -71,11 +71,11 @@ Every frisby request begins with `create(..)` and ends with a `toss()`.
 
 ### create(msg)
 
-- Types: `msg`: `string`
-- Default: `none`
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| msg | A string used to name the test when it's wrapped in mocha for execution at runtime | Yes |
 
 Used to create an instance of IcedFrisby that is used to send 1 request and receive the response.
-The `msg` is used to name the test when it's wrapped in mocha for execution at runtime.
 
 ```javascript
 frisby.create('a test')
@@ -114,8 +114,10 @@ An optional parameters object is accepted by each of these methods. All object p
 
 ### get(uri, params)
 
-- Types: `uri`: `string`, `params`: `object` (optional)
-- Default: `none`
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| uri | The URI/URL being requested | Yes |
+| params | An optional params object, as described above | No |
 
 Perform an HTTP GET on the specified URI.
 
@@ -137,8 +139,11 @@ Identical to [get](#geturi-params), using an HTTP OPTIONS request.
 
 ### post(uri, data, params)
 
-- Types: `uri`: `string`, `data`:`object` `params`: `object` (optional)
-- Default: `none`
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| uri | The URI string | Yes |
+| data | The data to post. An object when `{ json: true }` or `{ form: true }`, or else a data string / buffer. | Yes |
+| params | An optional params object, as described above. | No |
 
 Perform an HTTP POST to the specified URI.
 
@@ -179,8 +184,10 @@ Identical to [post](#posturi-params), using an HTTP DELETE request.
 
 Adds an HTTP header to your request
 
-- Types: `header`: `string`, `content`: `string`
-- Default: `none`
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| header | String giving the name of the header. Case insensitive. | Yes |
+| content | String giving the value of the given header. Case sensitive. | Yes |
 
 Note that `content` is always a string, regardless of whether the data it would represent is something else (an integer or GUID for example).
 
@@ -197,10 +204,9 @@ frisby.create('a test')
 
 Adds a collection of headers to your request
 
-- Types: `headers`: `object`
-- Default: `none`
-
-A flat object where each key becomes a header name and each corresponding value becomes that header's value in the request. As per HTTP spec, all header names are case-insensitive.
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| headers | A flat object where each key becomes a header name and each corresponding value becomes that header's value in the request. As per HTTP spec, all header names are case-insensitive. | Yes |
 
 ```javascript
 frisby.create('a test')
@@ -218,8 +224,9 @@ frisby.create('a test')
 
 Removes a given header from the outgoing request
 
-- Types: `header`: `string`
-- Default: `none`
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| header | String giving the name of the header to be removed | Yes |
 
 ```javascript
 frisby.create('Request with stripped headers')
@@ -232,8 +239,11 @@ frisby.create('Request with stripped headers')
 
 Sets the basic auth header for the request.
 
-- Types: `username`: `string`, `password`: `string`, `isDigest`: `boolean`
-- Default: `isDigest`: `false`
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| username | String | Yes |
+| password | String | Yes |
+| isDigest | Boolean. Defaults to `false`. <br>When given and `true`, will configure IcedFrisby to send the request initially without the auth header, then repeat the request with the auth header when challenged with an HTTP/401 that has a `WWW-Authenticate` header | No |
 
 ```javascript
 frisby.create('Get secret things')
@@ -242,8 +252,6 @@ frisby.create('Get secret things')
    .expectStatus(200)
    .toss()
 ```
-
-The `isDigest` flag will configure IcedFrisby to send the request initially without the auth header, then repeat the request with the auth header when challenged with an HTTP/401 that has a `WWW-Authenticate` header.
 
 As an alternative, you can use `http://username:password@example.com`.
 
@@ -265,8 +273,9 @@ frisby.create('a test')
 
 Tests the HTTP response Status code.
 
-- Types: `code`: `integer`
-- Default: `none`
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| code | Integer representing the HTTP status code expected to be on the response. | Yes |
 
 ```javascript
 frisby.create('Ensure we are dealing with a teapot')
@@ -275,12 +284,17 @@ frisby.create('Ensure we are dealing with a teapot')
 .toss()
 ```
 
+Note: IcedFrisby represents all network timeouts as a response of HTTP/599.
+
 ### expectHeader(key, content, options)
 
 Tests that a single HTTP response header has the [exact content](http://chaijs.com/api/bdd/#equal) or [matches](http://chaijs.com/api/bdd/#method_match) a regex. Key comparisons are case-insensitive. Content comparisons are case-insensitive for strings, case-sensitive for regular expressions.
 
-- Types: `key`: `string`, `content`: `string | regex`, `options`: `object` (optional)
-- Defaults: `options`: `{allowMultipleHeaders: false}`
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| key | String. Name of the header. | Yes |
+| content | String or RegExp to be matched. | Yes |
+| options | Object. When containing `allowMultipleHeaders: true`, will check each parameter with this name and succeed if 1 or more matches. <br>By default, multiple headers containing this name will raise an error. | No |
 
 String example:
 
@@ -307,8 +321,9 @@ For backwards compatibility, `expectHeaderToMatch(key, pattern)` is an alias for
 
 Tests that a specific HTTP header was not received in the response
 
-- Types: `key`: `string`
-- Defaults: `none`
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| key | String. Name of the header. | Yes |
 
 ```javascript
 frisby.create('Ensure response has no Set-Cookie header')
@@ -321,8 +336,11 @@ frisby.create('Ensure response has no Set-Cookie header')
 
 Tests that a single HTTP response header [contains](http://chaijs.com/api/bdd/#method_include) the specified content. Both key and content comparisons are case-insensitive.
 
-- Types: `key`: `string`, `content`: `string`, `options`: `object` (optional)
-- Defaults: `options`: `{allowMultipleHeaders: false}`
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| key | String. Name of the header. | Yes |
+| content | String to be matched. | Yes |
+| options | Object. When containing `allowMultipleHeaders: true`, will check each parameter with this name and succeed if 1 or more matches. <br>By default, multiple headers containing this name will raise an error. | No |
 
 ```javascript
 frisby.create('Ensure response has JSON somewhere in the Content-Type header')
@@ -340,8 +358,10 @@ frisby.create('Ensure response returns one cookie called "auth"')
 
 Tests that response body is JSON and [deeply equals](http://chaijs.com/api/bdd/#deep) the provided JSON.
 
-- Types: `path`: `string`, `json`: `JSON`
-- Defaults: `none`
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| path | String. Path to the the subset of the response JSON to be tested. | No |
+| json | Object. The JSON to test against. | Yes |
 
 For info on the path parameter, see [Using Paths](#using-paths).
 
@@ -361,8 +381,10 @@ frisby.create('Ensure test has foo and bar')
 
 Tests that response body is JSON and [contains a subset](http://chaijs.com/plugins/chai-subset) of the provided JSON.
 
-- Types: `path`: `string`, `json`: `JSON`
-- Defaults: `none`
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| path | String. Path to the the subset of the response JSON to be tested. | No |
+| json | Object. The JSON to test against. | Yes |
 
 For info on the path parameter, see [Using Paths](#using-paths).
 
@@ -379,8 +401,10 @@ frisby.create('Ensure test has foo and bar')
 
 Validates the response body against the provided [Joi](https://github.com/hapijs/joi) schema.
 
-- Types: `path`: `string`, `schema`: [`Joi schema`](https://github.com/hapijs/joi)
-- Defaults: `none`
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| path | String. Path to the the subset of the response JSON to be tested. | No |
+| schema | [`Joi schema`](https://github.com/hapijs/joi) that the response JSON should conform to. | Yes |
 
 For info on the path parameter, see [Using Paths](#using-paths).
 
@@ -405,8 +429,9 @@ frisby.create('Ensure response has proper JSON types in specified keys')
 
 Tests that the HTTP response body [contains](http://chaijs.com/api/bdd/#include) the provided content string. Used for testing HTML, text, or other content types.
 
-- Types: `content`: `string, regex`
-- Defaults: `none`
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| content | String or RegExp that the body will be tested against | Yes |
 
 ```javascript
 frisby.create('Ensure this is *actually* a real teapot, not some imposter coffee pot')
@@ -420,12 +445,9 @@ frisby.create('Ensure this is *actually* a real teapot, not some imposter coffee
 
 Tests given path or full JSON response for specified length. When used on objects, the number of keys are counted. When used on other JavaScript types such as Arrays or Strings, the native length property is used for comparison.
 
-- Types: `length`: `integer >= 0`, `string with <, <=, >, >=`
-  - `'< 5'`
-  - `'<= 5'`
-  - `'> 5'`
-  - `'<= 5'`
-- Defaults: `none`
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| length | Integer representing expected length, e.g. `3` <br>OR <br>String reprenting a condition, e.g. `>10`. Can be any of `<`, `<=`, `>`, `>=` | Yes |
 
 ```javascript
 frisby.create('Ensure "bar" really is only 3 characters... because you never know...')
@@ -438,8 +460,9 @@ frisby.create('Ensure "bar" really is only 3 characters... because you never kno
 
 Tests that the HTTP response arrives within a given number of milliseconds
 
-- Types: `ms`: `integer`
-- Defaults: `none`
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| ms | Integer representing number of milliseconds as the max threshold for the response | Yes |
 
 ```javascript
 frisby.create('Ensure response arrives within two seconds')
@@ -766,8 +789,9 @@ Mocha `describe.only` block instead of a `describe` block.
 
 Sets the timeout for this request.
 
-- Types: `ms`: `string`
-- Defaults: `none`
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| ms | Integer. Sets the mocha timeout for this request. | Yes |
 
 ```javascript
 frisby.create('Long-running request')
@@ -779,12 +803,16 @@ frisby.create('Long-running request')
 
 This function can also be called with no parameter to return the current configured timeout (either by default, by global setup or having used this function with a parameter previously).
 
+This is different from [expectMaxResponseTime](#expectmaxresponsetimems) in that expectMaxResponseTime will await the request to complete then test the amount of time that the request took (after any preceeding expect functions). This will abort the request and so not run any developer-defined expect functions on the response.
+
 ### retry(count, backoff)
 
 Set the number of (and additional backoff between) retries for this test. Each retry will be the configured timeout plus (retry number x backoff) apart.
 
-- Types: `count`: `integer`, `backoff`: `integer`
-- Defaults: `backoff`: 1000
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| count | Integer. Number of times to retry (meaning that 0 is still a single attempt) | Yes |
+| backoff | Integer. Number of milliseconds to add to the wait between each successive retry. Defaults to 1000ms. | No |
 
 ```javascript
 frisby.create('Get a flaky thing')
@@ -793,6 +821,8 @@ frisby.create('Get a flaky thing')
     .retry(2, 250)
     .toss()
 ```
+
+In this above example, the first request would wait 2000ms for a response (the default), then the first retry would begin 250ms later, allow another 2000ms for this to perhaps complete, then wait 500ms (2 x 250ms) before beginning the second retry.
 
 ### baseUri(uri)
 
@@ -847,14 +877,18 @@ Inspectors are useful for viewing details about HTTP requests and responses in t
 
 Provides access to request and response data before expectations are executed. This should not be used for assertions. Use [after()](https://github.com/RobertHerhold/IcedFrisby/blob/master/API.md#after) for more assertions.
 
-- Types: `cb`: `function(err, req, res, body, headers)`
-  - callback types:
-    - `err`: `Error` object is there was an error making the request. Will be `null` if no error is present.
-  - `req`: request `object` IcedFrisby made to the endpoint
-  - `res`: response `object` received from the endpoint
-  - `body`: body `object`, a part of the response
-  - `headers`: headers `object`, a part of the response
-- Defaults: `none`, performs no action if the callback is a false value
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| cb | Function to be called before expects. <br>Signature: `function(err, req, res, body, headers){..} | Yes |
+
+Callback Parameters:
+| Parameter | Description |
+| --------- | ----------- |
+| err | `Error` object if there was an error making the request. Will be `null` if no error is present. |
+| req | request `object` IcedFrisby made to the endpoint |
+| res | response `object` received from the endpoint |
+| body | body `object` (a part of the response) |
+| headers | headers `object` (a part of the response) |
 
 ```javascript
 frisby.create('Inspecting some data')
@@ -869,8 +903,9 @@ frisby.create('Inspecting some data')
 
 Inspects the entire request object sent from IcedFrisby.
 
-- Types: `message`: `string` An optional message to print before the inspection
-- Defaults: `none`
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| message | An optional to print before the inspection | No |
 
 ```javascript
 frisby.create('Just a quick inspection of the JSON HTTP response')
@@ -883,8 +918,9 @@ frisby.create('Just a quick inspection of the JSON HTTP response')
 
 Inspects the entire response.
 
-- Types: `message`: `string` An optional message to print before the inspection
-- Defaults: `none`
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| message | An optional to print before the inspection | No |
 
 ```javascript
 frisby.create('Just a quick inspection of the JSON HTTP response')
@@ -897,8 +933,9 @@ frisby.create('Just a quick inspection of the JSON HTTP response')
 
 Inspects the response headers.
 
-- Types: `message`: `string` An optional message to print before the inspection
-- Defaults: `none`
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| message | An optional to print before the inspection | No |
 
 ```javascript
 frisby.create('Just a quick inspection of the JSON HTTP response')
@@ -923,8 +960,9 @@ Console output:
 
 Dumps parsed JSON body to the console.
 
-- Types: `message`: `string` An optional message to print before the inspection
-- Defaults: `none`
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| message | An optional to print before the inspection | No |
 
 ```javascript
 frisby.create('Just a quick inspection of the JSON HTTP response')
@@ -952,8 +990,9 @@ Console output:
 
 Dumps the raw response body to the console without any parsing.
 
-- Types: `message`: `string` An optional message to print before the inspection
-- Defaults: `none`
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| message | An optional string to print before the inspection | No |
 
 ```javascript
 // Test
@@ -980,8 +1019,9 @@ Console output:
 
 Inspects the response status.
 
-- Types: `message`: `string` An optional message to print before the inspection
-- Defaults: `none`
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| message | An optional string to print before the inspection | No |
 
 ```javascript
 frisby.create('Just a quick inspection of the JSON HTTP response')
