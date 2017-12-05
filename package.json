@@ -56,6 +56,11 @@
     "proxyquire": "^1.8.0",
     "sinon": "^4.0.0"
   },
+  "greenkeeper": {
+    "ignore": [
+      "joi"
+    ]
+  },
   "main": "lib/icedfrisby",
   "files": [
     "lib",
