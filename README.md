@@ -1,8 +1,8 @@
 # IcedFrisby
 
-[![Build Status](https://api.travis-ci.org/MarkHerhold/IcedFrisby.svg?branch=master)](https://travis-ci.org/MarkHerhold/IcedFrisby/)
-[![Coverage Status](https://coveralls.io/repos/github/MarkHerhold/IcedFrisby/badge.svg)](https://coveralls.io/github/MarkHerhold/IcedFrisby)
-[![Greenkeeper badge](https://badges.greenkeeper.io/MarkHerhold/IcedFrisby.svg)](https://greenkeeper.io/)
+[![Build Status](https://img.shields.io/travis/IcedFrisby/IcedFrisby.svg)](https://travis-ci.org/IcedFrisby/IcedFrisby/)
+[![Coverage Status](https://img.shields.io/coveralls/github/IcedFrisby/IcedFrisby.svg)](https://coveralls.io/github/IcedFrisby/IcedFrisby)
+[![Greenkeeper badge](https://badges.greenkeeper.io/IcedFrisby/IcedFrisby.svg)](https://greenkeeper.io/)
 [![npm](https://img.shields.io/npm/v/icedfrisby.svg)](http://www.npmjs.com/package/icedfrisby)
 
 
@@ -179,7 +179,7 @@ IcedFrisby is maintained by:
 1. Make output errors more useful. It can be hard to track down which assertion is causing what error.
 1. Add a "stack trace" for paths to help discern why a path traversal failed
 1. Support [chained tests/promises](https://github.com/vlucas/frisby/issues/223). Related: [#127](https://github.com/vlucas/frisby/issues/127), [#154](https://github.com/vlucas/frisby/issues/154), [#200](https://github.com/vlucas/frisby/issues/200)
-1. ~~custom assertion plugin support~~ :rocket: [#27](https://github.com/MarkHerhold/icedfrisby/issues/27)
+1. ~~custom assertion plugin support~~ :rocket: [#27](https://github.com/IcedFrisby/icedfrisby/issues/27)
 
 ## License
 Licensed under the [MIT](http://opensource.org/licenses/MIT)/[BSD](http://opensource.org/licenses/BSD-3-Clause) license.
