@@ -151,6 +151,18 @@ const frisby = mix(require('icedfrisby')).with(require('./my-plugin'))
 
 ## IcedFrisby Development
 
+### Lerna repo
+
+This repo is managed with [Lerna][], which is designed for projects which ship
+multiple packages. The `postinstall` script will "hoist" dependencies to the root
+of the project and link them up. At time of writing, we've only one package, though
+when we have more than one, they will be linked to each other.
+
+After pulling a new commit, you can re-run `npm postinstall` at the root to update
+dependencies as needed.
+
+[Lerna]: https://lernajs.io/
+
 ### Code Coverage
 
 You can assess code coverage by running `npm run coverage`.
