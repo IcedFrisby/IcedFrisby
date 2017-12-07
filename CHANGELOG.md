@@ -1,6 +1,7 @@
 # IcedFrisby Changelog
 
-[Unreleased]: https://github.com/MarkHerhold/IcedFrisby/compare/1.5.0...HEAD
+[Unreleased]: https://github.com/MarkHerhold/IcedFrisby/compare/2.0.0-alpha.1...HEAD
+[2.0.0-alpha.1]: https://github.com/MarkHerhold/IcedFrisby/compare/2.0.0-alpha.1...1.5.0
 [1.5.0]: https://github.com/MarkHerhold/IcedFrisby/compare/1.5.0...1.4.0
 [1.4.0]: https://github.com/MarkHerhold/IcedFrisby/compare/1.4.0...1.3.0
 [1.3.1]: https://github.com/MarkHerhold/IcedFrisby/compare/1.4.0...1.3.0
@@ -9,6 +10,38 @@
 [1.1.0]: https://github.com/MarkHerhold/IcedFrisby/compare/1.1.0...1.0.0
 
 ## [Unreleased][]
+
+## [2.0.0-alpha.1][]
+
+### Breaking changes
+
+- Make Joi an optional dependency. ([PR #84][])
+    - Joi is only used when the developer invokes `expectJSONTypes`
+    - The developer must install Joi on their own.
+    - The developer can specify the version number of their choice. Upgrading
+      IcedFrisby does not affect the Joi version. Joi 12.0.0 works with Node
+      6+, 13.0.0 with Node 8+.
+    - The developer's specified version is the only copy of Joi installed.
+
+### Bug fixes
+
+- Significantly improve API documentation ([PR #94][])
+- Remove `setResponseType` and other `setResponseX` functions which were
+  not part of the public API and are unused internally. ([PR #89][])
+- Fix `timeout()` and `retry()` ([PR #71][])
+    - Retry on errors, not just timeouts
+    - Back off between retries
+    - Global setup respects `retryBackoff` option
+    - Configure Mocha’s timeout to accommodate `.timeout()` and `.retry()`
+- Clean up after `useApp()` ([PR #72][])
+
+[PR #71]: https://github.com/MarkHerhold/IcedFrisby/pull/71
+[PR #72]: https://github.com/MarkHerhold/IcedFrisby/pull/72
+[PR #73]: https://github.com/MarkHerhold/IcedFrisby/pull/73
+[PR #84]: https://github.com/MarkHerhold/IcedFrisby/pull/84
+[PR #89]: https://github.com/MarkHerhold/IcedFrisby/pull/89
+[PR #94]: https://github.com/MarkHerhold/IcedFrisby/pull/94
+
 
 ## [1.5.0][]
 
