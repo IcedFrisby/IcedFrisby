@@ -49,6 +49,11 @@
     "proxyquire": "^1.8.0",
     "strip-ansi": "^4.0.0"
   },
+  "greenkeeper": {
+    "ignore": [
+      "joi"
+    ]
+  },
   "main": "lib/icedfrisby",
   "files": [
     "lib",
