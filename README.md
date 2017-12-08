@@ -4,6 +4,7 @@
 [![Coverage Status](https://img.shields.io/coveralls/github/IcedFrisby/IcedFrisby.svg)](https://coveralls.io/github/IcedFrisby/IcedFrisby)
 [![Greenkeeper badge](https://badges.greenkeeper.io/IcedFrisby/IcedFrisby.svg)](https://greenkeeper.io/)
 [![npm](https://img.shields.io/npm/v/icedfrisby.svg)](http://www.npmjs.com/package/icedfrisby)
+[![npm@next](https://img.shields.io/npm/v/icedfrisby/next.svg)](https://github.com/IcedFrisby/IcedFrisby/releases)
 
 
 **IcedFrisby** is a Node.js npm module that makes testing API endpoints easy, fast and fun. Based on the original [Frisby](https://github.com/vlucas/frisby) project.
