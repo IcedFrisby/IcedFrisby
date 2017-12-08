@@ -1,19 +1,23 @@
 {
   "name": "icedfrisby",
-  "version": "1.5.0",
-  "description": "IcedFrisby: REST API Endpoint Testing built on Mocha and Chai",
-  "homepage": "https://github.com/RobertHerhold/IcedFrisby",
-  "author": "Robert Herhold",
+  "version": "2.0.0-alpha.1",
+  "description": "REST API testing made easy, fast, and fun",
+  "homepage": "https://github.com/IcedFrisby/IcedFrisby",
+  "bugs": "https://github.com/IcedFrisby/IcedFrisby/issues",
   "license": "MIT",
   "contributors": [
-    "Robert Herhold",
-    "Vance Lucas <vance@vancelucas.com>",
     "Eric Boehs <ericboehs@gmail.com>",
-    "Kevin Morey"
+    "Dan Caseley",
+    "Robert Herhold",
+    "Mark Herhold",
+    "Vance Lucas <vance@vancelucas.com>",
+    "Paul Melnikow",
+    "Kevin Morey",
+    "Casey Vega"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/RobertHerhold/IcedFrisby"
+    "url": "https://github.com/IcedFrisby/IcedFrisby"
   },
   "keywords": [
     "testing",

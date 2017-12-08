@@ -169,9 +169,10 @@ write a [plugin](#icedfrisby-plugins) and add a link here.
 
 IcedFrisby is maintained by:
 
-* [cvega](https://github.com/cvega)
-* [MarkHerhold](https://github.com/MarkHerhold)
-* [paulmelnikow](https://github.com/paulmelnikow)
+* [Dan Caseley](https://github.com/Fishbowler)
+* [Mark Herhold](https://github.com/MarkHerhold)
+* [Paul Melnikow](https://github.com/paulmelnikow)
+* [Casey Vega](https://github.com/cvega)
 
 
 ### Roadmap
