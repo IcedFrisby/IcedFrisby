@@ -34,6 +34,7 @@
     - Global setup respects `retryBackoff` option
     - Configure Mocha’s timeout to accommodate `.timeout()` and `.retry()`
 - Clean up after `useApp()` ([PR #72][])
+- Tidy request code ([PR #101][])
 
 [PR #71]: https://github.com/MarkHerhold/IcedFrisby/pull/71
 [PR #72]: https://github.com/MarkHerhold/IcedFrisby/pull/72
@@ -41,6 +42,7 @@
 [PR #84]: https://github.com/MarkHerhold/IcedFrisby/pull/84
 [PR #89]: https://github.com/MarkHerhold/IcedFrisby/pull/89
 [PR #94]: https://github.com/MarkHerhold/IcedFrisby/pull/94
+[PR #101]: https://github.com/IcedFrisby/IcedFrisby/pull/101
 
 
 ## [1.5.0][]
