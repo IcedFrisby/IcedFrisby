@@ -1834,11 +1834,11 @@ describe('Frisby matchers', function() {
     // effects which trigger a ("cb.call is not a function") error, which is
     // difficult to debug.
     const test = frisby.create(this.test.title)
-    expect(test.current.inspections).to.have.lengthOf(0)
+    expect(test._inspects).to.have.lengthOf(0)
     test.inspectJSON(() => {})
-    expect(test.current.inspections).to.have.lengthOf(1)
+    expect(test._inspects).to.have.lengthOf(1)
     util.inspect(test)
-    expect(test.current.inspections).to.have.lengthOf(1)
+    expect(test._inspects).to.have.lengthOf(1)
   })
 
   describe('exclusive tests', function () {

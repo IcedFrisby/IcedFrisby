@@ -35,7 +35,7 @@ describe('Frisby object setup', function() {
     expect(f1.current.request).to.deep.equal(f2.current.request)
 
     // Different describe statements
-    expect(f1.current.describe).not.to.deep.equal(f2.current.describe)
+    expect(f1._message).not.to.deep.equal(f2._message)
 
     // Add header only to f1
     f1.addHeaders({
