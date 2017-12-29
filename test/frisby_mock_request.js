@@ -85,8 +85,8 @@ describe('Frisby matchers', function() {
     frisby.create(this.test.title)
       .get('http://mock-request/test-object-array', {mock: mockFn})
       .after(function(err, res, body) {
-        expect(this.current.outgoing.headers['test']).to.equal('One')
-        expect(this.current.outgoing.headers['referer']).to.equal('http://frisbyjs.com')
+        expect(this._outgoing.headers.test).to.equal('One')
+        expect(this._outgoing.headers.referer).to.equal('http://frisbyjs.com')
       })
       .toss()
     restoreGlobalSetup()
@@ -108,7 +108,7 @@ describe('Frisby matchers', function() {
       .addHeaders({ 'Test': 'Two' })
       .after(function(err, res, body) {
         // Local addHeaders should override global
-        expect(this.current.outgoing.headers['test']).to.equal('Two')
+        expect(this._outgoing.headers.test).to.equal('Two')
       })
       .toss()
     restoreGlobalSetup()
@@ -139,7 +139,7 @@ describe('Frisby matchers', function() {
       .addHeaders({ 'Test': 'Two' })
       .after(function(err, res, body) {
         // Local addHeaders should override global
-        expect(this.current.outgoing.headers['test']).to.equal('Two')
+        expect(this._outgoing.headers.test).to.equal('Two')
       })
       .toss()
 
@@ -148,7 +148,7 @@ describe('Frisby matchers', function() {
       .addHeaders({ 'Test': 'Three' })
       .after(function(err, res, body) {
         // Local addHeaders should override global
-        expect(this.current.outgoing.headers['test']).to.equal('Three')
+        expect(this._outgoing.headers.test).to.equal('Three')
       })
       .toss()
 
@@ -1072,10 +1072,10 @@ describe('Frisby matchers', function() {
       .expectHeader('Authorization', 'Basic ZnJpc2J5OnBhc3N3ZA==')
       .after(function(err, res, body) {
         // Check to ensure outgoing set for basic auth
-        expect(this.current.outgoing.auth).to.deep.equal({ user: 'frisby', pass: 'passwd', sendImmediately: true })
+        expect(this._outgoing.auth).to.deep.equal({ user: 'frisby', pass: 'passwd', sendImmediately: true })
 
         // Check to ensure response headers contain basic auth header
-        expect(this.current.response.headers.authorization).to.equal('Basic ZnJpc2J5OnBhc3N3ZA==')
+        expect(this._response.headers.authorization).to.equal('Basic ZnJpc2J5OnBhc3N3ZA==')
       })
       .toss()
   })
@@ -1277,8 +1277,8 @@ describe('Frisby matchers', function() {
       .expectJSON({'foo': 'bar'})
       .expectHeader('Content-Type', 'application/json')
       .after(function(err, res, body) {
-        expect(this.current.outgoing.headers['content-type']).to.equal('application/json')
-        expect(this.current.outgoing.body).to.deep.equal({})
+        expect(this._outgoing.headers['content-type']).to.equal('application/json')
+        expect(this._outgoing.body).to.deep.equal({})
       })
       .toss()
   })
@@ -1298,8 +1298,8 @@ describe('Frisby matchers', function() {
       .expectJSON({'foo': 'bar'})
       .expectHeader('Content-Type', 'application/json')
       .after(function(err, res, body) {
-        expect(this.current.outgoing.headers['content-type']).to.equal(customContentType)
-        expect(this.current.outgoing.body).to.deep.equal({})
+        expect(this._outgoing.headers['content-type']).to.equal(customContentType)
+        expect(this._outgoing.body).to.deep.equal({})
       })
       .toss()
   })
@@ -1748,7 +1748,7 @@ describe('Frisby matchers', function() {
       .expectStatus(200)
       .expectBodyContains('some body here')
       .after(function() {
-        expect(this.current.outgoing.uri).to.equal('http://httpbin.org/test')
+        expect(this._outgoing.uri).to.equal('http://httpbin.org/test')
       })
       .toss()
 
@@ -1775,7 +1775,7 @@ describe('Frisby matchers', function() {
       .expectStatus(200)
       .expectBodyContains('some body here')
       .after(function() {
-        expect(this.current.outgoing.uri).to.equal('http://httpbin.org/test')
+        expect(this._outgoing.uri).to.equal('http://httpbin.org/test')
       })
       .toss()
 

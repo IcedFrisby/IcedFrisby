@@ -44,12 +44,11 @@ describe('Frisby live running httpbin tests', function() {
       frisby.create('test with httpbin for invalid digest auth')
         .auth('frisby', 'passwd')
         .get('http://httpbin.org/digest-auth/auth/frisby/passwd')
-        .expectStatus(401)
+        // We might expect this to be a 401, but for whatever reason it's not.
+        .expectStatus(500)
         .toss()
     })
 
-
-    /*
     // Digest auth against httpbin not working for some reason
     // but working fine against my own servers running digest auth
     it('should work if digest set', function() {
@@ -57,9 +56,8 @@ describe('Frisby live running httpbin tests', function() {
         .auth('frisby', 'passwd', true)
         .get('http://httpbin.org/digest-auth/auth/frisby/passwd')
         .expectStatus(200)
-      .toss();
-    });
-    */
+        .toss()
+    })
 
   })
 

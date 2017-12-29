@@ -122,7 +122,7 @@ describe('Frisby object setup', function() {
       }
     })
 
-    expect(frisby.create('mytest').get('/path').current.outgoing.json).to.deep.equal(false)
+    expect(frisby.create('mytest').get('/path')._outgoing.json).to.deep.equal(false)
   })
 
   it('should switch to json default = true when global config is configured json', function() {
@@ -143,7 +143,7 @@ describe('Frisby object setup', function() {
       }
     })
 
-    expect(frisby.create('mytest').get('/path').current.outgoing.json).to.deep.equal(true)
+    expect(frisby.create('mytest').get('/path')._outgoing.json).to.deep.equal(true)
   })
 
   it('should be able to reset the request object with reset()', function() {
@@ -193,7 +193,7 @@ describe('Frisby object setup', function() {
 
     expect(frisby.create('mytest').get('/path', {
       json: false
-    }).current.outgoing.json).to.equal(false)
+    })._outgoing.json).to.equal(false)
   })
 
   it('should switch to inspectOnFailure default = true when global config is configured inspectOnFailure', function() {
@@ -214,7 +214,7 @@ describe('Frisby object setup', function() {
       }
     })
 
-    expect(frisby.create('mytest').get('/path').current.outgoing.inspectOnFailure).to.deep.equal(true)
+    expect(frisby.create('mytest').get('/path')._outgoing.inspectOnFailure).to.deep.equal(true)
   })
 
   it('should be overridable by the params parameter inspectOnFailure=false', function() {
@@ -237,7 +237,7 @@ describe('Frisby object setup', function() {
 
     expect(frisby.create('mytest').get('/path', {
       inspectOnFailure: false
-    }).current.outgoing.inspectOnFailure).to.equal(false)
+    })._outgoing.inspectOnFailure).to.equal(false)
   })
 
 })
