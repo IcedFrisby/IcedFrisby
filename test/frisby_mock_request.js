@@ -18,31 +18,6 @@ const util = require('util')
 // enable real connections for localhost otherwise useApp() tests won't work
 nock.enableNetConnect('127.0.0.1')
 
-// Test global setup
-
-const mockGlobalSetup = function() {
-  frisby.globalSetup({
-    timeout: 3000,
-    request: {
-      headers: {
-        'Test'   : 'One',
-        'Referer': 'http://frisbyjs.com'
-      }
-    }
-  })
-}
-
-const restoreGlobalSetup = function() {
-  frisby.globalSetup({
-    request: {
-      headers: {},
-      inspectOnFailure: false,
-      json: false,
-      baseUri: ''
-    }
-  })
-}
-
 //
 // Tests run like normal Frisby specs but with 'mock' specified with a 'mock-request' object
 // These work without further 'expects' statements because Frisby generates and runs Jasmine tests
@@ -62,97 +37,6 @@ describe('Frisby matchers', function() {
       .get('http://mock-request/not-found', {mock: mockFn})
       .expectStatus(404)
       .toss()
-  })
-
-  it('globalSetup should set timeout to 3000', function() {
-    mockGlobalSetup()
-    const f1 = frisby.create(this.test.title)
-    expect(f1.timeout()).to.equal(3000)
-    restoreGlobalSetup()
-  })
-
-  it('globalSetup should set local request headers', function() {
-    // Mock API
-    const mockFn = mockRequest.mock()
-      .get('/test-object-array')
-      .respond({
-        statusCode: 200,
-        body: fixtures.arrayOfObjects
-      })
-      .run()
-
-    mockGlobalSetup()
-    frisby.create(this.test.title)
-      .get('http://mock-request/test-object-array', {mock: mockFn})
-      .after(function(err, res, body) {
-        expect(this._outgoing.headers.test).to.equal('One')
-        expect(this._outgoing.headers.referer).to.equal('http://frisbyjs.com')
-      })
-      .toss()
-    restoreGlobalSetup()
-  })
-
-  it('addHeaders should override globalSetup request headers', function() {
-    // Mock API
-    const mockFn = mockRequest.mock()
-      .get('/test-object-array')
-      .respond({
-        statusCode: 200,
-        body: fixtures.arrayOfObjects
-      })
-      .run()
-
-    mockGlobalSetup()
-    frisby.create(this.test.title)
-      .get('http://mock-request/test-object-array', {mock: mockFn})
-      .addHeaders({ 'Test': 'Two' })
-      .after(function(err, res, body) {
-        // Local addHeaders should override global
-        expect(this._outgoing.headers.test).to.equal('Two')
-      })
-      .toss()
-    restoreGlobalSetup()
-  })
-
-  it('addHeaders should override globalSetup request headers and not taint other Frisby tests', function() {
-    // Mock API
-    const mockFn = mockRequest.mock()
-      .get('/test-object-array-ex')
-      .respond({
-        statusCode: 200,
-        body: fixtures.arrayOfObjects
-      })
-      .run()
-
-    const mockFn2 = mockRequest.mock()
-      .get('/test-object-array-ex2')
-      .respond({
-        statusCode: 200,
-        body: fixtures.arrayOfObjects
-      })
-      .run()
-
-    mockGlobalSetup()
-
-    frisby.create(this.test.title + ' - mock test one')
-      .get('http://mock-request/test-object-array-ex', {mock: mockFn})
-      .addHeaders({ 'Test': 'Two' })
-      .after(function(err, res, body) {
-        // Local addHeaders should override global
-        expect(this._outgoing.headers.test).to.equal('Two')
-      })
-      .toss()
-
-    frisby.create(this.test.title + ' - mock test two')
-      .get('http://mock-request/test-object-array-ex2', {mock: mockFn2})
-      .addHeaders({ 'Test': 'Three' })
-      .after(function(err, res, body) {
-        // Local addHeaders should override global
-        expect(this._outgoing.headers.test).to.equal('Three')
-      })
-      .toss()
-
-    restoreGlobalSetup()
   })
 
   describe('before callbacks', function () {
@@ -1264,46 +1148,6 @@ describe('Frisby matchers', function() {
       .toss()
   })
 
-  it('should allow for passing raw request body and preserve json:true option', function() {
-    nock('http://httpbin.org', { allowUnmocked: true })
-      .post('/json')
-      .once()
-      .reply(200, {'foo': 'bar'})
-
-    // Intercepted with 'nock'
-    frisby.create(this.test.title)
-      .post('http://httpbin.org/json', {}, { json: true })
-      .expectStatus(200)
-      .expectJSON({'foo': 'bar'})
-      .expectHeader('Content-Type', 'application/json')
-      .after(function(err, res, body) {
-        expect(this._outgoing.headers['content-type']).to.equal('application/json')
-        expect(this._outgoing.body).to.deep.equal({})
-      })
-      .toss()
-  })
-
-  it('preserves a custom json header with json:true option', function() {
-    nock('http://example.com')
-      .post('/json')
-      .reply(200, {'foo': 'bar'})
-
-    const customContentType = 'application/json; profile=http://example.com/schema/books#'
-
-    // Intercepted with 'nock'
-    frisby.create(this.test.title)
-      .post('http://example.com/json', {}, { json: true })
-      .addHeader('Content-Type', customContentType)
-      .expectStatus(200)
-      .expectJSON({'foo': 'bar'})
-      .expectHeader('Content-Type', 'application/json')
-      .after(function(err, res, body) {
-        expect(this._outgoing.headers['content-type']).to.equal(customContentType)
-        expect(this._outgoing.body).to.deep.equal({})
-      })
-      .toss()
-  })
-
   describe('expectBodyContains', function () {
     it('should fail when the response is empty', function () {
       nock('http://example.com')
@@ -1727,59 +1571,23 @@ describe('Frisby matchers', function() {
       .toss()
   })
 
-  it('globalSetup should be able to set baseURI', function () {
-    nock('http://httpbin.org', { allowUnmocked: true })
-      .post('/test')
-      .once()
-      .reply(200, function(uri, requestBody) {
-        return requestBody
-      })
-
-    frisby.globalSetup({
-      request: {
-        baseUri: 'http://httpbin.org'
-      }
-    })
-
-    frisby.create(this.test.title)
-      .post('/test', {}, {
-        body: 'some body here'
-      })
-      .expectStatus(200)
-      .expectBodyContains('some body here')
-      .after(function() {
-        expect(this._outgoing.uri).to.equal('http://httpbin.org/test')
-      })
-      .toss()
-
-    restoreGlobalSetup()
-  })
-
-  it('baseUri should be able to override global setup', function() {
-    nock('http://httpbin.org', { allowUnmocked: true })
+  it('baseUri should set the outgoing URI', function() {
+    nock('http://host.example.com', { allowUnmocked: true })
       .post('/test')
       .once()
       .reply(200, (uri, requestBody) => requestBody)
 
-    frisby.globalSetup({
-      request: {
-        baseUri: 'http://example.com'
-      }
-    })
-
     frisby.create(this.test.title)
-      .baseUri('http://httpbin.org')
+      .baseUri('http://host.example.com')
       .post('/test', {}, {
         body: 'some body here'
       })
       .expectStatus(200)
       .expectBodyContains('some body here')
       .after(function() {
-        expect(this._outgoing.uri).to.equal('http://httpbin.org/test')
+        expect(this._outgoing.uri).to.equal('http://host.example.com/test')
       })
       .toss()
-
-    restoreGlobalSetup()
   })
 
   describe('Other HTTP methods', function () {
@@ -1968,6 +1776,103 @@ describe('Frisby matchers', function() {
         .post('http://example.com/path')
         .expectStatus(201)
         .expectHeader('MYheader', /myVALUE/)
+        .toss()
+    })
+  })
+})
+
+describe('request headers', function () {
+  it('addHeaders should add the normalized header to the outgoing request', function() {
+    let headers
+
+    const mockFn = mockRequest.mock()
+      .get('/test-object-array')
+      .respond({
+        statusCode: 200,
+        body: fixtures.arrayOfObjects
+      })
+      .run()
+    const saveReqHeaders = (outgoing, callback) => {
+      headers = outgoing.headers
+      mockFn(outgoing, callback)
+    }
+
+    frisby.create(this.test.title)
+      .get('http://mock-request/test-object-array', {mock: saveReqHeaders})
+      .addHeaders({ 'Test': 'Two' })
+      .expectStatus(200)
+      .after((err, res, body) => {
+        expect(headers.test).to.equal('Two')
+      })
+      .toss()
+  })
+
+  context.only('when configured with { json: true }', function() {
+    it('applies the expected json header', function() {
+      let headers
+
+      const mockFn = mockRequest.mock()
+        .get('/json-header')
+        .respond({
+          statusCode: 200,
+          body: fixtures.arrayOfObjects
+        })
+        .run()
+      const saveReqHeaders = (outgoing, callback) => {
+        headers = outgoing.headers
+        mockFn(outgoing, callback)
+      }
+
+      // Intercepted with 'nock'
+      frisby.create(this.test.title)
+        .config({ json: true })
+        .get('http://mock-request/json-header', { mock: saveReqHeaders })
+        .expectStatus(200)
+        .after((err, res, body) => {
+          expect(headers['content-type']).to.equal('application/json')
+        })
+        .toss()
+    })
+  })
+
+  context('when passing params to _request', function () {
+    it('should allow for passing raw request body and preserve json:true option', function() {
+      nock('http://httpbin.org', { allowUnmocked: true })
+        .post('/json')
+        .once()
+        .reply(200, {'foo': 'bar'})
+
+      // Intercepted with 'nock'
+      frisby.create(this.test.title)
+        .post('http://httpbin.org/json', {}, { json: true })
+        .expectStatus(200)
+        .expectJSON({'foo': 'bar'})
+        .expectHeader('Content-Type', 'application/json')
+        .after(function(err, res, body) {
+          expect(this._outgoing.headers['content-type']).to.equal('application/json')
+          expect(this._outgoing.body).to.deep.equal({})
+        })
+        .toss()
+    })
+
+    it('preserves a custom json header with json:true option', function() {
+      nock('http://example.com')
+        .post('/json')
+        .reply(200, {'foo': 'bar'})
+
+      const customContentType = 'application/json; profile=http://example.com/schema/books#'
+
+      // Intercepted with 'nock'
+      frisby.create(this.test.title)
+        .post('http://example.com/json', {}, { json: true })
+        .addHeader('Content-Type', customContentType)
+        .expectStatus(200)
+        .expectJSON({'foo': 'bar'})
+        .expectHeader('Content-Type', 'application/json')
+        .after(function(err, res, body) {
+          expect(this._outgoing.headers['content-type']).to.equal(customContentType)
+          expect(this._outgoing.body).to.deep.equal({})
+        })
         .toss()
     })
   })
