@@ -4,7 +4,7 @@
   - [The Basics](#thebasics)
     - [create(msg)](#createmsg)
     - [toss()](#toss)
-    - [config()](#config)
+    - [config()](#configopts)
   - [Commands](#commands)
     - [get(uri,params)](#geturi-params)
     - [head(uri,params)](#headuri-params)
@@ -95,7 +95,7 @@ frisby.create('a test')
 Set configuration options on this instance.
 
 - `inspectOnFailure` (boolean): This is a really neat option that will help you figure out what is happening with your requests. Dumps request/response information to the logs.
-- `json` (boolean): Sets the `content-type` header to `application/json`.
+- `json` (boolean): Sets body to JSON representation of value and adds Content-type: application/json header. Additionally, parses the response body as JSON.
 
 ```javascript
 frisby.create('...').get('...').config({ inspectOnFailure: true })
