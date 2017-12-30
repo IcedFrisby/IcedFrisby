@@ -1807,12 +1807,12 @@ describe('request headers', function () {
       .toss()
   })
 
-  context.only('when configured with { json: true }', function() {
+  context('when configured with { json: true }', function() {
     it('applies the expected json header', function() {
       let headers
 
       const mockFn = mockRequest.mock()
-        .get('/json-header')
+        .post('/json-header')
         .respond({
           statusCode: 200,
           body: fixtures.arrayOfObjects
@@ -1826,7 +1826,7 @@ describe('request headers', function () {
       // Intercepted with 'nock'
       frisby.create(this.test.title)
         .config({ json: true })
-        .get('http://mock-request/json-header', { mock: saveReqHeaders })
+        .post('http://mock-request/json-header', {}, { mock: saveReqHeaders })
         .expectStatus(200)
         .after((err, res, body) => {
           expect(headers['content-type']).to.equal('application/json')
