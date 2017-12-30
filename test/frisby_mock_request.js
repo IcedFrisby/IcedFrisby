@@ -1807,6 +1807,62 @@ describe('request headers', function () {
       .toss()
   })
 
+  context('when configured with { json: true }', function() {
+    it('applies the expected json header', function() {
+      let headers
+
+      const mockFn = mockRequest.mock()
+        .post('/json-header')
+        .respond({
+          statusCode: 200,
+          body: fixtures.arrayOfObjects
+        })
+        .run()
+      const saveReqHeaders = (outgoing, callback) => {
+        headers = outgoing.headers
+        mockFn(outgoing, callback)
+      }
+
+      // Intercepted with 'nock'
+      frisby.create(this.test.title)
+        .config({ json: true })
+        .post('http://mock-request/json-header', {}, { mock: saveReqHeaders })
+        .expectStatus(200)
+        .after((err, res, body) => {
+          expect(headers['content-type']).to.equal('application/json')
+        })
+        .toss()
+    })
+
+    context('when configured after _request() is invoked', function() {
+      it.skip('TODO still applies the expected json header', function() {
+        let headers
+
+        const mockFn = mockRequest.mock()
+          .post('/json-header')
+          .respond({
+            statusCode: 200,
+            body: fixtures.arrayOfObjects
+          })
+          .run()
+        const saveReqHeaders = (outgoing, callback) => {
+          headers = outgoing.headers
+          mockFn(outgoing, callback)
+        }
+
+        // Intercepted with 'nock'
+        frisby.create(this.test.title)
+          .post('http://mock-request/json-header', {}, { mock: saveReqHeaders })
+          .config({ json: true })
+          .expectStatus(200)
+          .after((err, res, body) => {
+            expect(headers['content-type']).to.equal('application/json')
+          })
+          .toss()
+      })
+    })
+  })
+
   context('when passing params to _request', function () {
     it('should allow for passing raw request body and preserve json:true option', function() {
       nock('http://httpbin.org', { allowUnmocked: true })

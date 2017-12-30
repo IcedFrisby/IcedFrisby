@@ -95,6 +95,7 @@ frisby.create('a test')
 Set configuration options on this instance.
 
 - `inspectOnFailure` (boolean): This is a really neat option that will help you figure out what is happening with your requests. Dumps request/response information to the logs.
+- `json` (boolean): Sets body to JSON representation of value and adds Content-type: application/json header. Additionally, parses the response body as JSON.
 
 ```javascript
 frisby.create('...').get('...').config({ inspectOnFailure: true })
@@ -108,7 +109,7 @@ An optional parameters object is accepted by each of these methods. All object p
 
 ```javascript
 {
-  json: 'boolean',         //Whether this will be a JSON body.
+  json: 'boolean',         //Whether this will be a JSON body. Overrides value set in globalSetup().
   body: 'string'|'object', //The body to include in the outbound request. This overrides "data" if provided in method call.
   mock: 'function',        //A mock runner to use. When not provided, uses "request" (i.e. does it for real).
   form: 'boolean'          //Use the object in the body to create a form-encoded request.

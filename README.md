@@ -50,9 +50,14 @@ const Joi = require('joi')
 const URL = 'http://localhost:3000/'
 const URL_AUTH = 'http://username:password@localhost:3000/'
 
+frisby.globalSetup({ // globalSetup is for ALL requests.
+  request: {
+    headers: { 'X-Auth-Token': 'fa8426a0-8eaf-4d22-8e13-7c1b16a9370c' }
+  }
+})
+
 frisby.create('GET user johndoe')
   .get(URL + '/users/3.json')
-  .addHeader('X-Auth-Token', 'fa8426a0-8eaf-4d22-8e13-7c1b16a9370c')
   .expectStatus(200)
   .expectJSONTypes({
     id: Joi.number(),
