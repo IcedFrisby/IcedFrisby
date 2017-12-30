@@ -109,7 +109,7 @@ An optional parameters object is accepted by each of these methods. All object p
 
 ```javascript
 {
-  json: 'boolean',         //Whether this will be a JSON body. Overrides value set in globalSetup().
+  json: 'boolean',         //Whether this will be a JSON body. Overrides value set in config().
   body: 'string'|'object', //The body to include in the outbound request. This overrides "data" if provided in method call.
   mock: 'function',        //A mock runner to use. When not provided, uses "request" (i.e. does it for real).
   form: 'boolean'          //Use the object in the body to create a form-encoded request.
