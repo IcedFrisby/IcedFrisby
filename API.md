@@ -773,7 +773,7 @@ Callback function to run after test is completed. This helper function automatic
 ```javascript
 frisby.create('First test')
   .get('http://httpbin.org/get?foo=bar')
-  afterJSON(function(json) {
+  .afterJSON(function(json) {
 
     // Now you can use 'json' in additional requests
     frisby.create('Second test, run after first is completed')
