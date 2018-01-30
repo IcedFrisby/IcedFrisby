@@ -426,4 +426,35 @@ describe('Frisby live running httpbin tests', function() {
   //     .toss();
   //
   // })
+
+  it('should send all headers when you bootstrap them with config', function(){
+
+    frisby.create(this.test.title)
+      .baseUri('http://httpbin.org')
+      .config({request:{headers:{'Abc':'def'}}})
+      .get('/headers')
+      .addHeader('Foo','bar')
+      .expectContainsJSON('headers',{
+        "Abc": "def"
+      })
+      .expectContainsJSON('headers',{
+        "Foo": "bar"
+      })
+      .toss()
+  })
+
+  it('should send all headers when you bootstrap them with parameters', function(){
+
+    frisby.create(this.test.title)
+      .baseUri('http://httpbin.org')
+      .get('/headers', {headers:{'Abc':'def'}})
+      .addHeader('Foo','bar')
+      .expectContainsJSON('headers',{
+        "Abc": "def"
+      })
+      .expectContainsJSON('headers',{
+        "Foo": "bar"
+      })
+      .toss()
+  })
 })
