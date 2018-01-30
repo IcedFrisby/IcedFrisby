@@ -104,8 +104,14 @@ Configuration object properties:
 - `retry` (integer): Number of times we'll try this request before returning a failure. If timeout is set, each retry uses the timeout.
 - `request` (object): Options for the request module. An object containing any of these: https://github.com/request/request#requestoptions-callback
 
+Must be called before any request method (get/post/options etc.)
+
 ```javascript
-frisby.create('...').get('...').config({ inspectOnFailure: true })
+frisby.create('...')
+    .config({ inspectOnFailure: true })
+    .get('...')
+    .expectStatus(200)
+    .toss();
 ```
 
 ## Commands
