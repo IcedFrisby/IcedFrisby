@@ -41,20 +41,29 @@ describe('console output', function() {
 
     mockGlobalSetup()
 
-    let stdout = ""
-    const unhook = intercept(function(txt) {
-      stdout += txt
-    })
+    let unhook
+    let stdout = ''
 
     frisby.create(this.test.title)
+      .addHeaders({
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Referer: 'http://frisbyjs.com',
+      })
       .post('http://mock-request/test-object', {
         isSomeObj: true
       })
       .expectStatus(201)
+      .before(() => {
+        unhook = intercept(txt => {
+          stdout += txt
+        })
+      })
+      .after(() => {
+        unhook()
+        chai.assert.equal(warning, stdout, 'expect stdout to have a specific warning')
+      })
       .toss()
-
-    unhook()
-    chai.assert.equal(warning, stdout, 'expect stdout to have a specific warning')
   })
 
   it('should NOT warn developers that "there is a header with \'json\' but the body type is not JSON" because there is no body provided', function() {
