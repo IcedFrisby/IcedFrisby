@@ -92,10 +92,17 @@ frisby.create('a test')
 
 ### config(opts)
 
-Set configuration options on this instance.
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| opts | Object containing configuration options for this instance of Frisby | Yes |
+
+Configuration object properties:
 
 - `inspectOnFailure` (boolean): This is a really neat option that will help you figure out what is happening with your requests. Dumps request/response information to the logs.
 - `json` (boolean): Sets body to JSON representation of value and adds Content-type: application/json header. Additionally, parses the response body as JSON.
+- `timeout` (integer): Sets the maximum time we'll wait for a response before failing the request
+- `retry` (integer): Number of times we'll try this request before returning a failure. If timeout is set, each retry uses the timeout.
+- `request` (object): Options for the request module. An object containing any of these: https://github.com/request/request#requestoptions-callback
 
 ```javascript
 frisby.create('...').get('...').config({ inspectOnFailure: true })
