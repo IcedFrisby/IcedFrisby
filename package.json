@@ -53,7 +53,7 @@
     "intercept-stdout": "^0.1.2",
     "istanbul": "^0.4.5",
     "joi": "^12.0.0",
-    "mocha": "^4.0.1",
+    "mocha": "^5.0.1",
     "mocha-lcov-reporter": "^1.2.0",
     "mock-request": "^0.1.2",
     "nock": "^9.0.2",
