@@ -1802,6 +1802,8 @@ describe('request headers', function () {
       .addHeaders({ 'Test': 'Two' })
       .expectStatus(200)
       .after((err, res, body) => {
+        expect(headers).to.not.have.property('Test')
+        expect(headers).to.have.property('test')
         expect(headers.test).to.equal('Two')
       })
       .toss()
@@ -1900,6 +1902,39 @@ describe('request headers', function () {
         .after(function(err, res, body) {
           expect(this._outgoing.headers['content-type']).to.equal(customContentType)
           expect(this._outgoing.body).to.deep.equal({})
+        })
+        .toss()
+    })
+  })
+
+  context('when passing headers by config()', function(){
+    it('config should add the normalized headers to the outgoing request', function(){
+      let headers
+
+      const mockFn = mockRequest.mock()
+        .get('/test-object-array')
+        .respond({
+          statusCode: 200,
+          body: fixtures.arrayOfObjects
+        })
+        .run()
+      const saveReqHeaders = (outgoing, callback) => {
+        headers = outgoing.headers
+        mockFn(outgoing, callback)
+      }
+
+      frisby.create(this.test.title)
+        .get('http://mock-request/test-object-array', {mock: saveReqHeaders})
+        .config({
+          request:{
+            headers: { 'Test': 'Two' }
+          }
+        })
+        .expectStatus(200)
+        .after((err, res, body) => {
+          expect(headers).to.not.have.property('Test')
+          expect(headers).to.have.property('test')
+          expect(headers.test).to.equal('Two')
         })
         .toss()
     })
