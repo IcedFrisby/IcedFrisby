@@ -44,8 +44,7 @@ describe('Frisby live running httpbin tests', function() {
       frisby.create('test with httpbin for invalid digest auth')
         .auth('frisby', 'passwd')
         .get('http://httpbin.org/digest-auth/auth/frisby/passwd')
-        // We might expect this to be a 401, but for whatever reason it's not.
-        .expectStatus(500)
+        .expectStatus(401)
         .toss()
     })
 
