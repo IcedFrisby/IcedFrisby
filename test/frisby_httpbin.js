@@ -456,4 +456,29 @@ describe('Frisby live running httpbin tests', function() {
       })
       .toss()
   })
+
+  it('should respect overridden headers - params > config', function(){
+    frisby.create(this.test.title)
+      .baseUri('http://httpbin.org')
+      .config({request:{headers:{'a':'1', 'b':'1'}}})
+      .get('/headers', {headers:{'a':'2'}})
+      .expectContainsJSON('headers',{
+        "A": "2",
+        "B": "1"
+      })
+      .toss()
+  })
+
+  //Doesn't currently pass, not sure it should. TBC in conversation on #106
+  it.skip('should respect overridden headers - addHeader > params', function(){
+    frisby.create(this.test.title)
+      .baseUri('http://httpbin.org')
+      .get('/headers', {headers:{'a':'1', 'b':'1'}})
+      .addHeader('a','2')
+      .expectContainsJSON('headers',{
+        "A": "2",
+        "B": "1"
+      })
+      .toss()
+  })
 })
