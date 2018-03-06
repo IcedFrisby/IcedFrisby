@@ -44,8 +44,7 @@ describe('Frisby live running httpbin tests', function() {
       frisby.create('test with httpbin for invalid digest auth')
         .auth('frisby', 'passwd')
         .get('http://httpbin.org/digest-auth/auth/frisby/passwd')
-        // We might expect this to be a 401, but for whatever reason it's not.
-        .expectStatus(500)
+        .expectStatus(401)
         .toss()
     })
 
@@ -426,4 +425,60 @@ describe('Frisby live running httpbin tests', function() {
   //     .toss();
   //
   // })
+
+  it('should send all headers when you bootstrap them with config', function(){
+
+    frisby.create(this.test.title)
+      .baseUri('http://httpbin.org')
+      .config({request:{headers:{'Abc':'def'}}})
+      .get('/headers')
+      .addHeader('Foo','bar')
+      .expectContainsJSON('headers',{
+        "Abc": "def"
+      })
+      .expectContainsJSON('headers',{
+        "Foo": "bar"
+      })
+      .toss()
+  })
+
+  it('should send all headers when you bootstrap them with parameters', function(){
+
+    frisby.create(this.test.title)
+      .baseUri('http://httpbin.org')
+      .get('/headers', {headers:{'Abc':'def'}})
+      .addHeader('Foo','bar')
+      .expectContainsJSON('headers',{
+        "Abc": "def"
+      })
+      .expectContainsJSON('headers',{
+        "Foo": "bar"
+      })
+      .toss()
+  })
+
+  it('should respect overridden headers - params > config', function(){
+    frisby.create(this.test.title)
+      .baseUri('http://httpbin.org')
+      .config({request:{headers:{'a':'1', 'b':'1'}}})
+      .get('/headers', {headers:{'a':'2'}})
+      .expectContainsJSON('headers',{
+        "A": "2",
+        "B": "1"
+      })
+      .toss()
+  })
+
+  //Doesn't currently pass, not sure it should. TBC in conversation on #106
+  it.skip('should respect overridden headers - addHeader > params', function(){
+    frisby.create(this.test.title)
+      .baseUri('http://httpbin.org')
+      .get('/headers', {headers:{'a':'1', 'b':'1'}})
+      .addHeader('a','2')
+      .expectContainsJSON('headers',{
+        "A": "2",
+        "B": "1"
+      })
+      .toss()
+  })
 })

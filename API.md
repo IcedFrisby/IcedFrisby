@@ -4,6 +4,7 @@
   - [The Basics](#thebasics)
     - [create(msg)](#createmsg)
     - [toss()](#toss)
+    - [config()](#configopts)
   - [Commands](#commands)
     - [get(uri,params)](#geturi-params)
     - [head(uri,params)](#headuri-params)
@@ -36,14 +37,6 @@
     - [Example Use:](#example-use)
       - [Express Application:](#express-application)
       - [IcedFrisby Test:](#icedfrisby-test)
-  - [Global Setup](#global-setup)
-    - [request.baseUri](#requestbaseuri)
-    - [request.headers](#requestheaders)
-    - [request.json](#requestjson)
-    - [request.inspectOnFailure](#requestinspectonfailure)
-    - [failOnMultiSetup](#failonmultisetup)
-    - [useApp](#useapp-in-globalsetup)
-    - [Resetting `globalSetup`](#resetting-globalsetup)
   - [Helpers](#helpers)
     - [before()](#before)
     - [after()](#after)
@@ -97,6 +90,30 @@ frisby.create('a test')
     .toss();
 ```
 
+### config(opts)
+
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| opts | Object containing configuration options for this instance of Frisby | Yes |
+
+Configuration object properties:
+
+- `inspectOnFailure` (boolean): This is a really neat option that will help you figure out what is happening with your requests. Dumps request/response information to the logs.
+- `json` (boolean): Sets body to JSON representation of value and adds Content-type: application/json header. Additionally, parses the response body as JSON.
+- `timeout` (integer): Sets the maximum time we'll wait for a response before failing the request
+- `retry` (integer): Number of times we'll try this request before returning a failure. If timeout is set, each retry uses the timeout.
+- `request` (object): Options for the request module. An object containing any of these: https://github.com/request/request#requestoptions-callback
+
+Must be called before any request method (get/post/options etc.)
+
+```javascript
+frisby.create('...')
+    .config({ inspectOnFailure: true })
+    .get('...')
+    .expectStatus(200)
+    .toss();
+```
+
 ## Commands
 
 These are the commands you'll need to get IcedFrisby talking HTTP.
@@ -105,7 +122,7 @@ An optional parameters object is accepted by each of these methods. All object p
 
 ```javascript
 {
-  json: 'boolean',         //Whether this will be a JSON body. Overrides value set in globalSetup().
+  json: 'boolean',         //Whether this will be a JSON body. Overrides value set in config().
   body: 'string'|'object', //The body to include in the outbound request. This overrides "data" if provided in method call.
   mock: 'function',        //A mock runner to use. When not provided, uses "request" (i.e. does it for real).
   form: 'boolean'          //Use the object in the body to create a form-encoded request.
@@ -565,12 +582,6 @@ IcedFrisby provides the `useApp(app, basePath)` function to bootstrap a Node.js 
 This is similar to [supertest's](https://github.com/visionmedia/supertest) request function:
 > You may pass an http.Server, or a Function to request() - if the server is not already listening for connections then it is bound to an ephemeral port for you so there is no need to keep track of ports.
 
-This overrides the globalSetup baseUri option for the current test.
-
-:warning: If you are using `useApp()` and [`reset()`](#resetting-globalsetup) in the same test, be sure to use [`reset()`](#resetting-globalsetup) **prior** to calling `useApp()` otherwise the base URL `useApp()` sets will be removed.
-
-:warning: If you are using `useApp()` to override the app used in the global setup, be sure to use `useApp()` prior to calling `get()`, `patch()`, `post()`, `put()`, `delete()`, `head()`, or `options()`. Otherwise, the app will not be overwritten and the app specified in the global setup will be used instead
-
 - Types: `app`: `http.Server`, `basePath`: `string`
 - Defaults: `app`: `none`, `basePath`: `''`
 
@@ -613,105 +624,6 @@ describe('Express app integration', function() {
 });
 ```
 
-## Global Setup
-
-`globalSetup()` allows you to define default options for ALL IcedFrisby tests.
-
-:collision: Global setup will affect IcedFrisby tests even across files. It is truly global. Do not call `globalSetup()` more than once unless you know what you are doing.
-
-### request.baseUri
-
-Base URI/URL that will be prepended to every request.
-Type: `string`
-Default: `''`
-
-```javascript
-frisby.globalSetup({
-  request: {
-    baseUri: 'http://localhost:3000/api/'
-  }
-});
-```
-
-### request.headers
-
-Default headers by providing an object with key-value pairs.
-Type: `Object`
-Default: `{}`
-
-```javascript
-frisby.globalSetup({
-  request: {
-    headers: { 'Authorization': 'Bearer [...]' }
-  }
-});
-```
-
-### request.json
-
-Sets the `content-type` header to `application/json`.
-Type: `boolean`
-Default: `false`
-
-```javascript
-frisby.globalSetup({
-  request: {
-    json: true // or false
-  }
-});
-```
-
-### request.inspectOnFailure
-
-This is a really neat option that will help you figure out what is happening with your requests. Dumps request/response information to the logs.
-Type: `boolean`
-Default: `false`
-
-```javascript
-frisby.globalSetup({
-  request: {
-    inspectOnFailure: true // or false
-  }
-});
-```
-
-### failOnMultiSetup
-
-Enabling the `failOnMultiSetup` option causes IcedFrisby to throw an error if `globalSetup(opts)` is called more than once. We recommend enabling this option. Message:
-> IcedFrisby global setup has already been done. Doing so again is disabled (see the failOnMultiSetup option) because it may cause indeterministic behavior.
-
-Type: `boolean`
-Default: `false` Disabled by default for backwards compatibility.
-
-```javascript
-frisby.globalSetup({
-  request: {
-    inspectOnFailure: true // or false
-  }
-});
-```
-
-### useApp in globalSetup
-
-Specifying a Node.js http.Server-based application in global setup will apply [useApp()](#useapp) to every test.
-
-``` javascript
-frisby.globalSetup({
-    useApp: require('./myApp.js')
-});
-
-```
-
-### Resetting `globalSetup`
-
-Resets the `globalSetup` settings for the current test.
-
-```javascript
-frisby.create('Request without the globalSetup options')
-  .reset() // reset the globalSetup options
-  .get(...)
-  ...
-```
 
 ## Helpers
 
@@ -878,6 +790,8 @@ frisby.create('Expecting something from nothing')
 ## Inspectors
 
 Inspectors are useful for viewing details about HTTP requests and responses in the console.
+
+Note that `.config({ inspectOnFailure: true })` is a really neat option that will help you figure out what is happening with your requests. Dumps request/response information to the logs.
 
 ### inspect(cb)
 
