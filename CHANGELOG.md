@@ -1,15 +1,37 @@
 # IcedFrisby Changelog
 
-[Unreleased]: https://github.com/MarkHerhold/IcedFrisby/compare/2.0.0-alpha.1...HEAD
-[2.0.0-alpha.1]: https://github.com/MarkHerhold/IcedFrisby/compare/2.0.0-alpha.1...1.5.0
-[1.5.0]: https://github.com/MarkHerhold/IcedFrisby/compare/1.5.0...1.4.0
-[1.4.0]: https://github.com/MarkHerhold/IcedFrisby/compare/1.4.0...1.3.0
-[1.3.1]: https://github.com/MarkHerhold/IcedFrisby/compare/1.4.0...1.3.0
-[1.3.0]: https://github.com/MarkHerhold/IcedFrisby/compare/1.3.0...1.2.0
-[1.2.0]: https://github.com/MarkHerhold/IcedFrisby/compare/1.2.0...1.1.0
-[1.1.0]: https://github.com/MarkHerhold/IcedFrisby/compare/1.1.0...1.0.0
+[Unreleased]: https://github.com/IcedFrisby/IcedFrisby/compare/2.0.0-alpha.2...HEAD
+[2.0.0-alpha.2]: https://github.com/IcedFrisby/IcedFrisby/compare/2.0.0-alpha.2...2.0.0-alpha.1
+[2.0.0-alpha.1]: https://github.com/IcedFrisby/IcedFrisby/compare/2.0.0-alpha.1...1.5.0
+[1.5.0]: https://github.com/IcedFrisby/IcedFrisby/compare/1.5.0...1.4.0
+[1.4.0]: https://github.com/IcedFrisby/IcedFrisby/compare/1.4.0...1.3.0
+[1.3.1]: https://github.com/IcedFrisby/IcedFrisby/compare/1.4.0...1.3.0
+[1.3.0]: https://github.com/IcedFrisby/IcedFrisby/compare/1.3.0...1.2.0
+[1.2.0]: https://github.com/IcedFrisby/IcedFrisby/compare/1.2.0...1.1.0
+[1.1.0]: https://github.com/IcedFrisby/IcedFrisby/compare/1.1.0...1.0.0
 
 ## [Unreleased][]
+
+## [2.0.0-alpha.2][]
+
+### Breaking changes
+
+- Remove globalConfig() ([PR #106])
+    - Each request can be independently configured with config() which takes the same options
+    - Also removes reset() since that was only useful globalConfig()
+- Change to plugin interface ([PR #100])
+    - this.current.expects is gone, use after() instead
+
+### Other changes
+
+- Under the hood improvements to code ([PR #100], [PR #105], [PR #107])
+- Upgrade to Mocha 5.0.1 ([PR #108])
+
+[PR #100]: https://github.com/IcedFrisby/IcedFrisby/pull/100
+[PR #105]: https://github.com/IcedFrisby/IcedFrisby/pull/105
+[PR #106]: https://github.com/IcedFrisby/IcedFrisby/pull/106
+[PR #107]: https://github.com/IcedFrisby/IcedFrisby/pull/107
+[PR #108]: https://github.com/IcedFrisby/IcedFrisby/pull/108
 
 ## [2.0.0-alpha.1][]
 
@@ -36,12 +58,12 @@
 - Clean up after `useApp()` ([PR #72][])
 - Tidy request code ([PR #101][])
 
-[PR #71]: https://github.com/MarkHerhold/IcedFrisby/pull/71
-[PR #72]: https://github.com/MarkHerhold/IcedFrisby/pull/72
-[PR #73]: https://github.com/MarkHerhold/IcedFrisby/pull/73
-[PR #84]: https://github.com/MarkHerhold/IcedFrisby/pull/84
-[PR #89]: https://github.com/MarkHerhold/IcedFrisby/pull/89
-[PR #94]: https://github.com/MarkHerhold/IcedFrisby/pull/94
+[PR #71]: https://github.com/IcedFrisby/IcedFrisby/pull/71
+[PR #72]: https://github.com/IcedFrisby/IcedFrisby/pull/72
+[PR #73]: https://github.com/IcedFrisby/IcedFrisby/pull/73
+[PR #84]: https://github.com/IcedFrisby/IcedFrisby/pull/84
+[PR #89]: https://github.com/IcedFrisby/IcedFrisby/pull/89
+[PR #94]: https://github.com/IcedFrisby/IcedFrisby/pull/94
 [PR #101]: https://github.com/IcedFrisby/IcedFrisby/pull/101
 
 
@@ -56,20 +78,20 @@
 - Drop support for Node 7. Continue support for Node 6 and 8.
 - Improve documentation.
 
-[PR #73]: https://github.com/MarkHerhold/IcedFrisby/pull/70
+[PR #73]: https://github.com/IcedFrisby/IcedFrisby/pull/70
 
 ## [1.4.0][]
 
 - Add only() helper ([PR #70][]).
 - Improve documentation
 
-[PR #70]: https://github.com/MarkHerhold/IcedFrisby/pull/70
+[PR #70]: https://github.com/IcedFrisby/IcedFrisby/pull/70
 
 ## [1.3.1][]
 
 - Add expectNoHeader() helper ([PR #63][]).
 
-[PR #63]: https://github.com/MarkHerhold/IcedFrisby/pull/63
+[PR #63]: https://github.com/IcedFrisby/IcedFrisby/pull/63
 
 ## [1.3.0][]
 
@@ -77,7 +99,7 @@
 - Update chai assertion checking to ^4.0.1
 - Update chalk to ^2.0.1
 
-[PR #59]: https://github.com/MarkHerhold/IcedFrisby/pull/59
+[PR #59]: https://github.com/IcedFrisby/IcedFrisby/pull/59
 
 ## [1.2.0][]
 
