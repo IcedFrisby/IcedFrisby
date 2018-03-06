@@ -16,7 +16,7 @@
     - [addHeader(header,content)](#addheaderheader-content)
     - [addHeaders(headers)](#addheadersheaders)
     - [removeHeader(header)](#removeheaderheader)
-    - [auth(username,password,isDigest)](#authusername-password-isdigest)
+    - [auth(username,password,isDigest)](#authusernamepasswordisdigest)
   - [Expectations](#expectations)
     - [expectStatus(code)](#expectstatuscode)
     - [expectHeader(key, content, options)](#expectheaderkey-content-options)
