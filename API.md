@@ -26,6 +26,7 @@
     - [expectContainsJSON([path], json)](#expectcontainsjsonpath-json)
     - [expectJSONTypes([path], schema)](#expectjsontypespath-schema)
     - [expectBodyContains(content)](#expectbodycontainscontent)
+    - [expectBodyLength(length, operator)] (#expectbodylengthlengthoperator)
     - [expectJSONLength([path], length)](#expectjsonlengthpath-length)
     - [expectMaxResponseTime(ms)](#expectmaxresponsetimems)
     - [not()](#not)
@@ -459,6 +460,23 @@ frisby.create('Ensure this is *actually* a real teapot, not some imposter coffee
   .get('http://httpbin.org/status/418')
     .expectStatus(418)
     .expectBodyContains('teapot')
+.toss()
+```
+
+### expectBodyLength(length, operator)
+
+Tests that the HTTP response body has a [lengthOf](http://chaijs.com/api/bdd/#lengthOf) the provided length and it's operator (so '<','>','<=','>=','='). Used for testing all content types.
+
+| Parameter | Description | Required |
+| --------- | ----------- | -------- |
+| length | Integer that the body will be tested against | Yes |
+| operator | String of the operator that will be used to compare the length of the body | Yes |
+
+```javascript
+frisby.create('Ensure this is *actually* a real teapot, not some imposter coffee pot')
+  .get('http://httpbin.org/status/418')
+    .expectStatus(418)
+    .expectBodyLength(418,'>')
 .toss()
 ```
 
