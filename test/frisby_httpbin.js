@@ -88,6 +88,7 @@ describe('Frisby live running httpbin tests', function() {
         headers: Joi.object().required().keys({
           Accept: Joi.any(),
           "Accept-Encoding": Joi.any(),
+          "Cache-Control": Joi.any(),
           Connection: Joi.any(),
           "Content-Type": Joi.string().required().valid("application/octet-stream"),
           "Content-Length" : Joi.string().required().valid("1024"),
@@ -116,6 +117,7 @@ describe('Frisby live running httpbin tests', function() {
         headers: Joi.object().keys({
           Accept: Joi.any(),
           "Accept-Encoding": Joi.any(),
+          "Cache-Control": Joi.any(),
           Connection: Joi.any(),
           "Content-Type": Joi.string().required().valid("application/octet-stream"),
           "Content-Length" : Joi.string().required().valid("1024"),
@@ -218,6 +220,7 @@ describe('Frisby live running httpbin tests', function() {
         headers: Joi.object().required().keys({
           Accept: Joi.any(),
           "Accept-Encoding": Joi.any(),
+          "Cache-Control": Joi.any(),
           Connection: Joi.any(),
           "Content-Type": Joi.string().valid("application/octet-stream"),
           "Content-Length" : Joi.string().valid("" + fileSize),
@@ -247,6 +250,7 @@ describe('Frisby live running httpbin tests', function() {
         headers: Joi.object().keys({
           Accept: Joi.any(),
           "Accept-Encoding": Joi.any(),
+          "Cache-Control": Joi.any(),
           Connection: Joi.any(),
           "Content-Type": Joi.string().valid("application/octet-stream"),
           "Content-Length" : Joi.string().valid("" + fileSize),
