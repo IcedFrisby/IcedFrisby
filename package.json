@@ -58,7 +58,7 @@
     "mock-request": "^0.1.2",
     "nock": "^9.0.2",
     "proxyquire": "^1.8.0",
-    "sinon": "^4.0.0"
+    "sinon": "^5.0.0"
   },
   "greenkeeper": {
     "ignore": [
