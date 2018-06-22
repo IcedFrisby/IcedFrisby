@@ -4,6 +4,7 @@ const chai = require('chai')
 const intercept = require("intercept-stdout")
 const nock = require('nock')
 const frisby = require('../lib/icedfrisby')
+const sinon = require('sinon')
 
 //
 // This spec tests and showcases the dev-friendy output features of IcedFrisby
@@ -69,5 +70,32 @@ describe('console output', function() {
 
   describe('inspectOnFailure', function () {
     it.skip('TODO should provide the expected debug output on failure')
+  })
+
+  describe('Deprecated features', function(){
+    it('should error when someone uses globalConfig', function(){
+      const spy = sinon.spy()
+
+      try {
+        frisby.globalSetup({})
+      } catch(err){
+        expect(err.message).to.equal('globalSetup() has been removed.')
+        spy()
+      }
+      expect(spy.calledOnce).to.equal(true)
+    })
+
+    it('should error when someone uses reset', function(){ //Was used to reset globalConfig
+      const spy = sinon.spy()
+
+      try {
+        frisby.create(this.test.title)
+          .reset()
+      } catch(err){
+        expect(err.message).to.equal('reset() has been removed from IcedFrisby v2.0+ - there\'s no more globalSetup(), use config() instead')
+        spy()
+      }
+      expect(spy.calledOnce).to.equal(true)
+    })
   })
 })
