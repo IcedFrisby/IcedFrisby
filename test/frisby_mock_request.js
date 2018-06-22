@@ -262,6 +262,25 @@ describe('Frisby matchers', function() {
       .toss()
   })
 
+  it('expectJSON should throw an error when response is not JSON', function(){
+
+    const responseBody = 'Payload'
+
+    nock('http://example.com')
+      .post('/path')
+      .reply(200, responseBody)
+
+    frisby.create(this.test.title)
+      .post('http://example.com/path')
+      .expectJSON({foo: 'bar'})
+      .exceptionHandler(err => {
+        // TODO How can I assert that this method is called?
+        expect(err).to.be.an.instanceof(Error)
+        expect(err.message).to.equal("Error parsing JSON string: Unexpected token P in JSON at position 0\n\tGiven: Payload")
+      })
+      .toss()
+  })
+
   it('expectJSONTypes should fail with a helpful message', function() {
     const frisbyWithoutJoi = proxyquire('../lib/icedfrisby', {
       './pathMatch': proxyquire('../lib/pathMatch', { joi: null })
@@ -1113,6 +1132,15 @@ describe('Frisby matchers', function() {
       expect(test._mochaTimeout()).to.equal(75 + 50 + 75 + gracePeriodMillis)
 
       test.toss()
+    })
+
+    it('should return the current timeout value when not setting a new one', function(){
+      const thisFrisby = frisby.create(this.test.title)
+      const defaultTimeout = thisFrisby.timeout()
+      const newTimeout = thisFrisby.timeout(1000).timeout()
+
+      expect(defaultTimeout).to.equal(5000)
+      expect(newTimeout).to.equal(1000)
     })
   })
 
