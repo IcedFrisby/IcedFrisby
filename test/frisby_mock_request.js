@@ -85,6 +85,38 @@ describe('Frisby matchers', function() {
         })
         .toss()
     })
+
+    it('should error gracefully when passed no function', function(){
+      const spy = sinon.spy()
+
+      try {
+        frisby.create(this.test.title)
+          .before()
+          .get('http://mock-request/test-object')
+          .toss()
+      } catch(err){
+        spy()
+        expect(err.message).to.equal('Expected Function object in before(), but got undefined')
+      }
+
+      expect(spy.calledOnce).to.equal(true)
+    })
+
+    it('should error gracefully when passed a string instead of function', function(){
+      const spy = sinon.spy()
+
+      try {
+        frisby.create(this.test.title)
+          .before('something')
+          .get('http://mock-request/test-object')
+          .toss()
+      } catch(err){
+        spy()
+        expect(err.message).to.equal('Expected Function object in before(), but got string')
+      }
+
+      expect(spy.calledOnce).to.equal(true)
+    })
   })
 
   describe('before callbacks (async)', function () {
@@ -787,6 +819,38 @@ describe('Frisby matchers', function() {
     })
 
     it('TODO: should not be invoked after a test failure')
+
+    it('should error gracefully when passed no function', function(){
+      const spy = sinon.spy()
+
+      try {
+        frisby.create(this.test.title)
+          .get('http://mock-request/test-object')
+          .after()
+          .toss()
+      } catch(err){
+        spy()
+        expect(err.message).to.equal('Expected Function object in after(), but got undefined')
+      }
+
+      expect(spy.calledOnce).to.equal(true)
+    })
+
+    it('should error gracefully when passed a string instead of function', function(){
+      const spy = sinon.spy()
+
+      try {
+        frisby.create(this.test.title)
+          .get('http://mock-request/test-object')
+          .after('something')
+          .toss()
+      } catch(err){
+        spy()
+        expect(err.message).to.equal('Expected Function object in after(), but got string')
+      }
+
+      expect(spy.calledOnce).to.equal(true)
+    })
   })
 
   describe('after() callbacks (async)', function() {
