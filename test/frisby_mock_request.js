@@ -1149,7 +1149,7 @@ describe('Frisby matchers', function() {
   })
 
   describe('expectBodyContains', function () {
-    it('should fail when the response is empty', function () {
+    it('should fail when the response body is empty', function () {
       nock('http://example.com')
         .post('/path')
         .reply(201)
@@ -1164,9 +1164,6 @@ describe('Frisby matchers', function() {
         })
         .toss()
     })
-
-    it('TODO should fail when the response is absent')
-    // Not sure how to reach the else block in `expectBodyContains`.
   })
 
   describe('Aliased functions backwards compatibility', function(){
