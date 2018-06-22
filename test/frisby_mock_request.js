@@ -1862,7 +1862,7 @@ describe('request headers', function () {
     })
 
     context('when configured after _request() is invoked', function() {
-      it.skip('TODO still applies the expected json header', function() {
+      it('still applies the expected json header', function() {
         let headers
 
         const mockFn = mockRequest.mock()
@@ -1960,6 +1960,128 @@ describe('request headers', function () {
           expect(headers).to.not.have.property('Test')
           expect(headers).to.have.property('test')
           expect(headers.test).to.equal('Two')
+        })
+        .toss()
+    })
+  })
+
+  context('when passing headers by config() and addHeader', function(){
+    it('should send all configured headers', function(){
+      let outgoingheaders
+
+      const mockFn = mockRequest.mock()
+        .get('/test-object-array')
+        .respond({
+          statusCode: 200,
+          body: fixtures.arrayOfObjects
+        })
+        .run()
+      const saveReqHeaders = (outgoing, callback) => {
+        outgoingheaders = outgoing.headers
+        mockFn(outgoing, callback)
+      }
+
+      frisby.create(this.test.title)
+        .get('http://mock-request/test-object-array', {mock: saveReqHeaders})
+        .config({
+          request:{
+            headers: { 'one': '1' }
+          }
+        })
+        .addHeader('two','2')
+        .expectStatus(200)
+        .after((err, res, body) => {
+          expect(outgoingheaders).to.have.property('one')
+          expect(outgoingheaders.one).to.equal('1')
+          expect(outgoingheaders).to.have.property('two')
+          expect(outgoingheaders.two).to.equal('2')
+        })
+        .toss()
+    })
+
+    it('addHeader should override config()', function(){
+      let outgoingheaders
+
+      const mockFn = mockRequest.mock()
+        .get('/test-object-array')
+        .respond({
+          statusCode: 200,
+          body: fixtures.arrayOfObjects
+        })
+        .run()
+      const saveReqHeaders = (outgoing, callback) => {
+        outgoingheaders = outgoing.headers
+        mockFn(outgoing, callback)
+      }
+
+      frisby.create(this.test.title)
+        .get('http://mock-request/test-object-array', {mock: saveReqHeaders})
+        .config({
+          request:{
+            headers: { 'three': '3' }
+          }
+        })
+        .addHeader('three','2+1')
+        .expectStatus(200)
+        .after((err, res, body) => {
+          expect(outgoingheaders).to.have.property('three')
+          expect(outgoingheaders.three).to.equal('2+1')
+        })
+        .toss()
+    })
+  })
+
+  context('when passing headers by params and addHeader', function(){
+    it('should send all configured headers', function(){
+      let outgoingheaders
+
+      const mockFn = mockRequest.mock()
+        .get('/test-object-array')
+        .respond({
+          statusCode: 200,
+          body: fixtures.arrayOfObjects
+        })
+        .run()
+      const saveReqHeaders = (outgoing, callback) => {
+        outgoingheaders = outgoing.headers
+        mockFn(outgoing, callback)
+      }
+
+      frisby.create(this.test.title)
+        .get('http://mock-request/test-object-array', {headers: { 'one': '1' }, mock: saveReqHeaders})
+        .addHeader('two','2')
+        .expectStatus(200)
+        .after((err, res, body) => {
+          expect(outgoingheaders).to.have.property('one')
+          expect(outgoingheaders.one).to.equal('1')
+          expect(outgoingheaders).to.have.property('two')
+          expect(outgoingheaders.two).to.equal('2')
+        })
+        .toss()
+    })
+
+    it.skip('addHeader should override params', function(){ //Issue #106
+      let outgoingheaders
+
+      const mockFn = mockRequest.mock()
+        .get('/test-object-array')
+        .respond({
+          statusCode: 200,
+          body: fixtures.arrayOfObjects
+        })
+        .run()
+      const saveReqHeaders = (outgoing, callback) => {
+        outgoingheaders = outgoing.headers
+        mockFn(outgoing, callback)
+      }
+
+      frisby.create(this.test.title)
+        .get('http://mock-request/test-object-array', {headers: { 'three': '3' }, mock: saveReqHeaders})
+        .addHeader('three','2+1')
+        .expectStatus(200)
+        .after((err, res, body) => {
+          expect(outgoingheaders).to.have.property('three')
+          expect(outgoingheaders.three).to.equal('2+1')
         })
         .toss()
     })
