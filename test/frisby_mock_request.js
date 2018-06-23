@@ -1206,6 +1206,12 @@ describe('Frisby matchers', function() {
       expect(defaultTimeout).to.equal(5000)
       expect(newTimeout).to.equal(1000)
     })
+
+    it('should set the timeout correctly via config()', function(){
+      const thisFrisby = frisby.create(this.test.title).config({timeout: 100})
+      const currentTimeout = thisFrisby.timeout()
+      expect(currentTimeout).to.equal(100)
+    })
   })
 
   it('should handle file uploads', function() {
