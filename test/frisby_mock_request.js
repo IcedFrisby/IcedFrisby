@@ -2150,4 +2150,151 @@ describe('request headers', function () {
         .toss()
     })
   })
+
+  context('when removing headers via removeHeader', function(){
+    it('should not send a removed header when it was added via addHeader', function(){
+      let headers
+
+      const mockFn = mockRequest.mock()
+        .get('/test-object-array')
+        .respond({
+          statusCode: 200,
+          body: fixtures.arrayOfObjects
+        })
+        .run()
+      const saveReqHeaders = (outgoing, callback) => {
+        headers = outgoing.headers
+        mockFn(outgoing, callback)
+      }
+
+      frisby.create(this.test.title)
+        .get('http://mock-request/test-object-array', {mock: saveReqHeaders})
+        .addHeaders({ 'One': '1', 'Two': '2' })
+        .removeHeader('One')
+        .expectStatus(200)
+        .after((err, res, body) => {
+          expect(headers).to.not.have.property('one')
+          expect(headers).to.have.property('two')
+          expect(headers.two).to.equal('2')
+        })
+        .toss()
+    })
+
+    it.skip('should not send a removed header when it was added via params', function(){ //Issue #122
+      let headers
+
+      const mockFn = mockRequest.mock()
+        .get('/test-object-array')
+        .respond({
+          statusCode: 200,
+          body: fixtures.arrayOfObjects
+        })
+        .run()
+      const saveReqHeaders = (outgoing, callback) => {
+        headers = outgoing.headers
+        mockFn(outgoing, callback)
+      }
+
+      frisby.create(this.test.title)
+        .get('http://mock-request/test-object-array', {mock: saveReqHeaders, headers: { 'One': '1', 'Two': '2' }})
+        .removeHeader('One')
+        .expectStatus(200)
+        .after((err, res, body) => {
+          expect(headers).to.not.have.property('one')
+          expect(headers).to.have.property('two')
+          expect(headers.two).to.equal('2')
+        })
+        .toss()
+    })
+
+    it('should not send a removed header when it was added via config()', function(){
+      let headers
+
+      const mockFn = mockRequest.mock()
+        .get('/test-object-array')
+        .respond({
+          statusCode: 200,
+          body: fixtures.arrayOfObjects
+        })
+        .run()
+      const saveReqHeaders = (outgoing, callback) => {
+        headers = outgoing.headers
+        mockFn(outgoing, callback)
+      }
+
+      frisby.create(this.test.title)
+        .get('http://mock-request/test-object-array', {mock: saveReqHeaders})
+        .config({
+          request:{
+            headers: { 'One': '1', 'Two': '2' }
+          }
+        })
+        .removeHeader('One')
+        .expectStatus(200)
+        .after((err, res, body) => {
+          expect(headers).to.not.have.property('one')
+          expect(headers).to.have.property('two')
+          expect(headers.two).to.equal('2')
+        })
+        .toss()
+    })
+
+    it('should not send a removed header, regardless of casing', function(){
+      let headers
+
+      const mockFn = mockRequest.mock()
+        .get('/test-object-array')
+        .respond({
+          statusCode: 200,
+          body: fixtures.arrayOfObjects
+        })
+        .run()
+      const saveReqHeaders = (outgoing, callback) => {
+        headers = outgoing.headers
+        mockFn(outgoing, callback)
+      }
+
+      frisby.create(this.test.title)
+        .get('http://mock-request/test-object-array', {mock: saveReqHeaders})
+        .addHeaders({ 'One': '1', 'Two': '2' })
+        .removeHeader('ONE')
+        .expectStatus(200)
+        .after((err, res, body) => {
+          expect(headers).to.not.have.property('one')
+          expect(headers).to.have.property('two')
+          expect(headers.two).to.equal('2')
+        })
+        .toss()
+    })
+
+    it('should not error when removing a non-existant header', function(){
+      let headers
+
+      const mockFn = mockRequest.mock()
+        .get('/test-object-array')
+        .respond({
+          statusCode: 200,
+          body: fixtures.arrayOfObjects
+        })
+        .run()
+      const saveReqHeaders = (outgoing, callback) => {
+        headers = outgoing.headers
+        mockFn(outgoing, callback)
+      }
+
+      frisby.create(this.test.title)
+        .get('http://mock-request/test-object-array', {mock: saveReqHeaders})
+        .addHeaders({ 'One': '1', 'Two': '2' })
+        .removeHeader('Three')
+        .expectStatus(200)
+        .after((err, res, body) => {
+          expect(headers).to.have.property('one')
+          expect(headers).to.have.property('two')
+          expect(headers.one).to.equal('1')
+          expect(headers.two).to.equal('2')
+          expect(headers).to.not.have.property('three')
+        })
+        .toss()
+    })
+  })
 })
