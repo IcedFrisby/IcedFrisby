@@ -117,6 +117,30 @@ describe('Frisby matchers', function() {
 
       expect(spy.calledOnce).to.equal(true)
     })
+
+    it('should wait the configured period before proceeding to the request', function(){
+      let timeDelta = 0
+
+      const mockFn = mockRequest.mock()
+        .get('/not-found')
+        .respond({
+          statusCode: 404
+        })
+        .run()
+
+      frisby.create(this.test.title)
+        .before(() => {
+          timeDelta = (new Date).getTime()
+        })
+        .waits(1000)
+        .get('http://mock-request/not-found', {mock: mockFn})
+        .after(() => {
+          timeDelta = (new Date).getTime() - timeDelta
+          expect(timeDelta).to.be.above(1000)
+          expect(timeDelta).to.be.below(1100)
+        })
+        .toss()
+    })
   })
 
   describe('before callbacks (async)', function () {
