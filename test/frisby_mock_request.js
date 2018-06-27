@@ -1222,6 +1222,39 @@ describe('Frisby matchers', function() {
         .toss()
     })
 
+    it('should not retry POST requests', function(){
+
+      let hitCount = 0
+
+      nock('http://example.com')
+        .post('/slow-form')
+        .delayBody(50) // delay 50ms
+        .times(2)
+        .reply((uri, requestBody) => {
+          spy()
+          hitCount++
+          return 200
+        })
+
+      const spy = sinon.spy()
+
+      frisby.create(this.test.title)
+        .post('http://example.com/slow-form')
+        .timeout(5)
+        .retry(2, 0) //2 retries with 0ms delay between them
+        .exceptionHandler(err => {
+          //Squash the expected error, keep the rest
+          if(!err.message.includes('Request timed out after')){
+            throw err
+          }
+        })
+        .finally(() => {
+          expect(hitCount).to.equal(1)
+          expect(spy.callCount).to.equal(1)
+        })
+        .toss()
+    })
+
     it('should pass the expected timeout to mocha, and not cause mocha to time out', function () {
       let requestCount = 0
 
