@@ -813,7 +813,7 @@ describe('Frisby matchers', function() {
         .toss()
     })
 
-    describe('should not be invoked after an failed expectation', function() {
+    it('should not be invoked after an failed expectation', function() {
       const mockFn = mockRequest.mock()
         .get('/test-object')
         .respond({
@@ -843,6 +843,34 @@ describe('Frisby matchers', function() {
     })
 
     it('TODO: should not be invoked after a test failure')
+
+    it('should not be invoked after a previous after hook raised an exception', function(){
+      const spy = sinon.spy()
+
+      const mockFn = mockRequest.mock()
+        .get('/test-object')
+        .respond({
+          statusCode: 200,
+          body: fixtures.singleObject
+        })
+        .run()
+
+      frisby.create(this.test.title)
+        .get('http://mock-request/test-object', {mock: mockFn})
+        .expectStatus(200)
+        .exceptionHandler(() => {}) //Swallow the exception
+        .after(() => {
+          spy()
+          throw Error('Error in first after()')
+        })
+        .after(() => {
+          spy()
+        })
+        .finally(() => {
+          expect(spy.calledOnce).to.equal(true)
+        })
+        .toss()
+    })
 
     it('should error gracefully when passed no function', function(){
       const spy = sinon.spy()
