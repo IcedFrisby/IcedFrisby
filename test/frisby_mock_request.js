@@ -136,7 +136,7 @@ describe('Frisby matchers', function() {
         .get('http://mock-request/not-found', {mock: mockFn})
         .after(() => {
           timeDelta = (new Date).getTime() - timeDelta
-          expect(timeDelta).to.be.above(1000)
+          expect(timeDelta).to.be.above(999)
           expect(timeDelta).to.be.below(1100)
         })
         .toss()
