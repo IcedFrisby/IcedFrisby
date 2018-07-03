@@ -970,6 +970,38 @@ describe('Frisby matchers', function() {
         .toss()
     })
 
+    it('should error gracefully when passed no function', function(){
+      const spy = sinon.spy()
+
+      try {
+        frisby.create(this.test.title)
+          .get('http://mock-request/test-object')
+          .finally()
+          .toss()
+      } catch(err){
+        spy()
+        expect(err.message).to.equal('Expected Function object in finally(), but got undefined')
+      }
+
+      expect(spy.calledOnce).to.equal(true)
+    })
+
+    it('should error gracefully when passed a string instead of function', function(){
+      const spy = sinon.spy()
+
+      try {
+        frisby.create(this.test.title)
+          .get('http://mock-request/test-object')
+          .finally('something')
+          .toss()
+      } catch(err){
+        spy()
+        expect(err.message).to.equal('Expected Function object in finally(), but got string')
+      }
+
+      expect(spy.calledOnce).to.equal(true)
+    })
+
     describe('should be invoked after an failed expectation', function() {
       const mockFn = mockRequest.mock()
         .get('/test-object')
