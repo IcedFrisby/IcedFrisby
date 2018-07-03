@@ -1297,6 +1297,37 @@ describe('Frisby matchers', function() {
       const currentTimeout = thisFrisby.timeout()
       expect(currentTimeout).to.equal(100)
     })
+
+    it('should retry the expected number of times after a timeout when set via config()', function(){
+      const retryCount = 4
+      let actualRequestCount = 0
+      const timeout = 5
+
+      nock('http://example.com')
+        .get('/just-dont-come-back-2')
+        .delayBody(50) // delay 50ms
+        .times(5)
+        .reply((uri, requestBody) => {
+          actualRequestCount += 1
+          return 200, '<html></html>'
+        })
+
+      const spy = sinon.spy()
+
+      frisby.create(this.test.title)
+        .get('http://example.com/just-dont-come-back-2')
+        .timeout(timeout)
+        .config({retry: retryCount})
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          spy()
+          expect(err.message).to.equal(`Request timed out after ${timeout} ms (${retryCount + 1} attempts)`)
+          expect(spy.calledOnce).to.equal(true)
+
+          expect(actualRequestCount).to.equal(retryCount + 1)
+        })
+        .toss()
+    })
   })
 
   it('should handle file uploads', function() {
