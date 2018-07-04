@@ -225,7 +225,7 @@ describe('IcedFrisby inspect methods', function() {
 
     frisby.create(this.test.title)
       .get('http://inspectBody.httpbin.org/get', {json: true})
-      .inspectBody('inspectBody')
+      .inspectBody()
       .after(function() {
         // check that the mock was consumed
         inspectNock.done()
