@@ -2452,3 +2452,22 @@ describe('request headers', function () {
     })
   })
 })
+
+describe('Error Handling', function(){
+  context('the exceptionHandler function', function(){
+    it('should return false when not set and called with no function', function(){
+      const thisFrisby = frisby.create(this.test.title).get('http://example.com')
+      const initialExH = thisFrisby.exceptionHandler()
+
+      expect(initialExH).to.equal(false)
+    })
+
+    it('should return the currently assigned error handler function when called with no function', function(){
+      const myExH = function(){ return }
+      const thisFrisby = frisby.create(this.test.title).get('http://example.com').exceptionHandler(myExH)
+      const setExH = thisFrisby.exceptionHandler()
+
+      expect(setExH).to.equal(myExH)
+    })
+  })
+})
