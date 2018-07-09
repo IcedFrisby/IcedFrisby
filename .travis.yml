@@ -1,3 +1,5 @@
+sudo: required
+
 language: node_js
 
 node_js:
@@ -5,7 +7,11 @@ node_js:
   - 6
   - 10
 
+services:
+  - docker
+
 before_install:
+  - docker run -d -p 80:80 kennethreitz/httpbin
   - npm install -g npm@6 greenkeeper-lockfile@1
 
 before_script:
@@ -15,3 +21,7 @@ after_script:
   # Only the first Node version listed will upload the lock file.
   - greenkeeper-lockfile-upload
   - npm run coverage && coveralls < coverage/lcov.info && rm -rf coverage
+
+addons:
+  hosts:
+    - httpbin.org
