@@ -1002,7 +1002,7 @@ describe('Frisby matchers', function() {
       expect(spy.calledOnce).to.equal(true)
     })
 
-    describe('should be invoked after an failed expectation', function() {
+    it('should be invoked after an failed expectation', function() {
       const mockFn = mockRequest.mock()
         .get('/test-object')
         .respond({
@@ -1029,7 +1029,7 @@ describe('Frisby matchers', function() {
       test.toss()
     })
 
-    describe('before hook errors are bundled together', function () {
+    it('before hook errors are bundled together', function () {
       const mockFn = mockRequest.mock()
         .get('/test-object')
         .respond({
