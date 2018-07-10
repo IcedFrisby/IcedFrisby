@@ -1192,7 +1192,7 @@ describe('Frisby matchers', function() {
       nock('http://example.com')
         .get('/just-dont-come-back-2')
         .delayBody(50) // delay 50ms
-        .times(5)
+        .times(retryCount + 1)
         .reply((uri, requestBody) => {
           actualRequestCount += 1
           return 200, '<html></html>'
@@ -1336,7 +1336,7 @@ describe('Frisby matchers', function() {
       const timeout = 5
 
       nock('http://example.com')
-        .get('/just-dont-come-back-2')
+        .get('/just-dont-come-back-3')
         .delayBody(50) // delay 50ms
         .times(5)
         .reply((uri, requestBody) => {
@@ -1347,7 +1347,7 @@ describe('Frisby matchers', function() {
       const spy = sinon.spy()
 
       frisby.create(this.test.title)
-        .get('http://example.com/just-dont-come-back-2')
+        .get('http://example.com/just-dont-come-back-3')
         .timeout(timeout)
         .config({retry: retryCount})
         .exceptionHandler(err => {
@@ -1363,14 +1363,14 @@ describe('Frisby matchers', function() {
   })
 
   it('should handle file uploads', function() {
-    nock('http://httpbin.org', { allowUnmocked: true })
+    nock('http://example.com', { allowUnmocked: true })
       .post('/file-upload')
       .once()
       .reply(200, {'result': 'ok'})
 
     // Intercepted with 'nock'
     frisby.create(this.test.title)
-      .post('http://httpbin.org/file-upload', {
+      .post('http://example.com/file-upload', {
         name: 'Test Upload',
         file: fs.createReadStream(path.join(__dirname, 'logo-frisby.png'))
       }, { form: true })
@@ -1534,13 +1534,13 @@ describe('Frisby matchers', function() {
 
   describe('expectHeader with regex', function () {
     it('should pass when regex matches', function() {
-      nock('http://httpbin.org', { allowUnmocked: true })
+      nock('http://example.com', { allowUnmocked: true })
         .post('/path')
         .once()
         .reply(201, "The payload", {'Location': '/path/23'})
 
       frisby.create(this.test.title)
-        .post('http://httpbin.org/path', {foo: 'bar'})
+        .post('http://example.com/path', {foo: 'bar'})
         .expectStatus(201)
         .expectHeader('location', /^\/path\/\d+$/)
         .toss()
@@ -1741,13 +1741,13 @@ describe('Frisby matchers', function() {
 
   describe('expectNoHeader', function () {
     it('should pass when a header is absent', function() {
-      nock('http://httpbin.org', { allowUnmocked: true })
+      nock('http://example.com', { allowUnmocked: true })
         .post('/path')
         .once()
         .reply(201, "The payload")
 
       frisby.create(this.test.title)
-        .post('http://httpbin.org/path', {foo: 'bar'})
+        .post('http://example.com/path', {foo: 'bar'})
         .expectStatus(201)
         .expectNoHeader('Location')
         .expectNoHeader('location')
@@ -2110,14 +2110,14 @@ describe('request headers', function () {
 
   context('when passing params to _request', function () {
     it('should allow for passing raw request body and preserve json:true option', function() {
-      nock('http://httpbin.org', { allowUnmocked: true })
+      nock('http://example.com', { allowUnmocked: true })
         .post('/json')
         .once()
         .reply(200, {'foo': 'bar'})
 
       // Intercepted with 'nock'
       frisby.create(this.test.title)
-        .post('http://httpbin.org/json', {}, { json: true })
+        .post('http://example.com/json', {}, { json: true })
         .expectStatus(200)
         .expectJSON({'foo': 'bar'})
         .expectHeader('Content-Type', 'application/json')
