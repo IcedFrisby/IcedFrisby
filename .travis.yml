@@ -11,7 +11,10 @@ services:
   - docker
 
 before_install:
-  - docker run -d -p 80:80 kennethreitz/httpbin
+  - curl -L https://github.com/requests/httpbin/archive/26a4892f14ab077833059cad2ca465d34b003f1b.zip --output httpbin.zip
+  - unzip httpbin.zip
+  - docker build -t httpbin-090 httpbin-26a4892f14ab077833059cad2ca465d34b003f1b
+  - docker run -d -p 80:80 httpbin-090
   - npm install -g npm@6 greenkeeper-lockfile@1
 
 before_script:
