@@ -437,10 +437,10 @@ describe('Frisby live running httpbin tests', function() {
       .config({request:{headers:{'Abc':'def'}}})
       .get('/headers')
       .addHeader('Foo','bar')
-      .expectContainsJSON({
+      .expectContainsJSON('headers',{
         "Abc": "def"
       })
-      .expectContainsJSON({
+      .expectContainsJSON('headers',{
         "Foo": "bar"
       })
       .toss()
@@ -452,10 +452,10 @@ describe('Frisby live running httpbin tests', function() {
       .baseUri('http://httpbin.org')
       .get('/headers', {headers:{'Abc':'def'}})
       .addHeader('Foo','bar')
-      .expectContainsJSON({
+      .expectContainsJSON('headers',{
         "Abc": "def"
       })
-      .expectContainsJSON({
+      .expectContainsJSON('headers',{
         "Foo": "bar"
       })
       .toss()
@@ -466,7 +466,7 @@ describe('Frisby live running httpbin tests', function() {
       .baseUri('http://httpbin.org')
       .config({request:{headers:{'a':'1', 'b':'1'}}})
       .get('/headers', {headers:{'a':'2'}})
-      .expectContainsJSON({
+      .expectContainsJSON('headers',{
         "A": "2",
         "B": "1"
       })
@@ -479,7 +479,7 @@ describe('Frisby live running httpbin tests', function() {
       .baseUri('http://httpbin.org')
       .get('/headers', {headers:{'a':'1', 'b':'1'}})
       .addHeader('a','2')
-      .expectContainsJSON({
+      .expectContainsJSON('headers',{
         "A": "2",
         "B": "1"
       })
