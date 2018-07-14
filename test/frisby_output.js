@@ -15,7 +15,7 @@ describe('console output', function() {
 
   it('should warn developers if there is a header with \'json\' but the body type is not JSON', function() {
     // Mock API
-    nock('http://mock-request/', {allowUnmocked: true})
+    nock('http://mock-request/')
       .post('/test-object')
       .once()
       .reply(201)
@@ -47,7 +47,7 @@ describe('console output', function() {
 
   it('should NOT warn developers that "there is a header with \'json\' but the body type is not JSON" because there is no body provided', function() {
     // Mock API
-    nock('http://mock-request/', {allowUnmocked: true})
+    nock('http://mock-request/')
       .post('/test-object')
       .once()
       .reply(201, function(uri, requestBody) {

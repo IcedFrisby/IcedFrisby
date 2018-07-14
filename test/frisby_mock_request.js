@@ -16,7 +16,7 @@ const path = require('path')
 const util = require('util')
 
 // enable real connections for localhost otherwise useApp() tests won't work
-nock.enableNetConnect('127.0.0.1')
+nock.enableNetConnect(/127.0.0.1|httpbin.org/)
 
 //
 // Tests run like normal Frisby specs but with 'mock' specified with a 'mock-request' object
@@ -1363,7 +1363,7 @@ describe('Frisby matchers', function() {
   })
 
   it('should handle file uploads', function() {
-    nock('http://example.com', { allowUnmocked: true })
+    nock('http://example.com')
       .post('/file-upload')
       .once()
       .reply(200, {'result': 'ok'})
@@ -1534,7 +1534,7 @@ describe('Frisby matchers', function() {
 
   describe('expectHeader with regex', function () {
     it('should pass when regex matches', function() {
-      nock('http://example.com', { allowUnmocked: true })
+      nock('http://example.com')
         .post('/path')
         .once()
         .reply(201, "The payload", {'Location': '/path/23'})
@@ -1741,7 +1741,7 @@ describe('Frisby matchers', function() {
 
   describe('expectNoHeader', function () {
     it('should pass when a header is absent', function() {
-      nock('http://example.com', { allowUnmocked: true })
+      nock('http://example.com')
         .post('/path')
         .once()
         .reply(201, "The payload")
@@ -1815,7 +1815,7 @@ describe('Frisby matchers', function() {
   })
 
   it('baseUri should set the outgoing URI', function() {
-    nock('http://host.example.com', { allowUnmocked: true })
+    nock('http://host.example.com')
       .post('/test')
       .once()
       .reply(200, (uri, requestBody) => requestBody)
@@ -2110,7 +2110,7 @@ describe('request headers', function () {
 
   context('when passing params to _request', function () {
     it('should allow for passing raw request body and preserve json:true option', function() {
-      nock('http://example.com', { allowUnmocked: true })
+      nock('http://example.com')
         .post('/json')
         .once()
         .reply(200, {'foo': 'bar'})
