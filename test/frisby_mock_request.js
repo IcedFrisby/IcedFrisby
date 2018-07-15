@@ -1169,6 +1169,246 @@ describe('Frisby matchers', function() {
     // Not sure how to reach the else block in `expectBodyContains`.
   })
 
+  describe.only('expectBodyLength', function(){
+    it('should pass when called with correct length, and called with one parameter', function(){
+      nock('http://example.com')
+        .get('/50chars')
+        .reply(200, 'a'.repeat(50))
+
+      frisby.create(this.test.title)
+        .get('http://example.com/50chars')
+        .expectBodyLength(50)
+        .toss()
+    })
+
+    it('should fail when called with incorrect length, and called with one parameter', function(){
+      nock('http://example.com')
+        .get('/51chars')
+        .reply(200, 'a'.repeat(51))
+
+      frisby.create(this.test.title)
+        .get('http://example.com/51chars')
+        .expectBodyLength(50)
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(AssertionError)
+          expect(err.message).to.equal("expected '" +  'a'.repeat(51) + "' to have a length of 50 but got 51")
+        })
+        .toss()
+    })
+
+    it('should pass when called with correct length, and called with = as the second parameter', function(){
+      nock('http://example.com')
+        .get('/50chars')
+        .reply(200, 'a'.repeat(50))
+
+      frisby.create(this.test.title)
+        .get('http://example.com/50chars')
+        .expectBodyLength(50,'=')
+        .toss()
+    })
+
+    it('should fail when called with incorrect length, and called with = as the second parameter', function(){
+      nock('http://example.com')
+        .get('/51chars')
+        .reply(200, 'a'.repeat(51))
+
+      frisby.create(this.test.title)
+        .get('http://example.com/51chars')
+        .expectBodyLength(50, '=')
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(AssertionError)
+          expect(err.message).to.equal("expected '" +  'a'.repeat(51) + "' to have a length of 50 but got 51")
+        })
+        .toss()
+    })
+
+    it('should pass when called with correct length, and called with >= as the second parameter', function(){
+      nock('http://example.com')
+        .get('/50chars')
+        .reply(200, 'a'.repeat(50))
+
+      frisby.create(this.test.title)
+        .get('http://example.com/50chars')
+        .expectBodyLength(50,'>=')
+        .toss()
+    })
+
+    it('should pass when called with smaller length, and called with >= as the second parameter', function(){
+      nock('http://example.com')
+        .get('/51chars')
+        .reply(200, 'a'.repeat(51))
+
+      frisby.create(this.test.title)
+        .get('http://example.com/51chars')
+        .expectBodyLength(50, '>=')
+        .toss()
+    })
+
+    it('should fail when called with greater length, and called with >= as the second parameter', function(){
+      nock('http://example.com')
+        .get('/50chars')
+        .reply(200, 'a'.repeat(50))
+
+      frisby.create(this.test.title)
+        .get('http://example.com/50chars')
+        .expectBodyLength(51, '>=')
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(AssertionError)
+          expect(err.message).to.equal("expected '" +  'a'.repeat(50) + "' to have a length at least 51 but got 50")
+        })
+        .toss()
+    })
+
+    it('should pass when called with correct length, and called with <= as the second parameter', function(){
+      nock('http://example.com')
+        .get('/50chars')
+        .reply(200, 'a'.repeat(50))
+
+      frisby.create(this.test.title)
+        .get('http://example.com/50chars')
+        .expectBodyLength(50,'<=')
+        .toss()
+    })
+
+    it('should pass when called with greater length, and called with <= as the second parameter', function(){
+      nock('http://example.com')
+        .get('/49chars')
+        .reply(200, 'a'.repeat(49))
+
+      frisby.create(this.test.title)
+        .get('http://example.com/49chars')
+        .expectBodyLength(50, '<=')
+        .toss()
+    })
+
+    it('should fail when called with smaller length, and called with <= as the second parameter', function(){
+      nock('http://example.com')
+        .get('/50chars')
+        .reply(200, 'a'.repeat(50))
+
+      frisby.create(this.test.title)
+        .get('http://example.com/50chars')
+        .expectBodyLength(49, '<=')
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(AssertionError)
+          expect(err.message).to.equal("expected '" +  'a'.repeat(50) + "' to have a length at most 49 but got 50")
+        })
+        .toss()
+    })
+
+    it('should pass when called with greater length, and called with < as the second parameter', function(){
+      nock('http://example.com')
+        .get('/49chars')
+        .reply(200, 'a'.repeat(49))
+
+      frisby.create(this.test.title)
+        .get('http://example.com/49chars')
+        .expectBodyLength(50, '<')
+        .toss()
+    })
+
+    it('should fail when called with smaller length, and called with < as the second parameter', function(){
+      nock('http://example.com')
+        .get('/50chars')
+        .reply(200, 'a'.repeat(50))
+
+      frisby.create(this.test.title)
+        .get('http://example.com/50chars')
+        .expectBodyLength(49, '<')
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(AssertionError)
+          expect(err.message).to.equal("expected '" +  'a'.repeat(50) + "' to have a length below 49 but got 50")
+        })
+        .toss()
+    })
+
+    it('should fail when called with the correct length, and called with < as the second parameter', function(){
+      nock('http://example.com')
+        .get('/50chars')
+        .reply(200, 'a'.repeat(50))
+
+      frisby.create(this.test.title)
+        .get('http://example.com/50chars')
+        .expectBodyLength(50, '<')
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(AssertionError)
+          expect(err.message).to.equal("expected '" +  'a'.repeat(50) + "' to have a length below 50 but got 50")
+        })
+        .toss()
+    })
+
+    it('should pass when called with smaller length, and called with > as the second parameter', function(){
+      nock('http://example.com')
+        .get('/50chars')
+        .reply(200, 'a'.repeat(50))
+
+      frisby.create(this.test.title)
+        .get('http://example.com/49chars')
+        .expectBodyLength(49, '>')
+        .toss()
+    })
+
+    it('should fail when called with greater length, and called with > as the second parameter', function(){
+      nock('http://example.com')
+        .get('/50chars')
+        .reply(200, 'a'.repeat(50))
+
+      frisby.create(this.test.title)
+        .get('http://example.com/50chars')
+        .expectBodyLength(51, '>')
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(AssertionError)
+          expect(err.message).to.equal("expected '" +  'a'.repeat(50) + "' to have a length above 51 but got 50")
+        })
+        .toss()
+    })
+
+    it('should fail when called with the correct length, and called with < as the second parameter', function(){
+      nock('http://example.com')
+        .get('/50chars')
+        .reply(200, 'a'.repeat(50))
+
+      frisby.create(this.test.title)
+        .get('http://example.com/50chars')
+        .expectBodyLength(50, '<')
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          expect(err).to.be.an.instanceof(AssertionError)
+          expect(err.message).to.equal("expected '" +  'a'.repeat(50) + "' to have a length below 50 but got 50")
+        })
+        .toss()
+    })
+
+    it('should pass when called with correct length, and called with an empty string as the second parameter', function(){
+      nock('http://example.com')
+        .get('/50chars')
+        .reply(200, 'a'.repeat(50))
+
+      frisby.create(this.test.title)
+        .get('http://example.com/50chars')
+        .expectBodyLength(50,'')
+        .toss()
+    })
+
+    it('should pass when called with correct length, and called with \'foo\' as the second parameter', function(){
+      nock('http://example.com')
+        .get('/50chars')
+        .reply(200, 'a'.repeat(50))
+
+      frisby.create(this.test.title)
+        .get('http://example.com/50chars')
+        .expectBodyLength(50,'foo')
+        .toss()
+    })
+  })
+
   describe('Aliased functions backwards compatibility', function(){
     it('should allow the use of expectHeaderToMatch as an alias for expectHeader', function(){
       nock('http://example.com')
