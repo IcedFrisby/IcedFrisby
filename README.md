@@ -7,21 +7,20 @@
 [![npm@next](https://img.shields.io/npm/v/icedfrisby/next.svg)](https://github.com/IcedFrisby/IcedFrisby/releases)
 
 
-**IcedFrisby** is a Node.js npm module that makes testing API endpoints easy, fast and fun. Based on the original [Frisby](https://github.com/vlucas/frisby) project.
+**IcedFrisby** is a Node.js library that makes testing API endpoints easy, fast and fun.
 
 ## :orange_book: API Documentation
-The [**IcedFrisby** API Docs](https://github.com/RobertHerhold/IcedFrisby/blob/master/API.md) are located in [API.md](https://github.com/RobertHerhold/IcedFrisby/blob/master/API.md).
+The [**IcedFrisby** API Docs](https://github.com/IcedFrisby/IcedFrisby/blob/master/API.md) are located in [API.md](https://github.com/IcedFrisby/IcedFrisby/blob/master/API.md).
 
 ## Changelog
-The [**IcedFrisby** Changelog](https://github.com/RobertHerhold/IcedFrisby/blob/master/CHANGELOG.md) is located in [CHANGELOG.md](https://github.com/RobertHerhold/IcedFrisby/blob/master/CHANGELOG.md).
+The [**IcedFrisby** Changelog](https://github.com/IcedFrisby/IcedFrisby/blob/master/CHANGELOG.md) is located in [CHANGELOG.md](https://github.com/IcedFrisby/IcedFrisby/blob/master/CHANGELOG.md).
 
 ## What makes IcedFrisby different?
-* Uses [Mocha](https://github.com/mochajs/mocha) as the driver instead of Jasmine
+* Uses [Mocha](https://github.com/mochajs/mocha) as the driver
 * Uses [Chai](https://github.com/chaijs/chai) for assertions
-* Uses [Joi](https://github.com/hapijs/joi) for flexible and simple schema/type JSON validation
-* expectJSON(...) is now strict. Undefined/null fields are not ignored and missing fields are considered errors
-* Adds expectContainsJSON(...)! Test JSON responses without knowing every field.
-* Uses [lodash](https://github.com/lodash/lodash) instead of underscore
+* Uses [Joi][] for flexible and simple schema/type JSON validation
+* `expectJSON(...)` is strict. Undefined/null fields are not ignored and missing fields are considered errors
+* `expectContainsJSON(...)` tests JSON responses without knowing every field.
 * Returns a 599 (network timeout error) response if a request times out or is unavailable instead of a 500
 
 ## Installation
@@ -30,11 +29,13 @@ Install IcedFrisby and Mocha from NPM:
 
     npm install mocha icedfrisby --save-dev
 
-If you are using [Joi][] (i.e. `expectJSONTypes`) install that too:
+If you are using `expectJSONTypes`, install [Joi][] too:
 
     npm install joi --save-dev
 
-**Note:** IcedFrisby is built and tested against Node 6 and 8.
+IcedFrisby is built and tested against Node 6, 8, and 10.
+
+[Joi]: https://github.com/hapijs/joi
 
 ## Show me some code!
 
@@ -43,7 +44,6 @@ IcedFrisby tests start with `frisby.create()` with a description of the test fol
 Each set of unique sequences or API endpoint tests should be started with new `frisby.toss` method calls instead of trying to chain multiple HTTP requests together.
 
 ```javascript
-
 const frisby = require('icedfrisby')
 const Joi = require('joi')
 
@@ -81,7 +81,6 @@ frisby.create('GET user johndoe')
       .toss()
   })
   .toss()
-
 ```
 
 Any Mocha/Chai/whatever tests can be used inside the `after` and `afterJSON` callbacks to perform additional or custom tests on the response data.
@@ -90,14 +89,13 @@ Any Mocha/Chai/whatever tests can be used inside the `after` and `afterJSON` cal
 
 Run tests as you normally would with [Mocha](https://github.com/mochajs/mocha).
 
-### Run it from the CLI
+For example:
 
     cd your/project
     mocha tests/someTest.js --reporter nyan
 
-
-IcedFrisby plugins
-------------------
+Plugins
+-------
 
 Plugins can provide custom assertions, setup and teardown logic, and
 additional functionality. Plugins can be implemented in an application's test
@@ -108,28 +106,10 @@ code or as a library.
 - [icedfrisby-jsonrefchecks](https://github.com/Fishbowler/icedfrisby-jsonrefchecks) &mdash;
   Check referential integrity between different sections of an API response
 
-
-### Writing your own plugin
-
-Writing a plugin for IcedFrisby is easy. For compatibility with other plugins,
-use a [subclass factory][]:
+To use a plugin, compose IcedFrisby with it:
 
 ```js
-const factory = superclass => class MyPlugin extends superclass {
-  expectValidXML () {
-    this.after((err, res, body) => {
-      // ... assert something here ...
-    })
-    return this
-  }
-}
-module.exports = factory
-```
-
-To use the plugin, compose IcedFrisby with it:
-
-```js
-const frisby = require('./my-plugin')(require('icedfrisby'))
+const frisby = require('./icedfrisby-nock')(require('icedfrisby'))
 ```
 
 or, more semantically, using the delightful [mixwith][]:
@@ -137,15 +117,18 @@ or, more semantically, using the delightful [mixwith][]:
 ```js
 const { mix } = require('mixwith')
 
-const frisby = mix(require('icedfrisby')).with(require('./my-plugin'))
+const frisby = mix(require('icedfrisby')).with(require('./icedfrisby-nock'))
 ```
 
-[subclass factory]: http://justinfagnani.com/2015/12/21/real-mixins-with-javascript-classes/
 [mixwith]: https://github.com/justinfagnani/mixwith.js
 
----
+Writing your own plugin is easy. For more details see [CONTRIBUTING.md].
 
-## IcedFrisby Development
+## Contributing
+
+Contributions are awesome! If you have an idea or code that you want to
+contribute, feel free to open an issue or a pull request and we will gladly
+review it. For more details see [CONTRIBUTING.md]
 
 ### Code Coverage
 
@@ -178,14 +161,10 @@ IcedFrisby is maintained by:
 1. Support [chained tests/promises](https://github.com/vlucas/frisby/issues/223). Related: [#127](https://github.com/vlucas/frisby/issues/127), [#154](https://github.com/vlucas/frisby/issues/154), [#200](https://github.com/vlucas/frisby/issues/200)
 1. ~~custom assertion plugin support~~ :rocket: [#27](https://github.com/IcedFrisby/icedfrisby/issues/27)
 
+## Acknowledgements
+
+IcedFrisby was originally based on the [Frisby](https://github.com/vlucas/frisby) project.
+
 ## License
+
 Licensed under the [MIT](http://opensource.org/licenses/MIT)/[BSD](http://opensource.org/licenses/BSD-3-Clause) license.
-
-## Notes for Releasing
-The procedure for issuing a release is as follows:
-
-1. Edit `package.json` and `CHANGELOG.md`, updating the version and release notes. Ensure no other files have changes.
-1. Make a new commit `git commit -am 'RELEASE X.X.X'`
-1. Tag the commit `git tag X.X.X`
-1. Push commits and tags `git push && git push --tags`
-1. Publish to npm `npm publish`
