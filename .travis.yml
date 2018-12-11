@@ -6,12 +6,7 @@ node_js:
   - 10
 
 before_install:
-  - npm install -g npm@6 greenkeeper-lockfile@1
-
-before_script:
-  - greenkeeper-lockfile-update
+  - npm install -g npm@6
 
 after_script:
-  # Only the first Node version listed will upload the lock file.
-  - greenkeeper-lockfile-upload
   - npm run coverage && coveralls < coverage/lcov.info && rm -rf coverage
