@@ -99,6 +99,24 @@ describe('IcedFrisby useApp(app)', function() {
       .toss()
   })
 
+  it('should work with an app with a base path component', function(){
+    const app = express()
+
+    app.get('/api/foo', function(req, res) {
+      res.send('bar')
+    })
+
+    frisby.create(this.test.title)
+      .useApp(app, '/api')
+      .get('/foo')
+      .expectStatus(200)
+      .expectBodyContains('bar')
+      .after(function(err, res, body) {
+        expect(err).to.not.exist
+      })
+      .toss()
+  })
+
   it('should throw an exception if app is not defined', function() {
     const self = this
 

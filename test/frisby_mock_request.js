@@ -15,8 +15,11 @@ const fs = require('fs')
 const path = require('path')
 const util = require('util')
 
-// enable real connections for localhost otherwise useApp() tests won't work
-nock.enableNetConnect('127.0.0.1')
+// Enable real connections for localhost otherwise useApp() tests won't work.
+// httpbin tests runa gainst the live server, so we explicitly allow it
+// through. Since all nocks run before the first frisby is tossed, we need to
+// do this first.
+nock.enableNetConnect(/127.0.0.1|httpbin.org/)
 
 //
 // Tests run like normal Frisby specs but with 'mock' specified with a 'mock-request' object
@@ -82,6 +85,62 @@ describe('Frisby matchers', function() {
         .get('http://mock-request/test-object', {mock: mockFn})
         .exceptionHandler(err => {
           expect(err.message).to.equal(message)
+        })
+        .toss()
+    })
+
+    it('should error gracefully when passed no function', function(){
+      const spy = sinon.spy()
+
+      try {
+        frisby.create(this.test.title)
+          .before()
+          .get('http://mock-request/test-object')
+          .toss()
+      } catch(err){
+        spy()
+        expect(err.message).to.equal('Expected Function object in before(), but got undefined')
+      }
+
+      expect(spy.calledOnce).to.equal(true)
+    })
+
+    it('should error gracefully when passed a string instead of function', function(){
+      const spy = sinon.spy()
+
+      try {
+        frisby.create(this.test.title)
+          .before('something')
+          .get('http://mock-request/test-object')
+          .toss()
+      } catch(err){
+        spy()
+        expect(err.message).to.equal('Expected Function object in before(), but got string')
+      }
+
+      expect(spy.calledOnce).to.equal(true)
+    })
+
+    it('should wait the configured period before proceeding to the request', function(){
+      let timeDelta = 0
+
+      const mockFn = mockRequest.mock()
+        .get('/not-found')
+        .respond({
+          statusCode: 404
+        })
+        .run()
+
+      frisby.create(this.test.title)
+        .before(() => {
+          timeDelta = (new Date).getTime()
+        })
+        .waits(1000)
+        .get('http://mock-request/not-found', {mock: mockFn})
+        .after(() => {
+          timeDelta = (new Date).getTime() - timeDelta
+          expect(timeDelta).to.be.above(999)
+          expect(timeDelta).to.be.below(1100)
         })
         .toss()
     })
@@ -258,6 +317,25 @@ describe('Frisby matchers', function() {
         test_int: Joi.number().valid(43),
         test_str: Joi.string().valid("I am a string two!"),
         test_optional: Joi.any().optional()
+      })
+      .toss()
+  })
+
+  it('expectJSON should throw an error when response is not JSON', function(){
+
+    const responseBody = 'Payload'
+
+    nock('http://example.com')
+      .post('/path')
+      .reply(200, responseBody)
+
+    frisby.create(this.test.title)
+      .post('http://example.com/path')
+      .expectJSON({foo: 'bar'})
+      .exceptionHandler(err => {
+        // TODO How can I assert that this method is called?
+        expect(err).to.be.an.instanceof(Error)
+        expect(err.message).to.equal("Error parsing JSON string: Unexpected token P in JSON at position 0\n\tGiven: Payload")
       })
       .toss()
   })
@@ -738,7 +816,7 @@ describe('Frisby matchers', function() {
         .toss()
     })
 
-    describe('should not be invoked after an failed expectation', function() {
+    it('should not be invoked after an failed expectation', function() {
       const mockFn = mockRequest.mock()
         .get('/test-object')
         .respond({
@@ -768,6 +846,66 @@ describe('Frisby matchers', function() {
     })
 
     it('TODO: should not be invoked after a test failure')
+
+    it('should not be invoked after a previous after hook raised an exception', function(){
+      const spy = sinon.spy()
+
+      const mockFn = mockRequest.mock()
+        .get('/test-object')
+        .respond({
+          statusCode: 200,
+          body: fixtures.singleObject
+        })
+        .run()
+
+      frisby.create(this.test.title)
+        .get('http://mock-request/test-object', {mock: mockFn})
+        .expectStatus(200)
+        .exceptionHandler(() => {}) //Swallow the exception
+        .after(() => {
+          spy()
+          throw Error('Error in first after()')
+        })
+        .after(() => {
+          spy()
+        })
+        .finally(() => {
+          expect(spy.calledOnce).to.equal(true)
+        })
+        .toss()
+    })
+
+    it('should error gracefully when passed no function', function(){
+      const spy = sinon.spy()
+
+      try {
+        frisby.create(this.test.title)
+          .get('http://mock-request/test-object')
+          .after()
+          .toss()
+      } catch(err){
+        spy()
+        expect(err.message).to.equal('Expected Function object in after(), but got undefined')
+      }
+
+      expect(spy.calledOnce).to.equal(true)
+    })
+
+    it('should error gracefully when passed a string instead of function', function(){
+      const spy = sinon.spy()
+
+      try {
+        frisby.create(this.test.title)
+          .get('http://mock-request/test-object')
+          .after('something')
+          .toss()
+      } catch(err){
+        spy()
+        expect(err.message).to.equal('Expected Function object in after(), but got string')
+      }
+
+      expect(spy.calledOnce).to.equal(true)
+    })
   })
 
   describe('after() callbacks (async)', function() {
@@ -835,7 +973,39 @@ describe('Frisby matchers', function() {
         .toss()
     })
 
-    describe('should be invoked after an failed expectation', function() {
+    it('should error gracefully when passed no function', function(){
+      const spy = sinon.spy()
+
+      try {
+        frisby.create(this.test.title)
+          .get('http://mock-request/test-object')
+          .finally()
+          .toss()
+      } catch(err){
+        spy()
+        expect(err.message).to.equal('Expected Function object in finally(), but got undefined')
+      }
+
+      expect(spy.calledOnce).to.equal(true)
+    })
+
+    it('should error gracefully when passed a string instead of function', function(){
+      const spy = sinon.spy()
+
+      try {
+        frisby.create(this.test.title)
+          .get('http://mock-request/test-object')
+          .finally('something')
+          .toss()
+      } catch(err){
+        spy()
+        expect(err.message).to.equal('Expected Function object in finally(), but got string')
+      }
+
+      expect(spy.calledOnce).to.equal(true)
+    })
+
+    it('should be invoked after an failed expectation', function() {
       const mockFn = mockRequest.mock()
         .get('/test-object')
         .respond({
@@ -862,7 +1032,7 @@ describe('Frisby matchers', function() {
       test.toss()
     })
 
-    describe('before hook errors are bundled together', function () {
+    it('before hook errors are bundled together', function () {
       const mockFn = mockRequest.mock()
         .get('/test-object')
         .respond({
@@ -1025,7 +1195,7 @@ describe('Frisby matchers', function() {
       nock('http://example.com')
         .get('/just-dont-come-back-2')
         .delayBody(50) // delay 50ms
-        .times(5)
+        .times(retryCount + 1)
         .reply((uri, requestBody) => {
           actualRequestCount += 1
           return 200, '<html></html>'
@@ -1087,6 +1257,39 @@ describe('Frisby matchers', function() {
         .toss()
     })
 
+    it('should not retry POST requests', function(){
+
+      let hitCount = 0
+
+      nock('http://example.com')
+        .post('/slow-form')
+        .delayBody(50) // delay 50ms
+        .times(2)
+        .reply((uri, requestBody) => {
+          spy()
+          hitCount++
+          return 200
+        })
+
+      const spy = sinon.spy()
+
+      frisby.create(this.test.title)
+        .post('http://example.com/slow-form')
+        .timeout(5)
+        .retry(2, 0) //2 retries with 0ms delay between them
+        .exceptionHandler(err => {
+          //Squash the expected error, keep the rest
+          if(!err.message.includes('Request timed out after')){
+            throw err
+          }
+        })
+        .finally(() => {
+          expect(hitCount).to.equal(1)
+          expect(spy.callCount).to.equal(1)
+        })
+        .toss()
+    })
+
     it('should pass the expected timeout to mocha, and not cause mocha to time out', function () {
       let requestCount = 0
 
@@ -1114,17 +1317,63 @@ describe('Frisby matchers', function() {
 
       test.toss()
     })
+
+    it('should return the current timeout value when not setting a new one', function(){
+      const thisFrisby = frisby.create(this.test.title)
+      const defaultTimeout = thisFrisby.timeout()
+      const newTimeout = thisFrisby.timeout(1000).timeout()
+
+      expect(defaultTimeout).to.equal(5000)
+      expect(newTimeout).to.equal(1000)
+    })
+
+    it('should set the timeout correctly via config()', function(){
+      const thisFrisby = frisby.create(this.test.title).config({timeout: 100})
+      const currentTimeout = thisFrisby.timeout()
+      expect(currentTimeout).to.equal(100)
+    })
+
+    it('should retry the expected number of times after a timeout when set via config()', function(){
+      const retryCount = 4
+      let actualRequestCount = 0
+      const timeout = 5
+
+      nock('http://example.com')
+        .get('/just-dont-come-back-3')
+        .delayBody(50) // delay 50ms
+        .times(5)
+        .reply((uri, requestBody) => {
+          actualRequestCount += 1
+          return 200, '<html></html>'
+        })
+
+      const spy = sinon.spy()
+
+      frisby.create(this.test.title)
+        .get('http://example.com/just-dont-come-back-3')
+        .timeout(timeout)
+        .config({retry: retryCount})
+        .exceptionHandler(err => {
+          // TODO How can I assert that this method is called?
+          spy()
+          expect(err.message).to.equal(`Request timed out after ${timeout} ms (${retryCount + 1} attempts)`)
+          expect(spy.calledOnce).to.equal(true)
+
+          expect(actualRequestCount).to.equal(retryCount + 1)
+        })
+        .toss()
+    })
   })
 
   it('should handle file uploads', function() {
-    nock('http://httpbin.org', { allowUnmocked: true })
+    nock('http://example.com')
       .post('/file-upload')
       .once()
       .reply(200, {'result': 'ok'})
 
     // Intercepted with 'nock'
     frisby.create(this.test.title)
-      .post('http://httpbin.org/file-upload', {
+      .post('http://example.com/file-upload', {
         name: 'Test Upload',
         file: fs.createReadStream(path.join(__dirname, 'logo-frisby.png'))
       }, { form: true })
@@ -1149,7 +1398,7 @@ describe('Frisby matchers', function() {
   })
 
   describe('expectBodyContains', function () {
-    it('should fail when the response is empty', function () {
+    it('should fail when the response body is empty', function () {
       nock('http://example.com')
         .post('/path')
         .reply(201)
@@ -1164,9 +1413,6 @@ describe('Frisby matchers', function() {
         })
         .toss()
     })
-
-    it('TODO should fail when the response is absent')
-    // Not sure how to reach the else block in `expectBodyContains`.
   })
 
   describe('Aliased functions backwards compatibility', function(){
@@ -1291,13 +1537,13 @@ describe('Frisby matchers', function() {
 
   describe('expectHeader with regex', function () {
     it('should pass when regex matches', function() {
-      nock('http://httpbin.org', { allowUnmocked: true })
+      nock('http://example.com')
         .post('/path')
         .once()
         .reply(201, "The payload", {'Location': '/path/23'})
 
       frisby.create(this.test.title)
-        .post('http://httpbin.org/path', {foo: 'bar'})
+        .post('http://example.com/path', {foo: 'bar'})
         .expectStatus(201)
         .expectHeader('location', /^\/path\/\d+$/)
         .toss()
@@ -1498,13 +1744,13 @@ describe('Frisby matchers', function() {
 
   describe('expectNoHeader', function () {
     it('should pass when a header is absent', function() {
-      nock('http://httpbin.org', { allowUnmocked: true })
+      nock('http://example.com')
         .post('/path')
         .once()
         .reply(201, "The payload")
 
       frisby.create(this.test.title)
-        .post('http://httpbin.org/path', {foo: 'bar'})
+        .post('http://example.com/path', {foo: 'bar'})
         .expectStatus(201)
         .expectNoHeader('Location')
         .expectNoHeader('location')
@@ -1572,7 +1818,7 @@ describe('Frisby matchers', function() {
   })
 
   it('baseUri should set the outgoing URI', function() {
-    nock('http://host.example.com', { allowUnmocked: true })
+    nock('http://host.example.com')
       .post('/test')
       .once()
       .reply(200, (uri, requestBody) => requestBody)
@@ -1837,7 +2083,7 @@ describe('request headers', function () {
     })
 
     context('when configured after _request() is invoked', function() {
-      it.skip('TODO still applies the expected json header', function() {
+      it('still applies the expected json header', function() {
         let headers
 
         const mockFn = mockRequest.mock()
@@ -1867,14 +2113,14 @@ describe('request headers', function () {
 
   context('when passing params to _request', function () {
     it('should allow for passing raw request body and preserve json:true option', function() {
-      nock('http://httpbin.org', { allowUnmocked: true })
+      nock('http://example.com')
         .post('/json')
         .once()
         .reply(200, {'foo': 'bar'})
 
       // Intercepted with 'nock'
       frisby.create(this.test.title)
-        .post('http://httpbin.org/json', {}, { json: true })
+        .post('http://example.com/json', {}, { json: true })
         .expectStatus(200)
         .expectJSON({'foo': 'bar'})
         .expectHeader('Content-Type', 'application/json')
@@ -1937,6 +2183,294 @@ describe('request headers', function () {
           expect(headers.test).to.equal('Two')
         })
         .toss()
+    })
+  })
+
+  context('when passing headers by config() and addHeader', function(){
+    it('should send all configured headers', function(){
+      let outgoingheaders
+
+      const mockFn = mockRequest.mock()
+        .get('/test-object-array')
+        .respond({
+          statusCode: 200,
+          body: fixtures.arrayOfObjects
+        })
+        .run()
+      const saveReqHeaders = (outgoing, callback) => {
+        outgoingheaders = outgoing.headers
+        mockFn(outgoing, callback)
+      }
+
+      frisby.create(this.test.title)
+        .get('http://mock-request/test-object-array', {mock: saveReqHeaders})
+        .config({
+          request:{
+            headers: { 'one': '1' }
+          }
+        })
+        .addHeader('two','2')
+        .expectStatus(200)
+        .after((err, res, body) => {
+          expect(outgoingheaders).to.have.property('one')
+          expect(outgoingheaders.one).to.equal('1')
+          expect(outgoingheaders).to.have.property('two')
+          expect(outgoingheaders.two).to.equal('2')
+        })
+        .toss()
+    })
+
+    it('addHeader should override config()', function(){
+      let outgoingheaders
+
+      const mockFn = mockRequest.mock()
+        .get('/test-object-array')
+        .respond({
+          statusCode: 200,
+          body: fixtures.arrayOfObjects
+        })
+        .run()
+      const saveReqHeaders = (outgoing, callback) => {
+        outgoingheaders = outgoing.headers
+        mockFn(outgoing, callback)
+      }
+
+      frisby.create(this.test.title)
+        .get('http://mock-request/test-object-array', {mock: saveReqHeaders})
+        .config({
+          request:{
+            headers: { 'three': '3' }
+          }
+        })
+        .addHeader('three','2+1')
+        .expectStatus(200)
+        .after((err, res, body) => {
+          expect(outgoingheaders).to.have.property('three')
+          expect(outgoingheaders.three).to.equal('2+1')
+        })
+        .toss()
+    })
+  })
+
+  context('when passing headers by params and addHeader', function(){
+    it('should send all configured headers', function(){
+      let outgoingheaders
+
+      const mockFn = mockRequest.mock()
+        .get('/test-object-array')
+        .respond({
+          statusCode: 200,
+          body: fixtures.arrayOfObjects
+        })
+        .run()
+      const saveReqHeaders = (outgoing, callback) => {
+        outgoingheaders = outgoing.headers
+        mockFn(outgoing, callback)
+      }
+
+      frisby.create(this.test.title)
+        .get('http://mock-request/test-object-array', {headers: { 'one': '1' }, mock: saveReqHeaders})
+        .addHeader('two','2')
+        .expectStatus(200)
+        .after((err, res, body) => {
+          expect(outgoingheaders).to.have.property('one')
+          expect(outgoingheaders.one).to.equal('1')
+          expect(outgoingheaders).to.have.property('two')
+          expect(outgoingheaders.two).to.equal('2')
+        })
+        .toss()
+    })
+
+    it.skip('addHeader should override params', function(){ //Issue #106
+      let outgoingheaders
+
+      const mockFn = mockRequest.mock()
+        .get('/test-object-array')
+        .respond({
+          statusCode: 200,
+          body: fixtures.arrayOfObjects
+        })
+        .run()
+      const saveReqHeaders = (outgoing, callback) => {
+        outgoingheaders = outgoing.headers
+        mockFn(outgoing, callback)
+      }
+
+      frisby.create(this.test.title)
+        .get('http://mock-request/test-object-array', {headers: { 'three': '3' }, mock: saveReqHeaders})
+        .addHeader('three','2+1')
+        .expectStatus(200)
+        .after((err, res, body) => {
+          expect(outgoingheaders).to.have.property('three')
+          expect(outgoingheaders.three).to.equal('2+1')
+        })
+        .toss()
+    })
+  })
+
+  context('when removing headers via removeHeader', function(){
+    it('should not send a removed header when it was added via addHeader', function(){
+      let headers
+
+      const mockFn = mockRequest.mock()
+        .get('/test-object-array')
+        .respond({
+          statusCode: 200,
+          body: fixtures.arrayOfObjects
+        })
+        .run()
+      const saveReqHeaders = (outgoing, callback) => {
+        headers = outgoing.headers
+        mockFn(outgoing, callback)
+      }
+
+      frisby.create(this.test.title)
+        .get('http://mock-request/test-object-array', {mock: saveReqHeaders})
+        .addHeaders({ 'One': '1', 'Two': '2' })
+        .removeHeader('One')
+        .expectStatus(200)
+        .after((err, res, body) => {
+          expect(headers).to.not.have.property('one')
+          expect(headers).to.have.property('two')
+          expect(headers.two).to.equal('2')
+        })
+        .toss()
+    })
+
+    it.skip('should not send a removed header when it was added via params', function(){ //Issue #122
+      let headers
+
+      const mockFn = mockRequest.mock()
+        .get('/test-object-array')
+        .respond({
+          statusCode: 200,
+          body: fixtures.arrayOfObjects
+        })
+        .run()
+      const saveReqHeaders = (outgoing, callback) => {
+        headers = outgoing.headers
+        mockFn(outgoing, callback)
+      }
+
+      frisby.create(this.test.title)
+        .get('http://mock-request/test-object-array', {mock: saveReqHeaders, headers: { 'One': '1', 'Two': '2' }})
+        .removeHeader('One')
+        .expectStatus(200)
+        .after((err, res, body) => {
+          expect(headers).to.not.have.property('one')
+          expect(headers).to.have.property('two')
+          expect(headers.two).to.equal('2')
+        })
+        .toss()
+    })
+
+    it('should not send a removed header when it was added via config()', function(){
+      let headers
+
+      const mockFn = mockRequest.mock()
+        .get('/test-object-array')
+        .respond({
+          statusCode: 200,
+          body: fixtures.arrayOfObjects
+        })
+        .run()
+      const saveReqHeaders = (outgoing, callback) => {
+        headers = outgoing.headers
+        mockFn(outgoing, callback)
+      }
+
+      frisby.create(this.test.title)
+        .get('http://mock-request/test-object-array', {mock: saveReqHeaders})
+        .config({
+          request:{
+            headers: { 'One': '1', 'Two': '2' }
+          }
+        })
+        .removeHeader('One')
+        .expectStatus(200)
+        .after((err, res, body) => {
+          expect(headers).to.not.have.property('one')
+          expect(headers).to.have.property('two')
+          expect(headers.two).to.equal('2')
+        })
+        .toss()
+    })
+
+    it('should not send a removed header, regardless of casing', function(){
+      let headers
+
+      const mockFn = mockRequest.mock()
+        .get('/test-object-array')
+        .respond({
+          statusCode: 200,
+          body: fixtures.arrayOfObjects
+        })
+        .run()
+      const saveReqHeaders = (outgoing, callback) => {
+        headers = outgoing.headers
+        mockFn(outgoing, callback)
+      }
+
+      frisby.create(this.test.title)
+        .get('http://mock-request/test-object-array', {mock: saveReqHeaders})
+        .addHeaders({ 'One': '1', 'Two': '2' })
+        .removeHeader('ONE')
+        .expectStatus(200)
+        .after((err, res, body) => {
+          expect(headers).to.not.have.property('one')
+          expect(headers).to.have.property('two')
+          expect(headers.two).to.equal('2')
+        })
+        .toss()
+    })
+
+    it('should not error when removing a non-existant header', function(){
+      let headers
+
+      const mockFn = mockRequest.mock()
+        .get('/test-object-array')
+        .respond({
+          statusCode: 200,
+          body: fixtures.arrayOfObjects
+        })
+        .run()
+      const saveReqHeaders = (outgoing, callback) => {
+        headers = outgoing.headers
+        mockFn(outgoing, callback)
+      }
+
+      frisby.create(this.test.title)
+        .get('http://mock-request/test-object-array', {mock: saveReqHeaders})
+        .addHeaders({ 'One': '1', 'Two': '2' })
+        .removeHeader('Three')
+        .expectStatus(200)
+        .after((err, res, body) => {
+          expect(headers).to.have.property('one')
+          expect(headers).to.have.property('two')
+          expect(headers.one).to.equal('1')
+          expect(headers.two).to.equal('2')
+          expect(headers).to.not.have.property('three')
+        })
+        .toss()
+    })
+  })
+})
+
+describe('Error Handling', function(){
+  context('the exceptionHandler function', function(){
+    it('should return false when not set and called with no function', function(){
+      const thisFrisby = frisby.create(this.test.title).get('http://example.com')
+      const initialExH = thisFrisby.exceptionHandler()
+
+      expect(initialExH).to.equal(false)
+    })
+
+    it('should return the currently assigned error handler function when called with no function', function(){
+      const myExH = function(){ return }
+      const thisFrisby = frisby.create(this.test.title).get('http://example.com').exceptionHandler(myExH)
+      const setExH = thisFrisby.exceptionHandler()
+
+      expect(setExH).to.equal(myExH)
     })
   })
 })
