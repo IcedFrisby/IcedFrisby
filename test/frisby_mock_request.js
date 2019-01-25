@@ -15,7 +15,10 @@ const fs = require('fs')
 const path = require('path')
 const util = require('util')
 
-// enable real connections for localhost otherwise useApp() tests won't work
+// Enable real connections for localhost otherwise useApp() tests won't work.
+// httpbin tests runa gainst the live server, so we explicitly allow it
+// through. Since all nocks run before the first frisby is tossed, we need to
+// do this first.
 nock.enableNetConnect(/127.0.0.1|httpbin.org/)
 
 //
