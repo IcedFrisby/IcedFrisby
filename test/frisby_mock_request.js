@@ -1016,18 +1016,22 @@ describe('Frisby matchers', function() {
 
       let finallyInvoked = false
 
-      const test = frisby.create('aaa')
+      class FrisbyWithFinishOverride extends frisby {
+        _finish (done) {
+          super._finish((err) => {
+            // TODO: How can I ensure this has been called?
+            expect(finallyInvoked).to.be.ok
+            done()
+          })
+        }
+      }
+
+      const test = FrisbyWithFinishOverride.create('aaa')
         .get('http://mock-request/test-object', {mock: mockFn})
+        // Because this is testing a failed expectation, this deliberately
+        // does _not_ match the mock above.
         .expectStatus(204)
         .finally(() => { finallyInvoked = true })
-
-      // TODO: How can I ensure this has been called?
-      test._finish = function (done) {
-        test.constructor.prototype._finish.call(this, (err) => {
-          expect(finallyInvoked).to.be.ok
-          done()
-        })
-      }
 
       test.toss()
     })
@@ -1044,22 +1048,24 @@ describe('Frisby matchers', function() {
       const beforeErrorMessage = 'this-is-the-before-error'
       const finallyErrorMessage = 'this-is-the-finally-error'
 
-      const test = frisby.create('error bundling')
+      class FrisbyWithFinishOverride extends frisby {
+        _finish (done) {
+          super._finish((err) => {
+            // TODO: How can I ensure this has been called?
+            expect(err).to.be.an.instanceOf(MultiError)
+            expect(err.errors()).to.have.lengthOf(2)
+            expect(err.errors()[0].message).to.equal(beforeErrorMessage)
+            expect(err.errors()[1].message).to.equal(finallyErrorMessage)
+            done()
+          })
+        }
+      }
+
+      const test = FrisbyWithFinishOverride.create('error bundling')
         .get('http://mock-request/test-object', {mock: mockFn})
         .expectStatus(200)
         .before(() => { throw Error(beforeErrorMessage) })
         .finally(() => { throw Error(finallyErrorMessage) })
-
-      // TODO: How can I ensure this has been called?
-      test._finish = function (done) {
-        test.constructor.prototype._finish.call(this, (err) => {
-          expect(err).to.be.an.instanceOf(MultiError)
-          expect(err.errors()).to.have.lengthOf(2)
-          expect(err.errors()[0].message).to.equal(beforeErrorMessage)
-          expect(err.errors()[1].message).to.equal(finallyErrorMessage)
-          done()
-        })
-      }
 
       test.toss()
     })
