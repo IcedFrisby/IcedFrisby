@@ -75,7 +75,7 @@ describe('Frisby live running httpbin tests', function() {
 
     frisby
       .create('POST random binary data via Buffer object')
-      .post('http://httpbin.org/post', new Buffer(data), {
+      .post('https://httpbin.org/post', new Buffer(data), {
         json: false,
         headers: {
           'content-type': 'application/octet-stream',
@@ -111,13 +111,13 @@ describe('Frisby live running httpbin tests', function() {
         origin: Joi.any(),
         url: Joi.string()
           .required()
-          .valid('http://httpbin.org/post'),
+          .valid('https://httpbin.org/post'),
       })
       .toss()
 
     frisby
       .create('PUT random binary data via Buffer object')
-      .put('http://httpbin.org/put', new Buffer(data), {
+      .put('https://httpbin.org/put', new Buffer(data), {
         json: false,
         headers: {
           'content-type': 'application/octet-stream',
@@ -152,7 +152,7 @@ describe('Frisby live running httpbin tests', function() {
         origin: Joi.any(),
         url: Joi.string()
           .required()
-          .valid('http://httpbin.org/put'),
+          .valid('https://httpbin.org/put'),
       })
       .toss()
   })
@@ -162,7 +162,7 @@ describe('Frisby live running httpbin tests', function() {
 
     frisby
       .create('PATCH via Buffer object')
-      .patch('http://httpbin.org/patch', new Buffer(patchCommand), {
+      .patch('https://httpbin.org/patch', new Buffer(patchCommand), {
         json: false,
         headers: {
           'content-type': 'text/plain',
@@ -193,13 +193,13 @@ describe('Frisby live running httpbin tests', function() {
         origin: Joi.any(),
         url: Joi.string()
           .required()
-          .valid('http://httpbin.org/patch'),
+          .valid('https://httpbin.org/patch'),
       })
       .toss()
 
     frisby
       .create('PATCH via Stream object')
-      .patch('http://httpbin.org/patch', new StringStream(patchCommand), {
+      .patch('https://httpbin.org/patch', new StringStream(patchCommand), {
         json: false,
         headers: {
           'content-type': 'text/plain',
@@ -233,7 +233,7 @@ describe('Frisby live running httpbin tests', function() {
         origin: Joi.any(),
         url: Joi.string()
           .required()
-          .valid('http://httpbin.org/patch'),
+          .valid('https://httpbin.org/patch'),
       })
       .toss()
   })
@@ -250,8 +250,8 @@ describe('Frisby live running httpbin tests', function() {
      */
 
     frisby
-      .create('POST frisby logo to http://httpbin.org/post using a Stream')
-      .post('http://httpbin.org/post', fs.createReadStream(filePath), {
+      .create('POST frisby logo to https://httpbin.org/post using a Stream')
+      .post('https://httpbin.org/post', fs.createReadStream(filePath), {
         json: false,
         headers: {
           'content-type': 'application/octet-stream',
@@ -285,13 +285,13 @@ describe('Frisby live running httpbin tests', function() {
         origin: Joi.any(),
         url: Joi.string()
           .required()
-          .valid('http://httpbin.org/post'),
+          .valid('https://httpbin.org/post'),
       })
       .toss()
 
     frisby
-      .create('PUT frisby logo to http://httpbin.org/put using a Stream')
-      .put('http://httpbin.org/put', fs.createReadStream(filePath), {
+      .create('PUT frisby logo to https://httpbin.org/put using a Stream')
+      .put('https://httpbin.org/put', fs.createReadStream(filePath), {
         json: false,
         headers: {
           'Content-Type': 'application/octet-stream',
@@ -319,7 +319,7 @@ describe('Frisby live running httpbin tests', function() {
         form: Joi.any(),
         json: Joi.any(),
         origin: Joi.any(),
-        url: Joi.string().valid('http://httpbin.org/put'),
+        url: Joi.string().valid('https://httpbin.org/put'),
       })
       .toss()
   })
