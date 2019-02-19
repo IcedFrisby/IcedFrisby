@@ -8,6 +8,7 @@ globals:
 
 extends:
   - "eslint:recommended"
+  - prettier
 
 plugins:
   - "mocha"

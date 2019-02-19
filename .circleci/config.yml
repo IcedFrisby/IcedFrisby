@@ -25,10 +25,10 @@ jobs:
           command: npm run lint
           when: always
 
-      # - run:
-      #     name: Check prettier
-      #     command: npm run prettier-check
-      #     when: always
+      - run:
+          name: Check prettier
+          command: npm run prettier-check
+          when: always
 
   node@8:
     docker:
@@ -50,10 +50,10 @@ jobs:
           command: npm run lint
           when: always
 
-      # - run:
-      #     name: Check prettier
-      #     command: npm run prettier-check
-      #     when: always
+      - run:
+          name: Check prettier
+          command: npm run prettier-check
+          when: always
 
 workflows:
   version: 2
@@ -66,7 +66,7 @@ workflows:
   daily:
     triggers:
       - schedule:
-          cron: "0 17 * * *"
+          cron: '0 17 * * *'
           filters:
             branches:
               only: master
