@@ -1,6 +1,7 @@
 # IcedFrisby Changelog
 
-[unreleased]: https://github.com/IcedFrisby/IcedFrisby/compare/2.0.0-alpha.2...HEAD
+[unreleased]: https://github.com/IcedFrisby/IcedFrisby/compare/2.0.0-alpha.3...HEAD
+[2.0.0-alpha.3]: https://github.com/IcedFrisby/IcedFrisby/compare/2.0.0-alpha.3...2.0.0-alpha.2
 [2.0.0-alpha.2]: https://github.com/IcedFrisby/IcedFrisby/compare/2.0.0-alpha.2...2.0.0-alpha.1
 [2.0.0-alpha.1]: https://github.com/IcedFrisby/IcedFrisby/compare/2.0.0-alpha.1...1.5.0
 [1.5.0]: https://github.com/IcedFrisby/IcedFrisby/compare/1.5.0...1.4.0
@@ -11,6 +12,21 @@
 [1.1.0]: https://github.com/IcedFrisby/IcedFrisby/compare/1.1.0...1.0.0
 
 ## [Unreleased][]
+
+## [2.0.0-alpha.3][]
+
+### Breaking changes
+
+- Remove support for Node 6.
+
+### New features
+
+- Add `async run()` method to support running IcedFrisby within `it()` blocks or
+  using a test runner other than Mocha.
+
+### Other changes
+
+- Update dependencies.
 
 ## [2.0.0-alpha.2][]
 
