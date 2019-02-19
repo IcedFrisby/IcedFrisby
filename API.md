@@ -4,6 +4,7 @@
   - [The Basics](#thebasics)
     - [create(msg)](#createmsg)
     - [toss()](#toss)
+    - [run()](#run)
     - [config()](#configopts)
   - [Commands](#commands)
     - [get(uri,params)](#geturi-params)
@@ -60,7 +61,7 @@
 
 ## The Basics
 
-Every frisby request begins with `create(..)` and ends with a `toss()`.
+Every frisby request begins with `create(..)` and ends with `toss()` or `run()`.
 
 ### create(msg)
 
@@ -90,6 +91,25 @@ frisby
   .expectStatus(200)
   // any number of additional expect statements here
   .toss()
+```
+
+IcedFrisby hook methods like [`after()`](#after) and [`finally()`](#finally)
+provide useful integration points for chaining tests and performing additional
+assertions when the tests complete.
+
+### async run()
+
+Run the test, returning a promise that resolves or rejects when the test
+completes. This is useful for running a test within an `.it()` and for
+chaining workflows using `async`/`await`.
+
+```javascript
+await frisby
+  .create('a test')
+  .get('http://example.com')
+  .expectStatus(200)
+  // any number of additional expect statements here
+  .run()
 ```
 
 ### config(opts)
