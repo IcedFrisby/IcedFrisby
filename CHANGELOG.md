@@ -26,6 +26,8 @@
 
 ### Other changes
 
+- Improve test coverage.
+- Improve documentation.
 - Update dependencies.
 
 ## [2.0.0-alpha.2][]
