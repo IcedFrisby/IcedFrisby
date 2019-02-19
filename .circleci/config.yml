@@ -18,6 +18,7 @@ jobs:
       - run:
           name: Send to Coveralls
           command: npm run coverage && coveralls < coverage/lcov.info
+          when: always
 
       - run:
           name: Check lint
