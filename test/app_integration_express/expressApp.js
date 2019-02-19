@@ -12,12 +12,10 @@ app.get('/', function(req, res) {
 // prevent the app from starting if it is required as a module
 if (!module.parent) {
   const server = app.listen(3000, function() {
-
     const host = server.address().address
     const port = server.address().port
 
     console.log('Example app listening at http://%s:%s', host, port)
-
   })
 }
 

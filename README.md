@@ -5,22 +5,24 @@
 [![npm](https://img.shields.io/npm/v/icedfrisby.svg)](http://www.npmjs.com/package/icedfrisby)
 [![npm@next](https://img.shields.io/npm/v/icedfrisby/next.svg)](https://github.com/IcedFrisby/IcedFrisby/releases)
 
-
 **IcedFrisby** is a Node.js library that makes testing API endpoints easy, fast and fun.
 
 ## :orange_book: API Documentation
+
 The [**IcedFrisby** API Docs](https://github.com/IcedFrisby/IcedFrisby/blob/master/API.md) are located in [API.md](https://github.com/IcedFrisby/IcedFrisby/blob/master/API.md).
 
 ## Changelog
+
 The [**IcedFrisby** Changelog](https://github.com/IcedFrisby/IcedFrisby/blob/master/CHANGELOG.md) is located in [CHANGELOG.md](https://github.com/IcedFrisby/IcedFrisby/blob/master/CHANGELOG.md).
 
 ## What makes IcedFrisby different?
-* Uses [Mocha](https://github.com/mochajs/mocha) as the driver
-* Uses [Chai](https://github.com/chaijs/chai) for assertions
-* Uses [Joi][] for flexible and simple schema/type JSON validation
-* `expectJSON(...)` is strict. Undefined/null fields are not ignored and missing fields are considered errors
-* `expectContainsJSON(...)` tests JSON responses without knowing every field.
-* Returns a 599 (network timeout error) response if a request times out or is unavailable instead of a 500
+
+- Uses [Mocha](https://github.com/mochajs/mocha) as the driver
+- Uses [Chai](https://github.com/chaijs/chai) for assertions
+- Uses [Joi][] for flexible and simple schema/type JSON validation
+- `expectJSON(...)` is strict. Undefined/null fields are not ignored and missing fields are considered errors
+- `expectContainsJSON(...)` tests JSON responses without knowing every field.
+- Returns a 599 (network timeout error) response if a request times out or is unavailable instead of a 500
 
 ## Installation
 
@@ -34,7 +36,7 @@ If you are using `expectJSONTypes`, install [Joi][] too:
 
 IcedFrisby is built and tested against Node 8 and 10.
 
-[Joi]: https://github.com/hapijs/joi
+[joi]: https://github.com/hapijs/joi
 
 ## Show me some code!
 
@@ -49,33 +51,35 @@ const Joi = require('joi')
 const URL = 'http://localhost:3000/'
 const URL_AUTH = 'http://username:password@localhost:3000/'
 
-frisby.create('GET user johndoe')
+frisby
+  .create('GET user johndoe')
   .get(URL + '/users/3.json')
   .addHeader('X-Auth-Token', 'fa8426a0-8eaf-4d22-8e13-7c1b16a9370c')
   .expectStatus(200)
   .expectJSONTypes({
     id: Joi.number(),
     username: Joi.string(),
-    is_admin: Joi.boolean()
+    is_admin: Joi.boolean(),
   })
   .expectJSON({
     id: 3,
     username: 'johndoe',
-    is_admin: false
+    is_admin: false,
   })
   .expectJSONTypes({
     id: Joi.number(),
     username: Joi.string(),
-    is_admin: Joi.boolean()
+    is_admin: Joi.boolean(),
   })
   // 'afterJSON' automatically parses response body as JSON and passes it as an argument
   .afterJSON(user => {
     // You can use any normal assertions here
-    expect(1+1).to.equal(2)
+    expect(1 + 1).to.equal(2)
 
     // Use data from previous result in next test
-    frisby.create('Update user')
-      .put(URL_AUTH + '/users/' + user.id + '.json', {tags: ['mocha', 'bdd']})
+    frisby
+      .create('Update user')
+      .put(URL_AUTH + '/users/' + user.id + '.json', { tags: ['mocha', 'bdd'] })
       .expectStatus(200)
       .toss()
   })
@@ -93,8 +97,7 @@ For example:
     cd your/project
     mocha tests/someTest.js --reporter nyan
 
-Plugins
--------
+## Plugins
 
 Plugins can provide custom assertions, setup and teardown logic, and
 additional functionality. Plugins can be implemented in an application's test
@@ -147,11 +150,10 @@ write a [plugin](#icedfrisby-plugins) and add a link here.
 
 IcedFrisby is maintained by:
 
-* [Dan Caseley](https://github.com/Fishbowler)
-* [Mark Herhold](https://github.com/MarkHerhold)
-* [Paul Melnikow](https://github.com/paulmelnikow)
-* [Casey Vega](https://github.com/cvega)
-
+- [Dan Caseley](https://github.com/Fishbowler)
+- [Mark Herhold](https://github.com/MarkHerhold)
+- [Paul Melnikow](https://github.com/paulmelnikow)
+- [Casey Vega](https://github.com/cvega)
 
 ### Roadmap
 
