@@ -55,32 +55,6 @@ jobs:
       #     command: npm run prettier-check
       #     when: always
 
-  node@6:
-    docker:
-      - image: circleci/node:6
-
-    steps:
-      - checkout
-
-      - run:
-          name: Install dependencies
-          # No `npm ci` in this npm version, and upgrading npm is giving me trouble.
-          command: npm install
-
-      - run:
-          name: Run tests
-          command: npm run coverage
-
-      - run:
-          name: Check lint
-          command: npm run lint
-          when: always
-
-      # - run:
-      #     name: Check prettier
-      #     command: npm run prettier-check
-      #     when: always
-
 workflows:
   version: 2
 
@@ -88,7 +62,6 @@ workflows:
     jobs:
       - node@latest
       - node@8
-      - node@6
 
   daily:
     triggers:
@@ -100,4 +73,3 @@ workflows:
     jobs:
       - node@latest
       - node@8
-      - node@6

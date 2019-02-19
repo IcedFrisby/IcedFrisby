@@ -32,7 +32,7 @@ If you are using `expectJSONTypes`, install [Joi][] too:
 
     npm install joi --save-dev
 
-IcedFrisby is built and tested against Node 6, 8, and 10.
+IcedFrisby is built and tested against Node 8 and 10.
 
 [Joi]: https://github.com/hapijs/joi
 
