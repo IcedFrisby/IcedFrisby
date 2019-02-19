@@ -1,0 +1,103 @@
+version: 2
+jobs:
+  node@latest:
+    docker:
+      - image: circleci/node:latest
+
+    steps:
+      - checkout
+
+      - run:
+          name: Install dependencies
+          command: npm ci
+
+      - run:
+          name: Run tests
+          command: npm run coverage
+
+      - run:
+          name: Send to Coveralls
+          command: node_modules/.bin/coveralls < coverage/lcov.info
+          when: always
+
+      - run:
+          name: Check lint
+          command: npm run lint
+          when: always
+
+      # - run:
+      #     name: Check prettier
+      #     command: npm run prettier-check
+      #     when: always
+
+  node@8:
+    docker:
+      - image: circleci/node:8
+
+    steps:
+      - checkout
+
+      - run:
+          name: Install dependencies
+          command: npm ci
+
+      - run:
+          name: Run tests
+          command: npm run coverage
+
+      - run:
+          name: Check lint
+          command: npm run lint
+          when: always
+
+      # - run:
+      #     name: Check prettier
+      #     command: npm run prettier-check
+      #     when: always
+
+  node@6:
+    docker:
+      - image: circleci/node:6
+
+    steps:
+      - checkout
+
+      - run:
+          name: Install dependencies
+          # No `npm ci` in this npm version, and upgrading npm is giving me trouble.
+          command: npm install
+
+      - run:
+          name: Run tests
+          command: npm run coverage
+
+      - run:
+          name: Check lint
+          command: npm run lint
+          when: always
+
+      # - run:
+      #     name: Check prettier
+      #     command: npm run prettier-check
+      #     when: always
+
+workflows:
+  version: 2
+
+  on-commit:
+    jobs:
+      - node@latest
+      - node@8
+      - node@6
+
+  daily:
+    triggers:
+      - schedule:
+          cron: "0 17 * * *"
+          filters:
+            branches:
+              only: master
+    jobs:
+      - node@latest
+      - node@8
+      - node@6
