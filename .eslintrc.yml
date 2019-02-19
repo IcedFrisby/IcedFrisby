@@ -7,26 +7,26 @@ globals:
   expect: true
 
 extends:
-  - "eslint:recommended"
+  - 'eslint:recommended'
   - prettier
 
 plugins:
-  - "mocha"
+  - 'mocha'
 
 rules:
-  semi: ["error", "never"]
-  indent: ["error", 2, { "SwitchCase": 1 }]
-  strict: ["error", "safe"]
-  no-trailing-spaces: "error"
-  eol-last: "error"
-  prefer-const: "error"
-  no-var: "error"
+  semi: ['error', 'never']
+  indent: ['error', 2, { 'SwitchCase': 1 }]
+  strict: ['error', 'safe']
+  no-trailing-spaces: 'error'
+  eol-last: 'error'
+  prefer-const: 'error'
+  no-var: 'error'
 
   # Disable a couple rules from eslint:recommended.
-  no-unused-vars: ["error", {"args": "none"}]
-  no-console: "off"
+  no-unused-vars: ['error', { 'args': 'none' }]
+  no-console: 'off'
 
-  "mocha/handle-done-callback": "error"
-  "mocha/no-global-tests": "error"
-  "mocha/no-mocha-arrows": "error"
-  "mocha/no-exclusive-tests": "error"
+  'mocha/handle-done-callback': 'error'
+  'mocha/no-global-tests': 'error'
+  'mocha/no-mocha-arrows': 'error'
+  'mocha/no-exclusive-tests': 'error'

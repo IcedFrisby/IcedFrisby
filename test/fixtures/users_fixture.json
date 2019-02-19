@@ -1,112 +1,118 @@
 {
-    "users": [{
-        "gender": "female",
-        "name": {
-            "title": "ms",
-            "first": "lisa",
-            "last": "coleman"
-        },
-        "location": {
-            "street": "3214 albert road",
-            "city": "newry",
-            "state": "lancashire",
-            "zip": "59355"
-        },
-        "email": "lisa.coleman17@example.com",
-        "username": "brownladybug622",
-        "password": "waterfal",
-        "salt": "csL6P3PC",
-        "cell": "01916-520-390",
-        "picture": {
-            "large": "http://api.randomuser.me/portraits/women/62.jpg",
-            "medium": "http://api.randomuser.me/portraits/med/women/62.jpg",
-            "thumbnail": "http://api.randomuser.me/portraits/thumb/women/62.jpg"
-        }
-    }, {
-        "gender": "male",
-        "name": {
-            "title": "mr",
-            "first": "ivan",
-            "last": "collins"
-        },
-        "location": {
-            "street": "1428 london road",
-            "city": "hereford",
-            "state": "warwickshire",
-            "zip": "32789"
-        },
-        "email": "ivan.collins20@example.com",
-        "username": "ticklishduck798",
-        "cell": "02014-092-339",
-        "picture": {
-            "large": "http://api.randomuser.me/portraits/men/9.jpg",
-            "medium": "http://api.randomuser.me/portraits/med/men/9.jpg",
-            "thumbnail": "http://api.randomuser.me/portraits/thumb/men/9.jpg"
-        }
-    }, {
-        "gender": "male",
-        "name": {
-            "title": "mr",
-            "first": "luis",
-            "last": "gray"
-        },
-        "location": {
-            "street": "8113 the drive",
-            "city": "st albans",
-            "state": "gloucestershire",
-            "zip": "67363"
-        },
-        "email": "luis.gray48@example.com",
-        "username": "goldencat389",
-        "cell": "02180-814-440",
-        "picture": {
-            "large": "http://api.randomuser.me/portraits/men/7.jpg",
-            "medium": "http://api.randomuser.me/portraits/med/men/7.jpg",
-            "thumbnail": "http://api.randomuser.me/portraits/thumb/men/7.jpg"
-        }
-    }, {
-        "gender": "male",
-        "name": {
-            "title": "mr",
-            "first": "jimmy",
-            "last": "bryant"
-        },
-        "location": {
-            "street": "5053 country club rd",
-            "city": "shiloh",
-            "state": "oregon",
-            "zip": "31201"
-        },
-        "email": "jimmy.bryant60@example.com",
-        "username": "yellowgorilla805",
-        "cell": "(559)-261-6598",
-        "SSN": "332-42-4822",
-        "picture": {
-            "large": "http://api.randomuser.me/portraits/men/19.jpg",
-            "medium": "http://api.randomuser.me/portraits/med/men/19.jpg",
-            "thumbnail": "http://api.randomuser.me/portraits/thumb/men/19.jpg"
-        }
-    }, {
-        "gender": "female",
-        "name": {
-            "title": "ms",
-            "first": "joyce",
-            "last": "hawkins"
-        },
-        "location": {
-            "street": "5545 locust rd",
-            "city": "roseburg",
-            "state": "missouri",
-            "zip": "23618"
-        },
-        "email": "joyce.hawkins18@example.com",
-        "username": "crazyladybug479",
-        "cell": "(432)-753-7921",
-        "SSN": "944-22-2892",
-        "picture": {
-            "large": "http://api.randomuser.me/portraits/women/57.jpg",
-            "medium": "http://api.randomuser.me/portraits/med/women/57.jpg",
-            "thumbnail": "http://api.randomuser.me/portraits/thumb/women/57.jpg"
-        }
-    }]
+  "users": [
+    {
+      "gender": "female",
+      "name": {
+        "title": "ms",
+        "first": "lisa",
+        "last": "coleman"
+      },
+      "location": {
+        "street": "3214 albert road",
+        "city": "newry",
+        "state": "lancashire",
+        "zip": "59355"
+      },
+      "email": "lisa.coleman17@example.com",
+      "username": "brownladybug622",
+      "password": "waterfal",
+      "salt": "csL6P3PC",
+      "cell": "01916-520-390",
+      "picture": {
+        "large": "http://api.randomuser.me/portraits/women/62.jpg",
+        "medium": "http://api.randomuser.me/portraits/med/women/62.jpg",
+        "thumbnail": "http://api.randomuser.me/portraits/thumb/women/62.jpg"
+      }
+    },
+    {
+      "gender": "male",
+      "name": {
+        "title": "mr",
+        "first": "ivan",
+        "last": "collins"
+      },
+      "location": {
+        "street": "1428 london road",
+        "city": "hereford",
+        "state": "warwickshire",
+        "zip": "32789"
+      },
+      "email": "ivan.collins20@example.com",
+      "username": "ticklishduck798",
+      "cell": "02014-092-339",
+      "picture": {
+        "large": "http://api.randomuser.me/portraits/men/9.jpg",
+        "medium": "http://api.randomuser.me/portraits/med/men/9.jpg",
+        "thumbnail": "http://api.randomuser.me/portraits/thumb/men/9.jpg"
+      }
+    },
+    {
+      "gender": "male",
+      "name": {
+        "title": "mr",
+        "first": "luis",
+        "last": "gray"
+      },
+      "location": {
+        "street": "8113 the drive",
+        "city": "st albans",
+        "state": "gloucestershire",
+        "zip": "67363"
+      },
+      "email": "luis.gray48@example.com",
+      "username": "goldencat389",
+      "cell": "02180-814-440",
+      "picture": {
+        "large": "http://api.randomuser.me/portraits/men/7.jpg",
+        "medium": "http://api.randomuser.me/portraits/med/men/7.jpg",
+        "thumbnail": "http://api.randomuser.me/portraits/thumb/men/7.jpg"
+      }
+    },
+    {
+      "gender": "male",
+      "name": {
+        "title": "mr",
+        "first": "jimmy",
+        "last": "bryant"
+      },
+      "location": {
+        "street": "5053 country club rd",
+        "city": "shiloh",
+        "state": "oregon",
+        "zip": "31201"
+      },
+      "email": "jimmy.bryant60@example.com",
+      "username": "yellowgorilla805",
+      "cell": "(559)-261-6598",
+      "SSN": "332-42-4822",
+      "picture": {
+        "large": "http://api.randomuser.me/portraits/men/19.jpg",
+        "medium": "http://api.randomuser.me/portraits/med/men/19.jpg",
+        "thumbnail": "http://api.randomuser.me/portraits/thumb/men/19.jpg"
+      }
+    },
+    {
+      "gender": "female",
+      "name": {
+        "title": "ms",
+        "first": "joyce",
+        "last": "hawkins"
+      },
+      "location": {
+        "street": "5545 locust rd",
+        "city": "roseburg",
+        "state": "missouri",
+        "zip": "23618"
+      },
+      "email": "joyce.hawkins18@example.com",
+      "username": "crazyladybug479",
+      "cell": "(432)-753-7921",
+      "SSN": "944-22-2892",
+      "picture": {
+        "large": "http://api.randomuser.me/portraits/women/57.jpg",
+        "medium": "http://api.randomuser.me/portraits/med/women/57.jpg",
+        "thumbnail": "http://api.randomuser.me/portraits/thumb/women/57.jpg"
+      }
+    }
+  ]
 }
