@@ -63,7 +63,9 @@ jobs:
 
       - run:
           name: Update npm
-          command: sudo npm install -g npm@6
+          command: |
+            sudo npm install -g npm@6
+            sudo npm cache clean
 
       - run:
           name: Install dependencies
