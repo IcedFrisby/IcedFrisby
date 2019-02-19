@@ -1,0 +1,105 @@
+version: 2
+jobs:
+  node@latest:
+    docker:
+      - image: circleci/node:latest
+
+    steps:
+      - checkout
+
+      - run:
+          name: Install dependencies
+          command: npm ci
+
+      - run:
+          name: Run tests
+          command: npm run test:js
+
+      - run:
+          name: Send to Coveralls
+          command: npm run coverage && coveralls < coverage/lcov.info
+
+      - run:
+          name: Check lint
+          command: npm run lint
+          when: always
+
+      - run:
+          name: Check prettier
+          command: npm run prettier-check
+          when: always
+
+  node@8:
+    docker:
+      - image: circleci/node:8
+
+    steps:
+      - checkout
+
+      - run:
+          name: Install dependencies
+          command: npm ci
+
+      - run:
+          name: Run tests
+          command: npm run test:js
+
+      - run:
+          name: Check lint
+          command: npm run lint
+          when: always
+
+      - run:
+          name: Check prettier
+          command: npm run prettier-check
+          when: always
+
+  node@6:
+    docker:
+      - image: circleci/node:6
+
+    steps:
+      - checkout
+
+      - run:
+          name: Update npm
+          command: npm install -g npm@6
+
+      - run:
+          name: Install dependencies
+          command: npm ci
+
+      - run:
+          name: Run tests
+          command: npm run test:js
+
+      - run:
+          name: Check lint
+          command: npm run lint
+          when: always
+
+      - run:
+          name: Check prettier
+          command: npm run prettier-check
+          when: always
+
+workflows:
+  version: 2
+
+  on-commit:
+    jobs:
+      - node@latest
+      - node@8
+      - node@6
+
+  daily:
+    triggers:
+      - schedule:
+          cron: "0 17 * * *"
+          filters:
+            branches:
+              only: master
+    jobs:
+      - node@latest
+      - node@8
+      - node@6
