@@ -1206,8 +1206,8 @@ describe('Frisby matchers', function() {
         })
 
       // TODO: How can I ensure this has been called?
-      test._finish = function(done) {
-        test.constructor.prototype._finish.call(this, err => {
+      test._finishWithContinuation = function(done) {
+        test.constructor.prototype._finishWithContinuation.call(this, err => {
           expect(finallyInvoked).to.be.ok
           done()
         })
