@@ -72,7 +72,7 @@
     "node": ">= 8"
   },
   "scripts": {
-    "coverage": "nyc mocha --report lcovonly",
+    "coverage": "nyc --reporter=lcovonly npm run test:js",
     "lint": "eslint \"**/*.js\"",
     "prettier": "prettier --write \"**/*.@(js|md|yml|json)\"",
     "prettier-check": "prettier-check \"**/*.@(js|md|yml|json)\"",
