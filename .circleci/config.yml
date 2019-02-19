@@ -17,7 +17,7 @@ jobs:
 
       - run:
           name: Send to Coveralls
-          command: coveralls < coverage/lcov.info
+          command: node_modules/.bin/coveralls < coverage/lcov.info
           when: always
 
       - run:
