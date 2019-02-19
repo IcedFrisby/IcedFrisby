@@ -13,11 +13,11 @@ jobs:
 
       - run:
           name: Run tests
-          command: npm run test:js
+          command: npm run coverage
 
       - run:
           name: Send to Coveralls
-          command: npm run coverage && coveralls < coverage/lcov.info
+          command: coveralls < coverage/lcov.info
           when: always
 
       - run:
@@ -43,7 +43,7 @@ jobs:
 
       - run:
           name: Run tests
-          command: npm run test:js
+          command: npm run coverage
 
       - run:
           name: Check lint
@@ -69,7 +69,7 @@ jobs:
 
       - run:
           name: Run tests
-          command: npm run test:js
+          command: npm run coverage
 
       - run:
           name: Check lint
