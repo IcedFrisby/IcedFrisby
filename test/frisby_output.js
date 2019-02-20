@@ -11,7 +11,7 @@ const { expect } = chai
 // This spec tests and showcases the dev-friendy output features of IcedFrisby
 //
 
-describe.skip('console output', function() {
+describe('console output', function() {
   const warning =
     '\u001b[33m\u001b[1mWARNING - content-type is json but body type is not set\u001b[22m\u001b[39m\n'
 
