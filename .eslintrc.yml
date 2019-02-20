@@ -7,18 +7,15 @@ parserOptions:
   ecmaVersion: 9
 
 extends:
-  - 'eslint:recommended'
+  - eslint:recommended
   - prettier
 
 plugins:
-  - 'mocha'
+  - mocha
+  - import
 
 rules:
-  semi: ['error', 'never']
-  indent: ['error', 2, { 'SwitchCase': 1 }]
   strict: ['error', 'safe']
-  no-trailing-spaces: 'error'
-  eol-last: 'error'
   prefer-const: 'error'
   no-var: 'error'
 
@@ -30,3 +27,5 @@ rules:
   'mocha/no-global-tests': 'error'
   'mocha/no-mocha-arrows': 'error'
   'mocha/no-exclusive-tests': 'error'
+
+  'import/order': ['error', { 'newlines-between': 'never' }]

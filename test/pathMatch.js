@@ -1,16 +1,12 @@
 'use strict'
 
-const pm = require('../lib/pathMatch')
-
 const Joi = require('joi')
-
 const chai = require('chai')
+const pm = require('../lib/pathMatch')
 chai.should() // setup should assertions
 chai.use(require('chai-things'))
 // chai.config.includeStack = true;
 const { expect } = chai
-
-// JSON to use in mock tests
 const fixtures = require('./fixtures/repetition_fixture.json')
 const usersFixture = require('./fixtures/users_fixture.json')
 
