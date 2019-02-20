@@ -2491,3 +2491,27 @@ describe('Error Handling', function() {
     })
   })
 })
+
+describe('toss()', function() {
+  const afterInvoked = sinon.spy()
+
+  it('Make sure the after() block runs', function() {})
+
+  after(function() {
+    expect(afterInvoked.calledOnce).to.be.true
+  })
+
+  let scope
+  frisby
+    .create('toss()')
+    .get('http://example.test/')
+    .before(() => {
+      scope = nock('http://example.test')
+        .get('/')
+        .reply(404)
+    })
+    .expectStatus(404)
+    .after(() => afterInvoked())
+    .after(() => scope.done())
+    .toss()
+})
