@@ -6,9 +6,6 @@ env:
 parserOptions:
   ecmaVersion: 9
 
-globals:
-  expect: true
-
 extends:
   - 'eslint:recommended'
   - prettier

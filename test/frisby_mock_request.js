@@ -4,7 +4,7 @@ const nock = require('nock')
 const fixtures = require('./fixtures/repetition_fixture.json')
 const frisby = require('../lib/icedfrisby')
 const Joi = require('joi')
-const { AssertionError } = require('chai')
+const { expect, AssertionError } = require('chai')
 const { MultiError } = require('verror')
 const sinon = require('sinon')
 const proxyquire = require('proxyquire').noPreserveCache()
@@ -16,11 +16,12 @@ const fs = require('fs')
 const path = require('path')
 const util = require('util')
 
-// Enable real connections for localhost otherwise useApp() tests won't work.
-// httpbin tests runa gainst the live server, so we explicitly allow it
-// through. Since all nocks run before the first frisby is tossed, we need to
-// do this first.
-nock.enableNetConnect(/127.0.0.1|httpbin.org/)
+afterEach(function() {
+  nock.restore()
+  nock.cleanAll()
+  nock.enableNetConnect()
+  nock.activate()
+})
 
 describe('Frisby matchers', function() {
   it('expectStatus for mock request should return 404', async function() {
@@ -71,15 +72,12 @@ describe('Frisby matchers', function() {
 
       const message = 'this is the error'
 
-      const scope = nock('http://example.test')
-        .get('/')
-        .reply(200, fixtures.singleObject)
-
       await frisby
         .create(this.test.title)
         .before(() => {
           throw new Error(message)
         })
+        // Due to the exception in `before()`, the request is never made.
         .get('http://example.test/')
         .exceptionHandler(err => {
           expect(err.message).to.equal(message)
@@ -88,7 +86,6 @@ describe('Frisby matchers', function() {
         .run()
 
       expect(gotException.calledOnce).to.equal(true)
-      scope.done()
     })
 
     it('should error gracefully when passed no function', async function() {
@@ -106,7 +103,9 @@ describe('Frisby matchers', function() {
     })
 
     it('should wait the configured period before proceeding to the request', async function() {
-      const scope = nock('http://example.test/')
+      const waits = 75
+
+      const scope = nock('http://example.test')
         .get('/')
         .reply(404)
 
@@ -114,15 +113,15 @@ describe('Frisby matchers', function() {
 
       await frisby
         .create(this.test.title)
-        .waits(75)
+        .waits(waits)
         .get('http://example.test/')
         .run()
 
-      timeDelta = new Date().getTime() - timeDelta
-      expect(timeDelta).to.be.above(74)
-      expect(timeDelta).to.be.below(100)
-
       scope.done()
+
+      timeDelta = new Date().getTime() - timeDelta
+      expect(timeDelta).to.be.at.least(waits)
+      expect(timeDelta).to.be.below(waits + 50)
     })
   })
 
@@ -1080,7 +1079,7 @@ describe('Frisby matchers', function() {
       let actualRequestCount = 0
       const timeout = 5
 
-      const scope = nock('http://example.com')
+      const scope = nock('http://example.test')
         .get('/just-dont-come-back-2')
         .delayBody(50)
         .times(retryCount + 1)
@@ -1092,7 +1091,7 @@ describe('Frisby matchers', function() {
       await expect(
         frisby
           .create(this.test.title)
-          .get('http://example.com/just-dont-come-back-2')
+          .get('http://example.test/just-dont-come-back-2')
           .timeout(timeout)
           .retry(retryCount, 0)
           .run()
@@ -1110,7 +1109,7 @@ describe('Frisby matchers', function() {
       let firstRequestTime
       let secondRequestTime
 
-      const scope = nock('http://example.com')
+      const scope = nock('http://example.test')
         .get('/fail-once')
         .twice()
         .reply((uri, requestBody) => {
@@ -1131,7 +1130,7 @@ describe('Frisby matchers', function() {
 
       await frisby
         .create(this.test.title)
-        .get('http://example.com/fail-once')
+        .get('http://example.test/fail-once')
         .retry(1, expectedBackoffMillis)
         .run()
 
@@ -1175,7 +1174,7 @@ describe('Frisby matchers', function() {
     it('should pass the expected timeout to mocha, and not cause mocha to time out', async function() {
       let requestCount = 0
 
-      nock('http://example.com')
+      nock('http://example.test')
         .get('/fail-four-times')
         .delay(50)
         .twice()
@@ -1193,7 +1192,7 @@ describe('Frisby matchers', function() {
 
       const test = frisby
         .create(this.test.title)
-        .get('http://example.com/fail-four-times')
+        .get('http://example.test/fail-four-times')
         .timeout(75)
         .retry(1, 50)
         .expectStatus(200)
@@ -1343,7 +1342,7 @@ describe('Frisby matchers', function() {
 
       await frisby
         .create(this.test.title)
-        .post('http://example.com/path')
+        .post('http://example.test/')
         .expectHeader('content-type', 'application/json')
         .run()
 
@@ -1360,18 +1359,16 @@ describe('Frisby matchers', function() {
           '7',
         ])
 
-      await frisby
-        .create(this.test.title)
-        .post('http://example.test/')
-        .expectHeader('content-type', 'json')
-        .exceptionHandler(err => {
-          // TODO How can I assert that this method is called?
-          expect(err).to.be.an.instanceof(Error)
-          expect(err.message).to.equal(
-            "expected an element of [ 'application/json' ] to equal 'json'"
-          )
-        })
-        .run()
+      await expect(
+        frisby
+          .create(this.test.title)
+          .post('http://example.test/')
+          .expectHeader('content-type', 'json')
+          .run()
+      ).to.be.rejectedWith(
+        Error,
+        "expected an element of [ 'application/json' ] to equal 'json'"
+      )
 
       scope.done()
     })
@@ -1390,7 +1387,7 @@ describe('Frisby matchers', function() {
         frisby
           .create(this.test.title)
           .post('http://example.test/')
-          .expectHeader('Host', 'example.com')
+          .expectHeader('Host', 'example.test')
           .run()
       ).to.be.rejectedWith(Error, "Header 'host' not present in HTTP response")
 
@@ -1420,7 +1417,7 @@ describe('Frisby matchers', function() {
 
     it('should fail when multiple same-name headers match and the allowMultipleHeaders option is not passed', async function() {
       const scope = nock('http://example.test')
-        .post('/path')
+        .post('/')
         .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
 
       await expect(
@@ -1439,7 +1436,7 @@ describe('Frisby matchers', function() {
 
     it('should fail when multiple same-name headers match and the allowMultipleHeaders option is false', async function() {
       const scope = nock('http://example.test')
-        .post('/path')
+        .post('/')
         .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
 
       await expect(
@@ -1447,6 +1444,7 @@ describe('Frisby matchers', function() {
           .create(this.test.title)
           .post('http://example.test/')
           .expectHeader('Set-Cookie', 'a=123', { allowMultipleHeaders: false })
+          .run()
       ).to.be.rejectedWith(
         Error,
         "Header 'set-cookie' present more than once in HTTP response. Pass {allowMultipleHeaders: true} in options if this is expected."
@@ -1473,14 +1471,14 @@ describe('Frisby matchers', function() {
 
   describe('expectHeader with regex', function() {
     it('should pass when regex matches', async function() {
-      const scope = nock('http://example.com')
-        .post('/path')
+      const scope = nock('http://example.test')
+        .post('/')
         .once()
         .reply(201, 'The payload', { Location: '/path/23' })
 
       await frisby
         .create(this.test.title)
-        .post('http://example.com/path', { foo: 'bar' })
+        .post('http://example.test/', { foo: 'bar' })
         .expectStatus(201)
         .expectHeader('location', /^\/path\/\d+$/)
         .run()
@@ -1489,14 +1487,14 @@ describe('Frisby matchers', function() {
     })
 
     it('should fail when the regex does not match', async function() {
-      const scope = nock('http://example.com')
-        .post('/path')
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201, 'The payload', { Location: '/something-else/23' })
 
       await expect(
         frisby
           .create(this.test.title)
-          .post('http://example.com/path')
+          .post('http://example.test/')
           .expectHeader('location', /^\/path\/\d+$/)
           .run()
       ).to.be.rejectedWith(
@@ -1508,14 +1506,14 @@ describe('Frisby matchers', function() {
     })
 
     it('should fail when the header is absent', async function() {
-      const scope = nock('http://example.com')
-        .post('/path')
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201)
 
       await expect(
         frisby
           .create(this.test.title)
-          .post('http://example.com/path')
+          .post('http://example.test/')
           .expectHeader('location', /^\/path\/\d+$/)
           .run()
       ).to.be.rejectedWith(
@@ -1556,7 +1554,7 @@ describe('Frisby matchers', function() {
           .post('http://example.test/')
           .expectHeader('Set-Cookie', /123/, { allowMultipleHeaders: false })
           .run()
-      ).to.be.rejectdWith(
+      ).to.be.rejectedWith(
         Error,
         "Header 'set-cookie' present more than once in HTTP response. Pass {allowMultipleHeaders: true} in options if this is expected."
       )
@@ -1657,7 +1655,7 @@ describe('Frisby matchers', function() {
         frisby
           .create(this.test.title)
           .post('http://example.test/')
-          .expectHeaderContains('Host', 'example.com')
+          .expectHeaderContains('Host', 'example.test')
           .run()
       ).to.be.rejectedWith(Error, "Header 'host' not present in HTTP response")
 
@@ -1747,13 +1745,13 @@ describe('Frisby matchers', function() {
 
   describe('expectNoHeader', function() {
     it('should pass when a header is absent', async function() {
-      const scope = nock('http://example.com')
-        .post('/path')
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201, 'The payload')
 
       await frisby
         .create(this.test.title)
-        .post('http://example.com/path', { foo: 'bar' })
+        .post('http://example.test/', { foo: 'bar' })
         .expectStatus(201)
         .expectNoHeader('Location')
         .expectNoHeader('location')
@@ -1763,15 +1761,16 @@ describe('Frisby matchers', function() {
     })
 
     it('should fail when a header is present', async function() {
-      const scope = nock('http://example.com')
-        .post('/path')
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201, 'The payload', { Location: '/something-else/23' })
 
       await expect(
         frisby
           .create(this.test.title)
-          .post('http://example.com/path')
+          .post('http://example.test/')
           .expectNoHeader('Location')
+          .run()
       ).to.be.rejectedWith(
         AssertionError,
         "expected { location: '/something-else/23' } to not have property 'location'"
@@ -1783,13 +1782,13 @@ describe('Frisby matchers', function() {
 
   describe('expectMaxResponseTime', function() {
     it('should pass when the time is less than the threshold', async function() {
-      const scope = nock('http://example.com')
-        .post('/path')
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(200, 'The payload')
 
       await frisby
         .create(this.test.title)
-        .post('http://example.com/path')
+        .post('http://example.test/')
         .expectMaxResponseTime(500)
         .run()
 
@@ -1797,18 +1796,21 @@ describe('Frisby matchers', function() {
     })
 
     it('should fail when the time is more than the threshold', async function() {
+      const maxResponseTime = 25
+      const delay = maxResponseTime + 25
+
       const scope = nock('http://example.test')
         .post('/')
-        .delay(501)
+        .delay(delay)
         .reply(200, 'The payload')
 
       await expect(
         frisby
           .create(this.test.title)
           .post('http://example.test/')
-          .expectMaxResponseTime(500)
+          .expectMaxResponseTime(maxResponseTime)
           .run()
-      ).to.be.rejectedWith(AssertionError, 'foobar')
+      ).to.be.rejectedWith(AssertionError, /^expected \d+ to be below 25/)
 
       scope.done()
     })
@@ -1874,7 +1876,7 @@ describe('Frisby matchers', function() {
       await frisby
         .create(this.test.title)
         .delete(
-          'http://example.com/test',
+          'http://example.test/',
           {},
           {
             qs: { name: 'sally' },
@@ -1896,7 +1898,7 @@ describe('Frisby matchers', function() {
 
       await frisby
         .create(this.test.title)
-        .head('http://example.com/test', {
+        .head('http://example.test/', {
           qs: { name: 'sally' },
         })
         .expectStatus(204)
@@ -1911,7 +1913,7 @@ describe('Frisby matchers', function() {
         .query({ name: 'sally' })
         .reply(204, (uri, requestBody) => requestBody)
 
-      frisby
+      await frisby
         .create(this.test.title)
         .options('http://example.test/', {
           qs: { name: 'sally' },
@@ -1956,7 +1958,7 @@ describe('Frisby matchers', function() {
     it('should register exclusive tests', function() {
       frisby
         .create(this.test.title)
-        .get('http://example.com/test')
+        .get('http://example.test/test')
         .only()
         .toss()
     })
@@ -1964,13 +1966,13 @@ describe('Frisby matchers', function() {
 
   describe('header checks should ignore case for strings', function() {
     it('expectHeader should pass when the header case is mismatched', async function() {
-      const scope = nock('http://example.com')
-        .post('/path')
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201, 'The payload', { myHEADER: 'myvalue' })
 
       await frisby
         .create(this.test.title)
-        .post('http://example.com/path')
+        .post('http://example.test/')
         .expectStatus(201)
         .expectHeader('MYheader', 'myvalue')
         .run()
@@ -1979,13 +1981,13 @@ describe('Frisby matchers', function() {
     })
 
     it('expectHeader should pass when the content case is mismatched', async function() {
-      const scope = nock('http://example.com')
-        .post('/path')
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201, 'The payload', { myheader: 'myVALUE' })
 
       await frisby
         .create(this.test.title)
-        .post('http://example.com/path')
+        .post('http://example.test/')
         .expectStatus(201)
         .expectHeader('myheader', 'MYvalue')
         .run()
@@ -1994,14 +1996,14 @@ describe('Frisby matchers', function() {
     })
 
     it('expectNoHeader should fail (detect the header) when the header case is mismatched', async function() {
-      const scope = nock('http://example.com')
-        .post('/path')
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201, 'The payload', { myHEADER: 'myVALUE' })
 
       await expect(
         frisby
           .create(this.test.title)
-          .post('http://example.com/path')
+          .post('http://example.test/')
           .expectStatus(201)
           .expectNoHeader('MYheader')
           .run()
@@ -2014,13 +2016,13 @@ describe('Frisby matchers', function() {
     })
 
     it('expectHeaderContains should pass when the header case is mismatched', async function() {
-      const scope = nock('http://example.com')
-        .post('/path')
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201, 'The payload', { myHEADER: 'myvalue' })
 
       await frisby
         .create(this.test.title)
-        .post('http://example.com/path')
+        .post('http://example.test/')
         .expectStatus(201)
         .expectHeaderContains('MYheader', 'myvalue')
         .run()
@@ -2029,13 +2031,13 @@ describe('Frisby matchers', function() {
     })
 
     it('expectHeaderContains should pass when the content case is mismatched', async function() {
-      const scope = nock('http://example.com')
-        .post('/path')
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201, 'The payload', { myheader: 'myVALUE' })
 
       await frisby
         .create(this.test.title)
-        .post('http://example.com/path')
+        .post('http://example.test/')
         .expectStatus(201)
         .expectHeaderContains('myheader', 'MYvalue')
         .run()
@@ -2044,14 +2046,14 @@ describe('Frisby matchers', function() {
     })
 
     it('expectHeader with regex should fail when the content case is mismatched', async function() {
-      const scope = nock('http://example.com')
-        .post('/path')
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201, 'The payload', { myHEADER: 'myVALUE' })
 
       await expect(
         frisby
           .create(this.test.title)
-          .post('http://example.com/path')
+          .post('http://example.test/')
           .expectStatus(201)
           .expectHeader('MYheader', /MYvalue/)
           .run()
@@ -2064,13 +2066,13 @@ describe('Frisby matchers', function() {
     })
 
     it('expectHeader with regex should pass when the case is mismatched and the regex is case-insensitive', async function() {
-      const scope = nock('http://example.com')
-        .post('/path')
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201, 'The payload', { myHEADER: 'myVALUE' })
 
       await frisby
         .create(this.test.title)
-        .post('http://example.com/path')
+        .post('http://example.test/')
         .expectStatus(201)
         .expectHeader('MYheader', /MYvalue/i)
         .run()
@@ -2079,13 +2081,13 @@ describe('Frisby matchers', function() {
     })
 
     it('expectHeader with regex should pass when the case is matched', async function() {
-      const scope = nock('http://example.com')
-        .post('/path')
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201, 'The payload', { myHEADER: 'myVALUE' })
 
       await frisby
         .create(this.test.title)
-        .post('http://example.com/path')
+        .post('http://example.test/')
         .expectStatus(201)
         .expectHeader('MYheader', /myVALUE/)
         .run()
@@ -2098,7 +2100,7 @@ describe('Frisby matchers', function() {
 describe('request headers', function() {
   it('addHeaders should add the normalized header to the outgoing request', async function() {
     let headers
-    const scope = nock('http:/example.test/')
+    const scope = nock('http://example.test')
       .get('/')
       .reply(200, function(uri, requestBody) {
         headers = this.req.headers
@@ -2107,7 +2109,7 @@ describe('request headers', function() {
 
     await frisby
       .create(this.test.title)
-      .get('http://mock-request/test-object-array')
+      .get('http://example.test/')
       .addHeaders({ Test: 'Two' })
       .expectStatus(200)
       .run()
@@ -2121,8 +2123,8 @@ describe('request headers', function() {
   context('when configured with { json: true }', function() {
     it('applies the expected json header', async function() {
       let headers
-      const scope = nock('http:/example.test/')
-        .get('/')
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(200, function(uri, requestBody) {
           headers = this.req.headers
           return fixtures.arrayOfObjects
@@ -2131,7 +2133,7 @@ describe('request headers', function() {
       await frisby
         .create(this.test.title)
         .config({ json: true })
-        .post('http://example.test/')
+        .post('http://example.test/', {})
         .expectStatus(200)
         .run()
 
@@ -2142,8 +2144,8 @@ describe('request headers', function() {
     context('when configured after _request() is invoked', function() {
       it('still applies the expected json header', async function() {
         let headers
-        const scope = nock('http:/example.test/')
-          .get('/')
+        const scope = nock('http://example.test')
+          .post('/')
           .reply(200, function(uri, requestBody) {
             headers = this.req.headers
             return fixtures.arrayOfObjects
@@ -2151,7 +2153,7 @@ describe('request headers', function() {
 
         await frisby
           .create(this.test.title)
-          .post('http://mock-request/json-header')
+          .post('http://example.test', {})
           .config({ json: true })
           .expectStatus(200)
           .run()
@@ -2164,13 +2166,13 @@ describe('request headers', function() {
 
   context('when passing params to _request', function() {
     it('should allow for passing raw request body and preserve json:true option', async function() {
-      const scope = nock('http://example.com')
-        .post('/json')
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(200, { foo: 'bar' })
 
       const test = frisby
         .create(this.test.title)
-        .post('http://example.com/json', {}, { json: true })
+        .post('http://example.test/', {}, { json: true })
         .expectStatus(200)
         .expectJSON({ foo: 'bar' })
         .expectHeader('Content-Type', 'application/json')
@@ -2180,21 +2182,21 @@ describe('request headers', function() {
       expect(test._outgoing.headers['content-type']).to.equal(
         'application/json'
       )
-      expect(this._outgoing.body).to.deep.equal({})
+      expect(test._outgoing.body).to.deep.equal({})
       scope.done()
     })
 
     it('preserves a custom json header with json:true option', async function() {
-      const scope = nock('http://example.com')
+      const scope = nock('http://example.test')
         .post('/json')
         .reply(200, { foo: 'bar' })
 
       const customContentType =
-        'application/json; profile=http://example.com/schema/books#'
+        'application/json; profile=http://example.test/schema/books#'
 
       const test = frisby
         .create(this.test.title)
-        .post('http://example.com/json', {}, { json: true })
+        .post('http://example.test/json', {}, { json: true })
         .addHeader('Content-Type', customContentType)
         .expectStatus(200)
         .expectJSON({ foo: 'bar' })
@@ -2211,7 +2213,7 @@ describe('request headers', function() {
   context('when passing headers by config()', function() {
     it('config should add the normalized headers to the outgoing request', async function() {
       let headers
-      const scope = nock('http:/example.test/')
+      const scope = nock('http://example.test')
         .get('/')
         .reply(200, function(uri, requestBody) {
           headers = this.req.headers
@@ -2220,7 +2222,7 @@ describe('request headers', function() {
 
       await frisby
         .create(this.test.title)
-        .get('http://mock-request/test-object-array')
+        .get('http://example.test/')
         .config({
           request: {
             headers: { Test: 'Two' },
@@ -2239,7 +2241,7 @@ describe('request headers', function() {
   context('when passing headers by config() and addHeader', function() {
     it('should send all configured headers', async function() {
       let headers
-      const scope = nock('http:/example.test/')
+      const scope = nock('http://example.test')
         .get('/')
         .reply(200, function(uri, requestBody) {
           headers = this.req.headers
@@ -2267,7 +2269,7 @@ describe('request headers', function() {
 
     it('addHeader should override config()', async function() {
       let headers
-      const scope = nock('http:/example.test/')
+      const scope = nock('http://example.test')
         .get('/')
         .reply(200, function(uri, requestBody) {
           headers = this.req.headers
@@ -2295,7 +2297,7 @@ describe('request headers', function() {
   context('when passing headers by params and addHeader', function() {
     it('should send all configured headers', async function() {
       let headers
-      const scope = nock('http:/example.test/')
+      const scope = nock('http://example.test')
         .get('/')
         .reply(200, function(uri, requestBody) {
           headers = this.req.headers
@@ -2304,7 +2306,7 @@ describe('request headers', function() {
 
       await frisby
         .create(this.test.title)
-        .get('http://mock-request/test-object-array', {
+        .get('http://example.test/', {
           headers: { one: '1' },
         })
         .addHeader('two', '2')
@@ -2321,7 +2323,7 @@ describe('request headers', function() {
     it.skip('addHeader should override params', async function() {
       //Issue #106
       let headers
-      const scope = nock('http:/example.test/')
+      const scope = nock('http://example.test')
         .get('/')
         .reply(200, function(uri, requestBody) {
           headers = this.req.headers
@@ -2330,7 +2332,7 @@ describe('request headers', function() {
 
       await frisby
         .create(this.test.title)
-        .get('http://mock-request/test-object-array', {
+        .get('http://example.test/', {
           headers: { three: '3' },
         })
         .addHeader('three', '2+1')
@@ -2346,7 +2348,7 @@ describe('request headers', function() {
   context('when removing headers via removeHeader', function() {
     it('should not send a removed header when it was added via addHeader', async function() {
       let headers
-      const scope = nock('http:/example.test/')
+      const scope = nock('http://example.test')
         .get('/')
         .reply(200, function(uri, requestBody) {
           headers = this.req.headers
@@ -2355,7 +2357,7 @@ describe('request headers', function() {
 
       await frisby
         .create(this.test.title)
-        .get('http://mock-request/test-object-array')
+        .get('http://example.test/')
         .addHeaders({ One: '1', Two: '2' })
         .removeHeader('One')
         .expectStatus(200)
@@ -2370,7 +2372,7 @@ describe('request headers', function() {
     it.skip('should not send a removed header when it was added via params', async function() {
       //Issue #122
       let headers
-      const scope = nock('http:/example.test/')
+      const scope = nock('http://example.test')
         .get('/')
         .reply(200, function(uri, requestBody) {
           headers = this.req.headers
@@ -2379,7 +2381,7 @@ describe('request headers', function() {
 
       await frisby
         .create(this.test.title)
-        .get('http://mock-request/test-object-array', {
+        .get('http://example.test/', {
           headers: { One: '1', Two: '2' },
         })
         .removeHeader('One')
@@ -2394,7 +2396,7 @@ describe('request headers', function() {
 
     it('should not send a removed header when it was added via config()', async function() {
       let headers
-      const scope = nock('http:/example.test/')
+      const scope = nock('http://example.test')
         .get('/')
         .reply(200, function(uri, requestBody) {
           headers = this.req.headers
@@ -2403,7 +2405,7 @@ describe('request headers', function() {
 
       await frisby
         .create(this.test.title)
-        .get('http://mock-request/test-object-array')
+        .get('http://example.test/')
         .config({
           request: {
             headers: { One: '1', Two: '2' },
@@ -2421,7 +2423,7 @@ describe('request headers', function() {
 
     it('should not send a removed header, regardless of casing', async function() {
       let headers
-      const scope = nock('http:/example.test/')
+      const scope = nock('http://example.test')
         .get('/')
         .reply(200, function(uri, requestBody) {
           headers = this.req.headers
@@ -2430,7 +2432,7 @@ describe('request headers', function() {
 
       await frisby
         .create(this.test.title)
-        .get('http://mock-request/test-object-array')
+        .get('http://example.test/')
         .addHeaders({ One: '1', Two: '2' })
         .removeHeader('ONE')
         .expectStatus(200)
@@ -2444,7 +2446,7 @@ describe('request headers', function() {
 
     it('should not error when removing a non-existant header', async function() {
       let headers
-      const scope = nock('http:/example.test/')
+      const scope = nock('http://example.test')
         .get('/')
         .reply(200, function(uri, requestBody) {
           headers = this.req.headers
@@ -2453,7 +2455,7 @@ describe('request headers', function() {
 
       await frisby
         .create(this.test.title)
-        .get('http://mock-request/test-object-array')
+        .get('http://example.test/')
         .addHeaders({ One: '1', Two: '2' })
         .removeHeader('Three')
         .expectStatus(200)
@@ -2474,7 +2476,7 @@ describe('Error Handling', function() {
     it('should return false when not set and called with no function', function() {
       const thisFrisby = frisby
         .create(this.test.title)
-        .get('http://example.com')
+        .get('http://example.test')
 
       expect(thisFrisby.exceptionHandler()).to.equal(false)
     })
@@ -2484,7 +2486,7 @@ describe('Error Handling', function() {
 
       const thisFrisby = frisby
         .create(this.test.title)
-        .get('http://example.com')
+        .get('http://example.test')
         .exceptionHandler(myExceptionHandler)
 
       expect(thisFrisby.exceptionHandler()).to.equal(myExceptionHandler)

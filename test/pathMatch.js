@@ -8,7 +8,7 @@ const chai = require('chai')
 chai.should() // setup should assertions
 chai.use(require('chai-things'))
 // chai.config.includeStack = true;
-global.expect = chai.expect
+const { expect } = chai
 
 // JSON to use in mock tests
 const fixtures = require('./fixtures/repetition_fixture.json')
