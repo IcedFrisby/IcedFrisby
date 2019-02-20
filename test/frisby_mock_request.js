@@ -974,15 +974,12 @@ describe('Frisby matchers', function() {
     })
 
     it('before hook errors are bundled together', async function() {
-      const scope = nock('http://example.test')
-        .get('/')
-        .reply(200, fixtures.singleObject)
-
       const beforeErrorMessage = 'this-is-the-before-error'
       const finallyErrorMessage = 'this-is-the-finally-error'
 
       const test = frisby
         .create('error bundling')
+        // Due to the exception in `before()`, this request is never sent.
         .get('http://example.test/')
         .expectStatus(200)
         .before(() => {
@@ -1000,142 +997,119 @@ describe('Frisby matchers', function() {
         expect(err.errors()[0].message).to.equal(beforeErrorMessage)
         expect(err.errors()[1].message).to.equal(finallyErrorMessage)
       }
-
-      scope.done()
     })
   })
 
-  it('Frisby basicAuth should set the correct HTTP Authorization header', function() {
-    // Mock API
-    const mockFn = mockRequest
-      .mock()
-      .get('/basic-auth')
-      .respond({
-        statusCode: 200,
-        headers: {
-          Authorization: 'Basic ZnJpc2J5OnBhc3N3ZA==',
-        },
-      })
-      .run()
+  it('Frisby basicAuth should set the correct HTTP Authorization header', async function() {
+    const scope = nock('http://example.test', {
+      reqheaders: {
+        Authorization: `Basic ${Buffer.from('frisby:passwd').toString(
+          'base64'
+        )}`,
+      },
+    })
+      .get('/')
+      .reply(200)
 
-    frisby
+    const test = frisby
       .create(this.test.title)
-      .get('http://mock-request/basic-auth', { mock: mockFn })
+      .get('http://example.test')
       .auth('frisby', 'passwd')
       .expectStatus(200)
-      .expectHeader('Authorization', 'Basic ZnJpc2J5OnBhc3N3ZA==')
-      .after(function(err, res, body) {
-        // Check to ensure outgoing set for basic auth
-        expect(this._outgoing.auth).to.deep.equal({
-          user: 'frisby',
-          pass: 'passwd',
-          sendImmediately: true,
-        })
 
-        // Check to ensure response headers contain basic auth header
-        expect(this._response.headers.authorization).to.equal(
-          'Basic ZnJpc2J5OnBhc3N3ZA=='
-        )
-      })
-      .toss()
+    await test.run()
+
+    expect(test._outgoing.auth).to.deep.equal({
+      user: 'frisby',
+      pass: 'passwd',
+      sendImmediately: true,
+    })
+
+    scope.done()
   })
 
   // reference: https://github.com/vlucas/frisby/issues/213 (does not appear to be an issue in IcedFrisby)
-  it('should work with a HTTP 204 responses', function() {
-    // Mock API
-    const mockFn = mockRequest
-      .mock()
-      .get('/no-content')
-      .respond({
-        statusCode: 204,
-      })
+  it('should work with a HTTP 204 responses', async function() {
+    const scope = nock('http://example.test')
+      .get('/')
+      .reply(204)
+
+    await frisby
+      .create(this.test.title)
+      .get('http://example.test/')
+      .expectStatus(204)
       .run()
 
-    frisby
-      .create(this.test.title)
-      .get('http://mock-request/no-content', { mock: mockFn })
-      .expectStatus(204)
-      .toss()
+    scope.done()
   })
 
-  it('Invalid URLs should fail with an error message', function() {
-    frisby
-      .create(this.test.title)
-      .get('invalid-url')
-      .expectStatus(599)
-      .timeout(5)
-      .exceptionHandler(function(e) {
-        expect(e.message).to.contain(
-          'Destination URL may be down or URL is invalid'
-        )
-      })
-      .toss()
+  xit('Invalid URLs should fail with an error message', async function() {
+    await expect(
+      frisby
+        .create(this.test.title)
+        .get('invalid-url')
+        .expectStatus(599)
+        .timeout(5)
+        .run()
+    ).to.be.rejectedWith(Error, 'Destination URL may be down or URL is invalid')
   })
 
   describe('timeouts and retries', function() {
-    it('should fail with the expected timeout message', function() {
-      const timeout = 10
-
-      nock('http://example.com')
+    it('should fail with the expected timeout message', async function() {
+      const scope = nock('http://example.test')
         .get('/just-dont-come-back-1')
-        .delayBody(50) // delay 50ms
+        .delayBody(30)
         .reply(200, '<html></html>')
 
-      const spy = sinon.spy()
+      const timeout = 10
 
-      frisby
-        .create(this.test.title)
-        .get('http://example.com/just-dont-come-back-1')
-        .timeout(timeout)
-        .exceptionHandler(err => {
-          // TODO How can I assert that this method is called?
-          spy()
-          expect(err.message).to.equal(`Request timed out after ${timeout} ms`)
-          expect(spy.calledOnce).to.equal(true)
-        })
-        .toss()
+      await expect(
+        frisby
+          .create(this.test.title)
+          .get('http://example.test/just-dont-come-back-1')
+          .timeout(timeout)
+          .run()
+      ).to.be.rejectedWith(Error, `Request timed out after ${timeout} ms`)
+
+      scope.done()
     })
 
-    it('should retry the expected number of times after a timeout', function() {
+    it('should retry the expected number of times after a timeout', async function() {
       const retryCount = 4
       let actualRequestCount = 0
       const timeout = 5
 
-      nock('http://example.com')
+      const scope = nock('http://example.com')
         .get('/just-dont-come-back-2')
-        .delayBody(50) // delay 50ms
+        .delayBody(50)
         .times(retryCount + 1)
         .reply((uri, requestBody) => {
           actualRequestCount += 1
           return 200, '<html></html>'
         })
 
-      const spy = sinon.spy()
+      await expect(
+        frisby
+          .create(this.test.title)
+          .get('http://example.com/just-dont-come-back-2')
+          .timeout(timeout)
+          .retry(retryCount, 0)
+          .run()
+      ).to.be.rejectedWith(
+        Error,
+        `Request timed out after ${timeout} ms (${retryCount + 1} attempts)`
+      )
 
-      frisby
-        .create(this.test.title)
-        .get('http://example.com/just-dont-come-back-2')
-        .timeout(timeout)
-        .retry(retryCount, 0)
-        .exceptionHandler(err => {
-          // TODO How can I assert that this method is called?
-          spy()
-          expect(err.message).to.equal(
-            `Request timed out after ${timeout} ms (${retryCount + 1} attempts)`
-          )
-          expect(spy.calledOnce).to.equal(true)
-
-          expect(actualRequestCount).to.equal(retryCount + 1)
-        })
-        .toss()
+      expect(actualRequestCount).to.equal(retryCount + 1)
+      scope.done()
     })
 
-    it('should delay retries by the backoff amount', function() {
+    it('should delay retries by the backoff amount', async function() {
       let actualRequestCount = 0
       let firstRequestTime
       let secondRequestTime
 
-      nock('http://example.com')
+      const scope = nock('http://example.com')
         .get('/fail-once')
         .twice()
         .reply((uri, requestBody) => {
@@ -1154,57 +1128,50 @@ describe('Frisby matchers', function() {
 
       const expectedBackoffMillis = 123
 
-      frisby
+      await frisby
         .create(this.test.title)
         .get('http://example.com/fail-once')
         .retry(1, expectedBackoffMillis)
-        .after(() => {
-          const [seconds, nanoseconds] = secondRequestTime
-          const timeBetweenRequestsMillis = 1e3 * seconds + 1e-6 * nanoseconds
+        .run()
 
-          const assertionGracePeriodMillis = 25
-          expect(timeBetweenRequestsMillis).to.be.within(
-            expectedBackoffMillis,
-            expectedBackoffMillis + assertionGracePeriodMillis
-          )
-        })
-        .toss()
+      const [seconds, nanoseconds] = secondRequestTime
+      const timeBetweenRequestsMillis = 1e3 * seconds + 1e-6 * nanoseconds
+
+      const assertionGracePeriodMillis = 25
+      expect(timeBetweenRequestsMillis).to.be.within(
+        expectedBackoffMillis,
+        expectedBackoffMillis + assertionGracePeriodMillis
+      )
+
+      scope.done()
     })
 
-    it('should not retry POST requests', function() {
-      let hitCount = 0
+    it('should not retry POST requests', async function() {
+      const gotRequest = sinon.spy()
 
-      nock('http://example.com')
-        .post('/slow-form')
-        .delayBody(50) // delay 50ms
-        .times(2)
-        .reply((uri, requestBody) => {
-          spy()
-          hitCount++
+      const scope = nock('http://example.test')
+        .post('/')
+        .delayBody(50)
+        .reply(200, (uri, requestBody) => {
+          gotRequest()
           return 200
         })
 
-      const spy = sinon.spy()
+      await expect(
+        frisby
+          .create(this.test.title)
+          .post('http://example.test/')
+          .timeout(5)
+          .retry(2, 0) // 2 retries with 0ms delay between them.
+          .run()
+      ).to.be.rejectedWith(Error, 'Request timed out after')
 
-      frisby
-        .create(this.test.title)
-        .post('http://example.com/slow-form')
-        .timeout(5)
-        .retry(2, 0) //2 retries with 0ms delay between them
-        .exceptionHandler(err => {
-          //Squash the expected error, keep the rest
-          if (!err.message.includes('Request timed out after')) {
-            throw err
-          }
-        })
-        .finally(() => {
-          expect(hitCount).to.equal(1)
-          expect(spy.callCount).to.equal(1)
-        })
-        .toss()
+      expect(gotRequest.calledOnce).to.be.true
+
+      nock.cleanAll()
     })
 
-    it('should pass the expected timeout to mocha, and not cause mocha to time out', function() {
+    it('should pass the expected timeout to mocha, and not cause mocha to time out', async function() {
       let requestCount = 0
 
       nock('http://example.com')
@@ -1233,7 +1200,7 @@ describe('Frisby matchers', function() {
       const gracePeriodMillis = 25
       expect(test._mochaTimeout()).to.equal(75 + 50 + 75 + gracePeriodMillis)
 
-      test.toss()
+      await test.run()
     })
 
     it('should return the current timeout value when not setting a new one', function() {
@@ -1251,52 +1218,43 @@ describe('Frisby matchers', function() {
       expect(currentTimeout).to.equal(100)
     })
 
-    it('should retry the expected number of times after a timeout when set via config()', function() {
+    it('should retry the expected number of times after a timeout when set via config()', async function() {
       const retryCount = 4
-      let actualRequestCount = 0
       const timeout = 5
 
-      nock('http://example.com')
-        .get('/just-dont-come-back-3')
-        .delayBody(50) // delay 50ms
-        .times(5)
-        .reply((uri, requestBody) => {
-          actualRequestCount += 1
-          return 200, '<html></html>'
-        })
+      const scope = nock('http://example.test')
+        .get('/')
+        .delayBody(timeout + 50)
+        .times(retryCount + 1)
+        .reply(200, '<html></html>')
 
-      const spy = sinon.spy()
-
-      frisby
+      const test = frisby
         .create(this.test.title)
-        .get('http://example.com/just-dont-come-back-3')
+        .get('http://example.test')
         .timeout(timeout)
         .config({ retry: retryCount })
-        .exceptionHandler(err => {
-          // TODO How can I assert that this method is called?
-          spy()
-          expect(err.message).to.equal(
-            `Request timed out after ${timeout} ms (${retryCount + 1} attempts)`
-          )
-          expect(spy.calledOnce).to.equal(true)
 
-          expect(actualRequestCount).to.equal(retryCount + 1)
-        })
-        .toss()
+      // TODO: Add this to the `config()` API.
+      test._attempts.backoffMillis = 0
+
+      await expect(test.run()).to.be.rejectedWith(
+        Error,
+        `Request timed out after ${timeout} ms (${retryCount + 1} attempts)`
+      )
+
+      scope.done()
     })
   })
 
-  it('should handle file uploads', function() {
-    nock('http://example.com')
-      .post('/file-upload')
-      .once()
+  it('should handle file uploads', async function() {
+    const scope = nock('http://example.test')
+      .post('/')
       .reply(200, { result: 'ok' })
 
-    // Intercepted with 'nock'
-    frisby
+    await frisby
       .create(this.test.title)
       .post(
-        'http://example.com/file-upload',
+        'http://example.test/',
         {
           name: 'Test Upload',
           file: fs.createReadStream(path.join(__dirname, 'logo-frisby.png')),
@@ -1304,20 +1262,21 @@ describe('Frisby matchers', function() {
         { form: true }
       )
       .expectStatus(200)
-      .toss()
+      .run()
+
+    scope.done()
   })
 
-  it('should allow for passing raw request body', function() {
-    nock('http://example.com')
-      .post('/raw')
-      .reply(200, function(uri, requestBody) {
-        return requestBody
-      })
+  it('should allow for passing raw request body', async function() {
+    const scope = nock('http://example.test')
+      .post('/')
+      // Echo the body back to the client.
+      .reply(200, (uri, requestBody) => requestBody)
 
-    frisby
+    await frisby
       .create(this.test.title)
       .post(
-        'http://example.com/raw',
+        'http://example.test/',
         {},
         {
           body: 'some body here',
@@ -1325,50 +1284,55 @@ describe('Frisby matchers', function() {
       )
       .expectStatus(200)
       .expectBodyContains('some body here')
-      .toss()
+      .run()
+
+    scope.done()
   })
 
   describe('expectBodyContains', function() {
-    it('should fail when the response body is empty', function() {
-      nock('http://example.com')
-        .post('/path')
+    it('should fail when the response body is empty', async function() {
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201)
 
-      frisby
-        .create(this.test.title)
-        .post('http://example.com/path')
-        .expectBodyContains('this-will-not-match')
-        .exceptionHandler(err => {
-          // TODO How can I assert that this method is called?
-          expect(err).to.be.an.instanceof(AssertionError)
-          expect(err.message).to.equal(
-            "expected '' to include 'this-will-not-match'"
-          )
-        })
-        .toss()
+      await expect(
+        frisby
+          .create(this.test.title)
+          .post('http://example.test/')
+          .expectBodyContains('this-will-not-match')
+          .run()
+      ).to.be.rejectedWith(
+        AssertionError,
+        "expected '' to include 'this-will-not-match'"
+      )
+
+      scope.done()
     })
   })
 
   describe('Aliased functions backwards compatibility', function() {
-    it('should allow the use of expectHeaderToMatch as an alias for expectHeader', function() {
-      nock('http://example.com')
-        .post('/path')
+    it('should allow the use of expectHeaderToMatch as an alias for expectHeader', async function() {
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201, 'The payload', { myheader: 'myvalue' })
 
-      frisby
+      await frisby
         .create(this.test.title)
-        .post('http://example.com/path')
+        .post('http://example.test/')
         .expectStatus(201)
         .expectHeaderToMatch('myheader', /myvalue/)
-        .toss()
+        .run()
+
+      scope.done()
     })
   })
 
   describe('expectHeader with string', function() {
-    //This feels like it's covered in other places, but not explicitly. Included for completeness
-    it('should pass when the header value passed exactly matches the content', function() {
-      nock('http://example.com')
-        .post('/path')
+    // This feels like it's covered in other places, but not explicitly.
+    // Included for completeness.
+    it('should pass when the header value passed exactly matches the content', async function() {
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201, 'Payload', [
           'content-type',
           'application/json',
@@ -1376,16 +1340,18 @@ describe('Frisby matchers', function() {
           '7',
         ])
 
-      frisby
+      await frisby
         .create(this.test.title)
         .post('http://example.com/path')
         .expectHeader('content-type', 'application/json')
-        .toss()
+        .run()
+
+      scope.done()
     })
 
-    it('should fail when the header value passed is a substring of the content', function() {
-      nock('http://example.com')
-        .post('/path')
+    it('should fail when the header value passed is a substring of the content', async function() {
+      nock('http://example.test')
+        .post('/')
         .reply(201, 'Payload', [
           'content-type',
           'application/json',
@@ -1393,9 +1359,9 @@ describe('Frisby matchers', function() {
           '7',
         ])
 
-      frisby
+      await frisby
         .create(this.test.title)
-        .post('http://example.com/path')
+        .post('http://example.test/')
         .expectHeader('content-type', 'json')
         .exceptionHandler(err => {
           // TODO How can I assert that this method is called?
@@ -1404,12 +1370,14 @@ describe('Frisby matchers', function() {
             "expected an element of [ 'application/json' ] to equal 'json'"
           )
         })
-        .toss()
+        .run()
+
+      scope.done()
     })
 
-    it('should fail when the header is not present', function() {
-      nock('http://example.com')
-        .post('/path')
+    it('should fail when the header is not present', async function() {
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201, 'Payload', [
           'content-type',
           'application/json',
@@ -1417,23 +1385,20 @@ describe('Frisby matchers', function() {
           '7',
         ])
 
-      frisby
-        .create(this.test.title)
-        .post('http://example.com/path')
-        .expectHeader('Host', 'example.com')
-        .exceptionHandler(err => {
-          // TODO How can I assert that this method is called?
-          expect(err).to.be.an.instanceof(Error)
-          expect(err.message).to.equal(
-            "Header 'host' not present in HTTP response"
-          )
-        })
-        .toss()
+      await expect(
+        frisby
+          .create(this.test.title)
+          .post('http://example.test/')
+          .expectHeader('Host', 'example.com')
+          .run()
+      ).to.be.rejectedWith(Error, "Header 'host' not present in HTTP response")
+
+      scope.done()
     })
 
-    it('should fail when the content is not a string or regex', function() {
-      nock('http://example.com')
-        .post('/path')
+    it('should fail when the content is not a string or regex', async function() {
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201, 'Payload', [
           'content-type',
           'application/json',
@@ -1441,181 +1406,183 @@ describe('Frisby matchers', function() {
           '7',
         ])
 
-      frisby
-        .create(this.test.title)
-        .post('http://example.com/path')
-        .expectHeader('content-type', 200)
-        .exceptionHandler(err => {
-          // TODO How can I assert that this method is called?
-          expect(err).to.be.an.instanceof(Error)
-          expect(err.message).to.equal(
-            "Content '200' is neither a string or regex"
-          )
-        })
-        .toss()
+      await expect(
+        frisby
+          .create(this.test.title)
+          .post('http://example.test/')
+          .expectHeader('content-type', 200)
+          .run()
+      ).to.be.rejectedWith(Error, "Content '200' is neither a string or regex")
+
+      scope.done()
     })
 
-    it('should fail when multiple same-name headers match and the allowMultipleHeaders option is not passed', function() {
-      nock('http://example.com')
+    it('should fail when multiple same-name headers match and the allowMultipleHeaders option is not passed', async function() {
+      const scope = nock('http://example.test')
         .post('/path')
         .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
 
-      frisby
-        .create(this.test.title)
-        .post('http://example.com/path')
-        .expectHeader('Set-Cookie', 'a=123')
-        .exceptionHandler(err => {
-          // TODO How can I assert that this method is called?
-          expect(err).to.be.an.instanceof(Error)
-          expect(err.message).to.equal(
-            "Header 'set-cookie' present more than once in HTTP response. Pass {allowMultipleHeaders: true} in options if this is expected."
-          )
-        })
-        .toss()
+      await expect(
+        frisby
+          .create(this.test.title)
+          .post('http://example.test/')
+          .expectHeader('Set-Cookie', 'a=123')
+          .run()
+      ).to.be.rejectedWith(
+        Error,
+        "Header 'set-cookie' present more than once in HTTP response. Pass {allowMultipleHeaders: true} in options if this is expected."
+      )
+
+      scope.done()
     })
 
-    it('should fail when multiple same-name headers match and the allowMultipleHeaders option is false', function() {
-      nock('http://example.com')
+    it('should fail when multiple same-name headers match and the allowMultipleHeaders option is false', async function() {
+      const scope = nock('http://example.test')
         .post('/path')
         .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
 
-      frisby
-        .create(this.test.title)
-        .post('http://example.com/path')
-        .expectHeader('Set-Cookie', 'a=123', { allowMultipleHeaders: false })
-        .exceptionHandler(err => {
-          // TODO How can I assert that this method is called?
-          expect(err).to.be.an.instanceof(Error)
-          expect(err.message).to.equal(
-            "Header 'set-cookie' present more than once in HTTP response. Pass {allowMultipleHeaders: true} in options if this is expected."
-          )
-        })
-        .toss()
+      await expect(
+        frisby
+          .create(this.test.title)
+          .post('http://example.test/')
+          .expectHeader('Set-Cookie', 'a=123', { allowMultipleHeaders: false })
+      ).to.be.rejectedWith(
+        Error,
+        "Header 'set-cookie' present more than once in HTTP response. Pass {allowMultipleHeaders: true} in options if this is expected."
+      )
+
+      scope.done()
     })
 
-    it('should pass when one of multiple same-name headers matches and the allowMultipleHeaders option is true', function() {
-      nock('http://example.com')
-        .post('/path')
+    it('should pass when one of multiple same-name headers matches and the allowMultipleHeaders option is true', async function() {
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
 
-      frisby
+      await frisby
         .create(this.test.title)
-        .post('http://example.com/path')
+        .post('http://example.test/')
         .expectHeader('Set-Cookie', 'a=123', { allowMultipleHeaders: true })
         .expectHeader('Set-Cookie', 'b=456', { allowMultipleHeaders: true })
-        .toss()
+        .run()
+
+      scope.done()
     })
   })
 
   describe('expectHeader with regex', function() {
-    it('should pass when regex matches', function() {
-      nock('http://example.com')
+    it('should pass when regex matches', async function() {
+      const scope = nock('http://example.com')
         .post('/path')
         .once()
         .reply(201, 'The payload', { Location: '/path/23' })
 
-      frisby
+      await frisby
         .create(this.test.title)
         .post('http://example.com/path', { foo: 'bar' })
         .expectStatus(201)
         .expectHeader('location', /^\/path\/\d+$/)
-        .toss()
+        .run()
+
+      scope.done()
     })
 
-    it('should fail when the regex does not match', function() {
-      nock('http://example.com')
+    it('should fail when the regex does not match', async function() {
+      const scope = nock('http://example.com')
         .post('/path')
         .reply(201, 'The payload', { Location: '/something-else/23' })
 
-      frisby
-        .create(this.test.title)
-        .post('http://example.com/path')
-        .expectHeader('location', /^\/path\/\d+$/)
-        .exceptionHandler(err => {
-          // TODO How can I assert that this method is called?
-          expect(err).to.be.an.instanceof(AssertionError)
-          expect(err.message).to.equal(
-            "expected an element of [ '/something-else/23' ] to match /^\\/path\\/\\d+$/"
-          )
-        })
-        .toss()
+      await expect(
+        frisby
+          .create(this.test.title)
+          .post('http://example.com/path')
+          .expectHeader('location', /^\/path\/\d+$/)
+          .run()
+      ).to.be.rejectedWith(
+        AssertionError,
+        "expected an element of [ '/something-else/23' ] to match /^\\/path\\/\\d+$/"
+      )
+
+      scope.done()
     })
 
-    it('should fail when the header is absent', function() {
-      nock('http://example.com')
+    it('should fail when the header is absent', async function() {
+      const scope = nock('http://example.com')
         .post('/path')
         .reply(201)
 
-      frisby
-        .create(this.test.title)
-        .post('http://example.com/path')
-        .expectHeader('location', /^\/path\/\d+$/)
-        .exceptionHandler(err => {
-          // TODO How can I assert that this method is called?
-          expect(err).to.be.an.instanceof(Error)
-          expect(err.message).to.equal(
-            "Header 'location' not present in HTTP response"
-          )
-        })
-        .toss()
+      await expect(
+        frisby
+          .create(this.test.title)
+          .post('http://example.com/path')
+          .expectHeader('location', /^\/path\/\d+$/)
+          .run()
+      ).to.be.rejectedWith(
+        Error,
+        "Header 'location' not present in HTTP response"
+      )
+
+      scope.done()
     })
 
-    it('should fail when multiple same-name headers match and the allowMultipleHeaders option is not passed', function() {
-      nock('http://example.com')
-        .post('/path')
+    it('should fail when multiple same-name headers match and the allowMultipleHeaders option is not passed', async function() {
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
 
-      frisby
-        .create(this.test.title)
-        .post('http://example.com/path')
-        .expectHeader('Set-Cookie', /123/)
-        .exceptionHandler(err => {
-          // TODO How can I assert that this method is called?
-          expect(err).to.be.an.instanceof(Error)
-          expect(err.message).to.equal(
-            "Header 'set-cookie' present more than once in HTTP response. Pass {allowMultipleHeaders: true} in options if this is expected."
-          )
-        })
-        .toss()
+      await expect(
+        frisby
+          .create(this.test.title)
+          .post('http://example.test/')
+          .expectHeader('Set-Cookie', /123/)
+          .run()
+      ).to.be.rejectedWith(
+        Error,
+        "Header 'set-cookie' present more than once in HTTP response. Pass {allowMultipleHeaders: true} in options if this is expected."
+      )
+
+      scope.done()
     })
 
-    it('should fail when multiple same-name headers match and the allowMultipleHeaders option is false', function() {
-      nock('http://example.com')
-        .post('/path')
+    it('should fail when multiple same-name headers match and the allowMultipleHeaders option is false', async function() {
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
 
-      frisby
-        .create(this.test.title)
-        .post('http://example.com/path')
-        .expectHeader('Set-Cookie', /123/, { allowMultipleHeaders: false })
-        .exceptionHandler(err => {
-          // TODO How can I assert that this method is called?
-          expect(err).to.be.an.instanceof(Error)
-          expect(err.message).to.equal(
-            "Header 'set-cookie' present more than once in HTTP response. Pass {allowMultipleHeaders: true} in options if this is expected."
-          )
-        })
-        .toss()
+      await expect(
+        frisby
+          .create(this.test.title)
+          .post('http://example.test/')
+          .expectHeader('Set-Cookie', /123/, { allowMultipleHeaders: false })
+          .run()
+      ).to.be.rejectdWith(
+        Error,
+        "Header 'set-cookie' present more than once in HTTP response. Pass {allowMultipleHeaders: true} in options if this is expected."
+      )
+
+      scope.done()
     })
 
-    it('should pass when one of multiple same-name headers matches and the allowMultipleHeaders option is true', function() {
-      nock('http://example.com')
-        .post('/path')
+    it('should pass when one of multiple same-name headers matches and the allowMultipleHeaders option is true', async function() {
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
 
-      frisby
+      await frisby
         .create(this.test.title)
-        .post('http://example.com/path')
+        .post('http://example.test/')
         .expectHeader('Set-Cookie', /123/, { allowMultipleHeaders: true })
         .expectHeader('Set-Cookie', /456/, { allowMultipleHeaders: true })
-        .toss()
+        .run()
+
+      scope.done()
     })
   })
 
   describe('expectHeaderContains', function() {
-    it('should pass when the value passed exactly matches the header content', function() {
-      nock('http://example.com')
-        .post('/path')
+    it('should pass when the value passed exactly matches the header content', async function() {
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201, 'Payload', [
           'content-type',
           'application/json',
@@ -1623,16 +1590,18 @@ describe('Frisby matchers', function() {
           '7',
         ])
 
-      frisby
+      await frisby
         .create(this.test.title)
-        .post('http://example.com/path')
+        .post('http://example.test/')
         .expectHeaderContains('content-type', 'application/json')
-        .toss()
+        .run()
+
+      scope.done()
     })
 
-    it('should pass when the value passed is a substring of the header content', function() {
-      nock('http://example.com')
-        .post('/path')
+    it('should pass when the value passed is a substring of the header content', async function() {
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201, 'Payload', [
           'content-type',
           'application/json',
@@ -1640,16 +1609,18 @@ describe('Frisby matchers', function() {
           '7',
         ])
 
-      frisby
+      await frisby
         .create(this.test.title)
-        .post('http://example.com/path')
+        .post('http://example.test/')
         .expectHeaderContains('content-type', 'json')
-        .toss()
+        .run()
+
+      scope.done()
     })
 
-    it('should fail when the value passed is not a substring of the header content', function() {
-      nock('http://example.com')
-        .post('/path')
+    it('should fail when the value passed is not a substring of the header content', async function() {
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201, 'Payload', [
           'content-type',
           'application/json',
@@ -1657,23 +1628,23 @@ describe('Frisby matchers', function() {
           '7',
         ])
 
-      frisby
-        .create(this.test.title)
-        .post('http://example.com/path')
-        .expectHeaderContains('content-type', 'xml')
-        .exceptionHandler(err => {
-          // TODO How can I assert that this method is called?
-          expect(err).to.be.an.instanceof(Error)
-          expect(err.message).to.equal(
-            "xml not found in application/json: expected an element of [ 'application/json' ] to satisfy [Function]"
-          )
-        })
-        .toss()
+      await expect(
+        frisby
+          .create(this.test.title)
+          .post('http://example.test/')
+          .expectHeaderContains('content-type', 'xml')
+          .run()
+      ).to.be.rejectedWith(
+        Error,
+        "xml not found in application/json: expected an element of [ 'application/json' ] to satisfy [Function]"
+      )
+
+      scope.done()
     })
 
-    it('should fail when the header is not present', function() {
-      nock('http://example.com')
-        .post('/path')
+    it('should fail when the header is not present', async function() {
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201, 'Payload', [
           'content-type',
           'application/json',
@@ -1681,96 +1652,95 @@ describe('Frisby matchers', function() {
           '7',
         ])
 
-      frisby
-        .create(this.test.title)
-        .post('http://example.com/path')
-        .expectHeaderContains('Host', 'example.com')
-        .exceptionHandler(err => {
-          // TODO How can I assert that this method is called?
-          expect(err).to.be.an.instanceof(Error)
-          expect(err.message).to.equal(
-            "Header 'host' not present in HTTP response"
-          )
-        })
-        .toss()
+      await expect(
+        frisby
+          .create(this.test.title)
+          .post('http://example.test/')
+          .expectHeaderContains('Host', 'example.com')
+          .run()
+      ).to.be.rejectedWith(Error, "Header 'host' not present in HTTP response")
+
+      scope.done()
     })
 
-    it('should fail when multiple same-name headers are found and the allowMultipleHeaders option is not passed', function() {
-      nock('http://example.com')
-        .post('/path')
+    it('should fail when multiple same-name headers are found and the allowMultipleHeaders option is not passed', async function() {
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
 
-      frisby
-        .create(this.test.title)
-        .post('http://example.com/path')
-        .expectHeaderContains('Set-Cookie', 'a=')
-        .exceptionHandler(err => {
-          // TODO How can I assert that this method is called?
-          expect(err).to.be.an.instanceof(Error)
-          expect(err.message).to.equal(
-            "Header 'set-cookie' present more than once in HTTP response. Pass {allowMultipleHeaders: true} in options if this is expected."
-          )
-        })
-        .toss()
+      await expect(
+        frisby
+          .create(this.test.title)
+          .post('http://example.test/')
+          .expectHeaderContains('Set-Cookie', 'a=')
+          .run()
+      ).to.be.rejectedWith(
+        Error,
+        "Header 'set-cookie' present more than once in HTTP response. Pass {allowMultipleHeaders: true} in options if this is expected."
+      )
+
+      scope.done()
     })
 
-    it('should fail when multiple same-name headers are found and the allowMultipleHeaders option is false', function() {
-      nock('http://example.com')
-        .post('/path')
+    it('should fail when multiple same-name headers are found and the allowMultipleHeaders option is false', async function() {
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
 
-      frisby
-        .create(this.test.title)
-        .post('http://example.com/path')
-        .expectHeaderContains('Set-Cookie', 'a=', {
-          allowMultipleHeaders: false,
-        })
-        .exceptionHandler(err => {
-          // TODO How can I assert that this method is called?
-          expect(err).to.be.an.instanceof(Error)
-          expect(err.message).to.equal(
-            "Header 'set-cookie' present more than once in HTTP response. Pass {allowMultipleHeaders: true} in options if this is expected."
-          )
-        })
-        .toss()
+      await expect(
+        frisby
+          .create(this.test.title)
+          .post('http://example.test/')
+          .expectHeaderContains('Set-Cookie', 'a=', {
+            allowMultipleHeaders: false,
+          })
+          .run()
+      ).to.be.rejectedWith(
+        Error,
+        "Header 'set-cookie' present more than once in HTTP response. Pass {allowMultipleHeaders: true} in options if this is expected."
+      )
+
+      scope.done()
     })
 
-    it('should pass when one of multiple same-name headers contains the string and the allowMultipleHeaders option is true', function() {
-      nock('http://example.com')
-        .post('/path')
+    it('should pass when one of multiple same-name headers contains the string and the allowMultipleHeaders option is true', async function() {
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
 
-      frisby
+      await frisby
         .create(this.test.title)
-        .post('http://example.com/path')
+        .post('http://example.test/')
         .expectHeaderContains('Set-Cookie', 'a=', {
           allowMultipleHeaders: true,
         })
         .expectHeaderContains('Set-Cookie', '456', {
           allowMultipleHeaders: true,
         })
-        .toss()
+        .run()
+
+      scope.done()
     })
 
-    it('should fail when none of multiple same-name headers contains the string', function() {
-      nock('http://example.com')
-        .post('/path')
+    it('should fail when none of multiple same-name headers contains the string', async function() {
+      const scope = nock('http://example.test')
+        .post('/')
         .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
 
-      frisby
-        .create(this.test.title)
-        .post('http://example.com/path')
-        .expectHeaderContains('Set-Cookie', '789', {
-          allowMultipleHeaders: true,
-        })
-        .exceptionHandler(err => {
-          // TODO How can I assert that this method is called?
-          expect(err).to.be.an.instanceof(Error)
-          expect(err.message).to.equal(
-            "789 not found in a=123,b=456: expected an element of [ 'a=123', 'b=456' ] to satisfy [Function]"
-          )
-        })
-        .toss()
+      await expect(
+        frisby
+          .create(this.test.title)
+          .post('http://example.test/')
+          .expectHeaderContains('Set-Cookie', '789', {
+            allowMultipleHeaders: true,
+          })
+          .run()
+      ).to.be.rejectedWith(
+        Error,
+        "789 not found in a=123,b=456: expected an element of [ 'a=123', 'b=456' ] to satisfy [Function]"
+      )
+
+      scope.done()
     })
   })
 
