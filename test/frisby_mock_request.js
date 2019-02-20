@@ -790,9 +790,9 @@ describe('Frisby matchers', function() {
 
     it('TODO: should not be invoked after a test failure')
 
-    // This is failing; not sure if it's due to the rewrite, or a previous
+    // TODO: This is failing; not sure if it's due to the rewrite, or a previous
     // change, or if it was broken before, too.
-    xit('should not be invoked after a previous after hook raised an exception', async function() {
+    it.skip('should not be invoked after a previous after hook raised an exception', async function() {
       const afterCalled = sinon.spy()
 
       const scope = nock('http://example.test')
@@ -801,7 +801,7 @@ describe('Frisby matchers', function() {
 
       await frisby
         .create(this.test.title)
-        .get('http://example.test')
+        .get('http://example.test/')
         .expectStatus(200)
         .exceptionHandler(() => {}) // Swallow the exception that is thrown below.
         .after(() => {
@@ -886,7 +886,7 @@ describe('Frisby matchers', function() {
   describe('finally() hooks', function() {
     // Not sure if this is a new problem, or has just surfaced because it's
     // been rewritten.
-    xit('should be invoked in sequence after after() hooks', async function() {
+    it.skip('should be invoked in sequence after after() hooks', async function() {
       const sequence = []
 
       const scope = nock('http://example.test')
@@ -1043,15 +1043,13 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  xit('Invalid URLs should fail with an error message', async function() {
-    await expect(
-      frisby
-        .create(this.test.title)
-        .get('invalid-url')
-        .expectStatus(599)
-        .timeout(5)
-        .run()
-    ).to.be.rejectedWith(Error, 'Destination URL may be down or URL is invalid')
+  it('Invalid URLs should fail with a 599 status code', async function() {
+    await frisby
+      .create(this.test.title)
+      .get('invalid-url')
+      .expectStatus(599)
+      .timeout(5)
+      .run()
   })
 
   describe('timeouts and retries', function() {
