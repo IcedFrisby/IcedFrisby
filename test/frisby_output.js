@@ -4,7 +4,6 @@ const chai = require('chai')
 const intercept = require('intercept-stdout')
 const nock = require('nock')
 const frisby = require('../lib/icedfrisby')
-const sinon = require('sinon')
 const { expect } = chai
 
 //
