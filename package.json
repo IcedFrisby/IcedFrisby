@@ -47,6 +47,7 @@
     "joi": "*"
   },
   "devDependencies": {
+    "chai-as-promised": "^7.1.1",
     "coveralls": "^3.0.0",
     "eslint": "^5.0.1",
     "eslint-config-prettier": "^4.0.0",

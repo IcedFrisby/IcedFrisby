@@ -5,9 +5,7 @@ const https = require('https')
 const path = require('path')
 const frisby = require('./../lib/icedfrisby')
 const express = require('express')
-
-const chai = require('chai')
-const expect = chai.expect
+const { expect } = require('chai')
 
 // The following tests were adapted from:
 // https://github.com/visionmedia/supertest/blob/master/test/supertest.js
@@ -26,16 +24,13 @@ describe('IcedFrisby useApp(app)', function() {
       .get('/')
       .expectStatus(200)
       .expectBodyContains('^.^')
-      .after(function(err, res, body) {
-        expect(err).to.not.exist
-      })
       .toss()
   })
 
   it('should work with an active http server', function() {
     const app = express()
 
-    app.get('/', function(req, res) {
+    app.get('/', (req, res) => {
       res.send('^.^')
     })
 
@@ -46,9 +41,7 @@ describe('IcedFrisby useApp(app)', function() {
         .get('/')
         .expectStatus(200)
         .expectBodyContains('^.^')
-        .after(() => {
-          server.close()
-        })
+        .after(() => server.close())
         .toss()
     })
   })

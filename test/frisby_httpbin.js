@@ -26,56 +26,56 @@ StringStream.prototype._read = function(ignore) {
 // These work without further 'expects' statements because Frisby generates and runs Jasmine tests
 //
 describe('Frisby live running httpbin tests', function() {
-  it('Frisby basicAuth should work', function() {
-    frisby
+  it('Frisby basicAuth should work', async function() {
+    await frisby
       .create('test with httpbin for valid basic auth')
       .get('http://httpbin.org/basic-auth/frisby/passwd')
       .auth('frisby', 'passwd')
       .expectStatus(200)
-      .toss()
+      .run()
   })
 
   describe('Frisby digestAuth', function() {
-    it('should not work if digest not set', function() {
-      frisby
+    it('should not work if digest not set', async function() {
+      await frisby
         .create('test with httpbin for invalid digest auth')
         .auth('frisby', 'passwd')
         .get('http://httpbin.org/digest-auth/auth/frisby/passwd')
         .expectStatus(401)
-        .toss()
+        .run()
     })
 
     // Digest auth against httpbin not working for some reason
     // but working fine against my own servers running digest auth
-    it('should work if digest set', function() {
-      frisby
+    it('should work if digest set', async function() {
+      await frisby
         .create('test with httpbin for valid digest auth')
         .auth('frisby', 'passwd', true)
         .get('http://httpbin.org/digest-auth/auth/frisby/passwd')
         .expectStatus(200)
-        .toss()
+        .run()
     })
   })
 
-  it('should pass in param hash to request call dependency', function() {
-    frisby
+  it('should pass in param hash to request call dependency', async function() {
+    await frisby
       .create('test with httpbin for valid basic auth')
       .get('http://httpbin.org/redirect/3', {
         followRedirect: false,
         maxRedirects: 1,
       })
       .expectStatus(302)
-      .toss()
+      .run()
   })
 
-  it('sending binary data via put or post requests using Buffer objects should work', function() {
+  it('sending binary data via put or post requests using Buffer objects should work', async function() {
     const data = []
 
     for (let i = 0; i < 1024; i++) data.push(Math.round(Math.random() * 256))
 
-    frisby
+    await frisby
       .create('POST random binary data via Buffer object')
-      .post('https://httpbin.org/post', new Buffer(data), {
+      .post('https://httpbin.org/post', Buffer.from(data), {
         json: false,
         headers: {
           'content-type': 'application/octet-stream',
@@ -87,7 +87,7 @@ describe('Frisby live running httpbin tests', function() {
         // use the JSONTypes to check for data and headers. We don't really care about anything else.
         data: Joi.string().valid(
           'data:application/octet-stream;base64,' +
-            new Buffer(data).toString('base64')
+            Buffer.from(data).toString('base64')
         ),
         headers: Joi.object()
           .required()
@@ -113,11 +113,11 @@ describe('Frisby live running httpbin tests', function() {
           .required()
           .valid('https://httpbin.org/post'),
       })
-      .toss()
+      .run()
 
-    frisby
+    await frisby
       .create('PUT random binary data via Buffer object')
-      .put('https://httpbin.org/put', new Buffer(data), {
+      .put('https://httpbin.org/put', Buffer.from(data), {
         json: false,
         headers: {
           'content-type': 'application/octet-stream',
@@ -130,7 +130,7 @@ describe('Frisby live running httpbin tests', function() {
           .required()
           .valid(
             'data:application/octet-stream;base64,' +
-              new Buffer(data).toString('base64')
+              Buffer.from(data).toString('base64')
           ),
         headers: Joi.object().keys({
           Accept: Joi.any(),
@@ -154,15 +154,15 @@ describe('Frisby live running httpbin tests', function() {
           .required()
           .valid('https://httpbin.org/put'),
       })
-      .toss()
+      .run()
   })
 
-  it('PATCH requests with Buffer and Stream objects should work.', function() {
+  it('PATCH requests with Buffer and Stream objects should work.', async function() {
     const patchCommand = 'Patch me!'
 
-    frisby
+    await frisby
       .create('PATCH via Buffer object')
-      .patch('https://httpbin.org/patch', new Buffer(patchCommand), {
+      .patch('https://httpbin.org/patch', Buffer.from(patchCommand), {
         json: false,
         headers: {
           'content-type': 'text/plain',
@@ -195,9 +195,9 @@ describe('Frisby live running httpbin tests', function() {
           .required()
           .valid('https://httpbin.org/patch'),
       })
-      .toss()
+      .run()
 
-    frisby
+    await frisby
       .create('PATCH via Stream object')
       .patch('https://httpbin.org/patch', new StringStream(patchCommand), {
         json: false,
@@ -235,10 +235,10 @@ describe('Frisby live running httpbin tests', function() {
           .required()
           .valid('https://httpbin.org/patch'),
       })
-      .toss()
+      .run()
   })
 
-  it('sending binary data via put or post requests using Stream objects should work', function() {
+  it('sending binary data via put or post requests using Stream objects should work', async function() {
     const filePath = path.resolve(__dirname, './logo-frisby.png')
     const fileSize = fs.statSync(filePath).size
     const fileContent = fs.readFileSync(filePath)
@@ -249,7 +249,7 @@ describe('Frisby live running httpbin tests', function() {
      *      return an empty data field. However not setting the Content-Length
      */
 
-    frisby
+    await frisby
       .create('POST frisby logo to https://httpbin.org/post using a Stream')
       .post('https://httpbin.org/post', fs.createReadStream(filePath), {
         json: false,
@@ -287,9 +287,9 @@ describe('Frisby live running httpbin tests', function() {
           .required()
           .valid('https://httpbin.org/post'),
       })
-      .toss()
+      .run()
 
-    frisby
+    await frisby
       .create('PUT frisby logo to https://httpbin.org/put using a Stream')
       .put('https://httpbin.org/put', fs.createReadStream(filePath), {
         json: false,
@@ -321,7 +321,7 @@ describe('Frisby live running httpbin tests', function() {
         origin: Joi.any(),
         url: Joi.string().valid('https://httpbin.org/put'),
       })
-      .toss()
+      .run()
   })
 
   // it('sending multipart/from-data encoded bodies should work', function () {
@@ -488,8 +488,8 @@ describe('Frisby live running httpbin tests', function() {
   //
   // })
 
-  it('should send all headers when you bootstrap them with config', function() {
-    frisby
+  it('should send all headers when you bootstrap them with config', async function() {
+    await frisby
       .create(this.test.title)
       .baseUri('http://httpbin.org')
       .config({ request: { headers: { Abc: 'def' } } })
@@ -501,11 +501,11 @@ describe('Frisby live running httpbin tests', function() {
       .expectContainsJSON('headers', {
         Foo: 'bar',
       })
-      .toss()
+      .run()
   })
 
-  it('should send all headers when you bootstrap them with parameters', function() {
-    frisby
+  it('should send all headers when you bootstrap them with parameters', async function() {
+    await frisby
       .create(this.test.title)
       .baseUri('http://httpbin.org')
       .get('/headers', { headers: { Abc: 'def' } })
@@ -516,11 +516,11 @@ describe('Frisby live running httpbin tests', function() {
       .expectContainsJSON('headers', {
         Foo: 'bar',
       })
-      .toss()
+      .run()
   })
 
-  it('should respect overridden headers - params > config', function() {
-    frisby
+  it('should respect overridden headers - params > config', async function() {
+    await frisby
       .create(this.test.title)
       .baseUri('http://httpbin.org')
       .config({ request: { headers: { a: '1', b: '1' } } })
@@ -529,12 +529,12 @@ describe('Frisby live running httpbin tests', function() {
         A: '2',
         B: '1',
       })
-      .toss()
+      .run()
   })
 
-  //Doesn't currently pass, not sure it should. TBC in conversation on #106
-  it.skip('should respect overridden headers - addHeader > params', function() {
-    frisby
+  // Doesn't currently pass, not sure it should. TBC in conversation on #106.
+  it.skip('should respect overridden headers - addHeader > params', async function() {
+    await frisby
       .create(this.test.title)
       .baseUri('http://httpbin.org')
       .get('/headers', { headers: { a: '1', b: '1' } })
@@ -543,6 +543,6 @@ describe('Frisby live running httpbin tests', function() {
         A: '2',
         B: '1',
       })
-      .toss()
+      .run()
   })
 })

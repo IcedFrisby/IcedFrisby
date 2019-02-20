@@ -3,334 +3,140 @@
 const frisby = require('../lib/icedfrisby')
 const expect = require('chai').expect
 const nock = require('nock')
+const sinon = require('sinon')
+const fixtures = require('./fixtures/repetition_fixture.json')
 
 describe('IcedFrisby inspect methods', function() {
-  it('should perform no action if null is provided to the inspect() callback', function() {
-    const inspectNock = nock('http://inspect-null.httpbin.org')
-      .get('/get')
-      .once()
-      .reply(200, {
-        args: {},
-        headers: {
-          Host: 'httpbin.org',
-        },
-        origin: '127.0.0.1',
-        url: 'http://inspect.httpbin.org/get',
-      })
-
-    frisby
-      .create(this.test.title)
-      .get('http://inspect-null.httpbin.org/get', { json: true })
-      .inspect(null)
-      .after(function() {
-        // check that the mock was consumed
-        inspectNock.done()
-      })
-      .toss()
+  let scope
+  beforeEach(function() {
+    scope = nock('http://example.test')
+      .get('/')
+      .reply(200, fixtures.singleObject)
+  })
+  afterEach(function() {
+    scope.done()
   })
 
-  it('should allow a call to inspect the request and response', function() {
-    const inspectNock = nock('http://inspect.httpbin.org')
-      .get('/get')
-      .reply(200, {
-        args: {},
-        headers: {
-          Host: 'httpbin.org',
-        },
-        origin: '127.0.0.1',
-        url: 'http://inspect.httpbin.org/get',
-      })
-
-    frisby
+  it('should perform no action if null is provided to the inspect() callback', async function() {
+    await frisby
       .create(this.test.title)
-      .get('http://inspect.httpbin.org/get', { json: true })
-      .inspect(function(err, req, res, body, headers) {
+      .get('http://example.test/', { json: true })
+      .inspect(null)
+      .run()
+  })
+
+  it('should allow a call to inspect the request and response', async function() {
+    const inspectInvoked = sinon.spy()
+
+    await frisby
+      .create(this.test.title)
+      .get('http://example.test/', { json: true })
+      .inspect((err, req, res, body, headers) => {
         expect(err).to.equal(null)
         expect(req).to.be.an('object')
         expect(res).to.be.an('object')
         expect(body).to.be.an('object')
         expect(headers).to.be.an('object')
-
-        // check that the mock was consumed
-        inspectNock.done()
+        inspectInvoked()
       })
-      .toss()
+      .run()
+
+    expect(inspectInvoked.calledOnce).to.be.true
   })
 
-  //TODO: Improvement needed. These check that the request fired (and so the inspect didn't explode)
-  it('- inspectRequest should work', function() {
-    const inspectNock = nock('http://inspectRequest.httpbin.org')
-      .get('/get')
-      .reply(200, {
-        args: {},
-        headers: {
-          Host: 'httpbin.org',
-        },
-        origin: '127.0.0.1',
-        url: 'http://inspect.httpbin.org/get',
-      })
-
-    frisby
+  it('inspectRequest should work', async function() {
+    await frisby
       .create(this.test.title)
-      .get('http://inspectRequest.httpbin.org/get', { json: true })
+      .get('http://example.test/', { json: true })
       .inspectRequest('inspectRequest')
-      .after(function() {
-        // check that the mock was consumed
-        inspectNock.done()
-      })
-      .toss()
+      .run()
   })
 
-  it('- inspectRequest should work when passed no message', function() {
-    const inspectNock = nock('http://inspectRequest.httpbin.org')
-      .get('/get')
-      .reply(200, {
-        args: {},
-        headers: {
-          Host: 'httpbin.org',
-        },
-        origin: '127.0.0.1',
-        url: 'http://inspect.httpbin.org/get',
-      })
-
-    frisby
+  it('inspectRequest should work when passed no message', async function() {
+    await frisby
       .create(this.test.title)
-      .get('http://inspectRequest.httpbin.org/get', { json: true })
+      .get('http://example.test/', { json: true })
       .inspectRequest()
-      .after(function() {
-        // check that the mock was consumed
-        inspectNock.done()
-      })
-      .toss()
+      .run()
   })
 
-  it('- inspectResponse should work', function() {
-    const inspectNock = nock('http://inspectResponse.httpbin.org')
-      .get('/get')
-      .reply(200, {
-        args: {},
-        headers: {
-          Host: 'httpbin.org',
-        },
-        origin: '127.0.0.1',
-        url: 'http://inspect.httpbin.org/get',
-      })
-
-    frisby
+  it('inspectResponse should work', async function() {
+    await frisby
       .create(this.test.title)
-      .get('http://inspectResponse.httpbin.org/get', { json: true })
+      .get('http://example.test/', { json: true })
       .inspectResponse('inspectResponse')
-      .after(function() {
-        // check that the mock was consumed
-        inspectNock.done()
-      })
-      .toss()
+      .run()
   })
 
-  it('- inspectResponse should work when passed no message', function() {
-    const inspectNock = nock('http://inspectResponse.httpbin.org')
-      .get('/get')
-      .reply(200, {
-        args: {},
-        headers: {
-          Host: 'httpbin.org',
-        },
-        origin: '127.0.0.1',
-        url: 'http://inspect.httpbin.org/get',
-      })
-
-    frisby
+  it('inspectResponse should work when passed no message', async function() {
+    await frisby
       .create(this.test.title)
-      .get('http://inspectResponse.httpbin.org/get', { json: true })
+      .get('http://example.test/', { json: true })
       .inspectResponse()
-      .after(function() {
-        // check that the mock was consumed
-        inspectNock.done()
-      })
-      .toss()
+      .run()
   })
 
-  it('- inspectHeaders should work', function() {
-    const inspectNock = nock('http://inspectHeaders.httpbin.org')
-      .get('/get')
-      .reply(200, {
-        args: {},
-        headers: {
-          Host: 'httpbin.org',
-        },
-        origin: '127.0.0.1',
-        url: 'http://inspect.httpbin.org/get',
-      })
-
-    frisby
+  it('inspectHeaders should work', async function() {
+    await frisby
       .create(this.test.title)
-      .get('http://inspectHeaders.httpbin.org/get', { json: true })
+      .get('http://example.test/', { json: true })
       .inspectHeaders('inspectHeaders')
-      .after(function() {
-        // check that the mock was consumed
-        inspectNock.done()
-      })
-      .toss()
+      .run()
   })
 
-  it('- inspectHeaders should work when passed no message', function() {
-    const inspectNock = nock('http://inspectHeaders.httpbin.org')
-      .get('/get')
-      .reply(200, {
-        args: {},
-        headers: {
-          Host: 'httpbin.org',
-        },
-        origin: '127.0.0.1',
-        url: 'http://inspect.httpbin.org/get',
-      })
-
-    frisby
+  it('inspectHeaders should work when passed no message', async function() {
+    await frisby
       .create(this.test.title)
-      .get('http://inspectHeaders.httpbin.org/get', { json: true })
+      .get('http://example.test/', { json: true })
       .inspectHeaders()
-      .after(function() {
-        // check that the mock was consumed
-        inspectNock.done()
-      })
-      .toss()
+      .run()
   })
 
-  it('- inspectBody should work', function() {
-    const inspectNock = nock('http://inspectBody.httpbin.org')
-      .get('/get')
-      .reply(200, {
-        args: {},
-        headers: {
-          Host: 'httpbin.org',
-        },
-        origin: '127.0.0.1',
-        url: 'http://inspect.httpbin.org/get',
-      })
-
-    frisby
+  it('inspectBody should work', async function() {
+    await frisby
       .create(this.test.title)
-      .get('http://inspectBody.httpbin.org/get', { json: true })
+      .get('http://example.test/', { json: true })
       .inspectBody('inspectBody')
-      .after(function() {
-        // check that the mock was consumed
-        inspectNock.done()
-      })
-      .toss()
+      .run()
   })
 
-  it('- inspectBody should work when passed no message', function() {
-    const inspectNock = nock('http://inspectBody.httpbin.org')
-      .get('/get')
-      .reply(200, {
-        args: {},
-        headers: {
-          Host: 'httpbin.org',
-        },
-        origin: '127.0.0.1',
-        url: 'http://inspect.httpbin.org/get',
-      })
-
-    frisby
+  it('inspectBody should work when passed no message', async function() {
+    await frisby
       .create(this.test.title)
-      .get('http://inspectBody.httpbin.org/get', { json: true })
+      .get('http://example.test/', { json: true })
       .inspectBody()
-      .after(function() {
-        // check that the mock was consumed
-        inspectNock.done()
-      })
-      .toss()
+      .run()
   })
 
-  it('- inspectJSON should work', function() {
-    const inspectNock = nock('http://inspectJSON.httpbin.org')
-      .get('/get')
-      .reply(200, {
-        args: {},
-        headers: {
-          Host: 'httpbin.org',
-        },
-        origin: '127.0.0.1',
-        url: 'http://inspect.httpbin.org/get',
-      })
-
-    frisby
+  it('inspectJSON should work', async function() {
+    await frisby
       .create(this.test.title)
-      .get('http://inspectJSON.httpbin.org/get', { json: true })
+      .get('http://example.test/', { json: true })
       .inspectJSON('inspectJSON')
-      .after(function() {
-        // check that the mock was consumed
-        inspectNock.done()
-      })
-      .toss()
+      .run()
   })
 
-  it('- inspectJSON should work when passed no message', function() {
-    const inspectNock = nock('http://inspectJSON.httpbin.org')
-      .get('/get')
-      .reply(200, {
-        args: {},
-        headers: {
-          Host: 'httpbin.org',
-        },
-        origin: '127.0.0.1',
-        url: 'http://inspect.httpbin.org/get',
-      })
-
-    frisby
+  it('inspectJSON should work when passed no message', async function() {
+    await frisby
       .create(this.test.title)
-      .get('http://inspectJSON.httpbin.org/get', { json: true })
+      .get('http://example.test/', { json: true })
       .inspectJSON()
-      .after(function() {
-        // check that the mock was consumed
-        inspectNock.done()
-      })
-      .toss()
+      .run()
   })
 
-  it('- inspectStatus should work', function() {
-    const inspectNock = nock('http://inspectStatus.httpbin.org')
-      .get('/get')
-      .reply(200, {
-        args: {},
-        headers: {
-          Host: 'httpbin.org',
-        },
-        origin: '127.0.0.1',
-        url: 'http://inspect.httpbin.org/get',
-      })
-
-    frisby
+  it('inspectStatus should work', async function() {
+    await frisby
       .create(this.test.title)
-      .get('http://inspectStatus.httpbin.org/get', { json: true })
+      .get('http://example.test/', { json: true })
       .inspectStatus('inspectStatus')
-      .after(function() {
-        // check that the mock was consumed
-        inspectNock.done()
-      })
-      .toss()
+      .run()
   })
 
-  it('- inspectStatus should work when passed no message', function() {
-    const inspectNock = nock('http://inspectStatus.httpbin.org')
-      .get('/get')
-      .reply(200, {
-        args: {},
-        headers: {
-          Host: 'httpbin.org',
-        },
-        origin: '127.0.0.1',
-        url: 'http://inspect.httpbin.org/get',
-      })
-
-    frisby
+  it('inspectStatus should work when passed no message', async function() {
+    await frisby
       .create(this.test.title)
-      .get('http://inspectStatus.httpbin.org/get', { json: true })
+      .get('http://example.test/', { json: true })
       .inspectStatus()
-      .after(function() {
-        // check that the mock was consumed
-        inspectNock.done()
-      })
-      .toss()
+      .run()
   })
 })
