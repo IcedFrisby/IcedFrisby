@@ -1,11 +1,11 @@
 'use strict'
 
-const frisby = require('../lib/icedfrisby')
-const Joi = require('joi')
 const fs = require('fs')
 const path = require('path')
 const util = require('util')
 const Readable = require('stream').Readable
+const Joi = require('joi')
+const frisby = require('../lib/icedfrisby')
 
 function StringStream(string, options) {
   Readable.call(this, options)

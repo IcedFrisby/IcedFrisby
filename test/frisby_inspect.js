@@ -1,9 +1,9 @@
 'use strict'
 
-const frisby = require('../lib/icedfrisby')
 const expect = require('chai').expect
 const nock = require('nock')
 const sinon = require('sinon')
+const frisby = require('../lib/icedfrisby')
 const fixtures = require('./fixtures/repetition_fixture.json')
 
 describe('IcedFrisby inspect methods', function() {

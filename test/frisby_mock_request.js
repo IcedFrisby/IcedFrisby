@@ -1,20 +1,18 @@
 'use strict'
 
-const nock = require('nock')
-const fixtures = require('./fixtures/repetition_fixture.json')
-const frisby = require('../lib/icedfrisby')
+const fs = require('fs')
+const path = require('path')
+const util = require('util')
 const Joi = require('joi')
+const nock = require('nock')
 const { expect, AssertionError } = require('chai')
 const { MultiError } = require('verror')
 const sinon = require('sinon')
 const proxyquire = require('proxyquire').noPreserveCache()
+const frisby = require('../lib/icedfrisby')
+const fixtures = require('./fixtures/repetition_fixture.json')
 
 require('chai').use(require('chai-as-promised'))
-
-// Built-in node.js
-const fs = require('fs')
-const path = require('path')
-const util = require('util')
 
 afterEach(function() {
   nock.restore()

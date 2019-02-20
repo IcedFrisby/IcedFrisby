@@ -3,9 +3,9 @@
 const fs = require('fs')
 const https = require('https')
 const path = require('path')
-const frisby = require('./../lib/icedfrisby')
 const express = require('express')
 const { expect } = require('chai')
+const frisby = require('./../lib/icedfrisby')
 
 // The following tests were adapted from:
 // https://github.com/visionmedia/supertest/blob/master/test/supertest.js
