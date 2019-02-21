@@ -809,7 +809,7 @@ describe('Frisby matchers', function() {
       expect(() =>
         frisby
           .create(this.test.title)
-          .get('http://mock-request/test-object')
+          .get('http://example.test/')
           .after()
       ).to.throw(
         Error,
@@ -821,7 +821,7 @@ describe('Frisby matchers', function() {
       expect(() =>
         frisby
           .create(this.test.title)
-          .get('http://mock-request/test-object')
+          .get('http://example.test/')
           .after('something')
       ).to.throw(Error, 'Expected Function object in after(), but got string')
     })
@@ -922,7 +922,7 @@ describe('Frisby matchers', function() {
       expect(() =>
         frisby
           .create(this.test.title)
-          .get('http://mock-request/test-object')
+          .get('http://example.test/')
           .finally()
       ).to.throw(
         Error,
@@ -934,7 +934,7 @@ describe('Frisby matchers', function() {
       expect(() =>
         frisby
           .create(this.test.title)
-          .get('http://mock-request/test-object')
+          .get('http://example.test/')
           .finally('something')
       ).to.throw(Error, 'Expected Function object in finally(), but got string')
     })

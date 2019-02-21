@@ -58,7 +58,6 @@
     "joi": "^14.3.0",
     "mocha": "^6.0.0",
     "mocha-lcov-reporter": "^1.2.0",
-    "mock-request": "^0.1.2",
     "nock": "11.0.0-beta.6",
     "nyc": "^13.3.0",
     "prettier": "^1.16.4",

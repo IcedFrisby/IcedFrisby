@@ -24,8 +24,8 @@ describe('console output', function() {
   })
 
   it("should warn developers if there is a header with 'json' but the body type is not JSON", async function() {
-    const scope = nock('http://mock-request/')
-      .post('/test-object')
+    const scope = nock('http://example.test/')
+      .post('/')
       .once()
       .reply(201)
 
@@ -36,7 +36,7 @@ describe('console output', function() {
         Accept: 'application/json',
         Referer: 'http://frisbyjs.com',
       })
-      .post('http://mock-request/test-object', {
+      .post('http://example.test/', {
         isSomeObj: true,
       })
       .expectStatus(201)
@@ -49,14 +49,14 @@ describe('console output', function() {
   })
 
   it('should NOT warn developers that "there is a header with \'json\' but the body type is not JSON" because there is no body provided', async function() {
-    const scope = nock('http://mock-request/')
-      .post('/test-object')
+    const scope = nock('http://example.test')
+      .post('/')
       .once()
       .reply(201, (uri, requestBody) => requestBody)
 
     await frisby
       .create(this.test.title)
-      .post('http://mock-request/test-object')
+      .post('http://example.test/')
       .expectStatus(201)
       .run()
 
