@@ -75,7 +75,7 @@
     "node": ">= 8"
   },
   "scripts": {
-    "coverage": "nyc --reporter=lcovonly npm run test:js",
+    "coverage": "nyc --reporter=lcovonly --reporter=text npm run test:js",
     "lint": "eslint \"**/*.js\"",
     "prettier": "prettier --write \"**/*.@(js|md|yml|json)\"",
     "prettier-check": "prettier-check \"**/*.@(js|md|yml|json)\"",
