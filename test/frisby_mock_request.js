@@ -757,32 +757,22 @@ describe('Frisby matchers', function() {
     })
 
     it('should not be invoked after an failed expectation', async function() {
+      const afterInvoked = sinon.spy()
+
       const scope = nock('http://example.test')
         .get('/')
-        .reply(200, fixtures.singleObject)
+        .reply(418, fixtures.singleObject)
 
-      const test = frisby
-        .create('aaa')
-        .get('http://example.test/')
-        .expectStatus(204)
-        .after(() => {
-          expect.fail("The after function shouldn't be invoked")
-        })
+      await expect(
+        frisby
+          .create('aaa')
+          .get('http://example.test/')
+          .expectStatus(404)
+          .after(() => afterInvoked())
+          .run()
+      ).to.be.rejectedWith(AssertionError, 'expected 418 to equal 404')
 
-      // Intercept the raised exception to prevent Mocha from receiving it.
-      test._invokeExpects = function(done) {
-        try {
-          test.prototype._invokeExpects.call(test, done)
-        } catch (e) {
-          done()
-          return
-        }
-        // If we catch the exeption, as expected, we should never get here.
-        expect.fail('The failed expectation should have raised an exception')
-      }
-
-      await test.run()
-
+      expect(afterInvoked.called).to.be.false
       scope.done()
     })
 
