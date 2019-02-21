@@ -1161,7 +1161,7 @@ describe('Frisby matchers', function() {
       let requestCount = 0
 
       nock('http://example.test')
-        .get('/fail-four-times')
+        .get('/fail-first-time')
         .delay(50)
         .twice()
         .reply((uri, requestBody) => {
@@ -1178,7 +1178,7 @@ describe('Frisby matchers', function() {
 
       const test = frisby
         .create(this.test.title)
-        .get('http://example.test/fail-four-times')
+        .get('http://example.test/fail-first-time')
         .timeout(75)
         .retry(1, 50)
         .expectStatus(200)
