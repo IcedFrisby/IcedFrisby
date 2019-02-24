@@ -15,6 +15,20 @@ The [**IcedFrisby** API Docs](https://github.com/IcedFrisby/IcedFrisby/blob/mast
 
 The [**IcedFrisby** Changelog](https://github.com/IcedFrisby/IcedFrisby/blob/master/CHANGELOG.md) is located in [CHANGELOG.md](https://github.com/IcedFrisby/IcedFrisby/blob/master/CHANGELOG.md).
 
+## Upgrading from 1.5.0 to 2.0.0
+
+1. Ensure you're using Node 8+.
+2. If using `expectJSONTypes`, add `joi` to `devDependencies`.
+3. Replace calls to `globalConfig()` and `reset()` with calls to `.config()`.
+   If necessary, create a helper function which invokes
+   `frisby.create().config()`.
+4. Consider running your tests using `async run()` instead of `toss()` if it
+   improves your workflow.
+
+The full set of changes is documented [in the changelog][changelog-2.0.0].
+
+[changelog-2.0.0: https://github.com/IcedFrisby/IcedFrisby/blob/master/CHANGELOG.md#2.0.0
+
 ## What makes IcedFrisby different?
 
 - Uses [Mocha](https://github.com/mochajs/mocha) as the driver

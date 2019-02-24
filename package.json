@@ -1,6 +1,6 @@
 {
   "name": "icedfrisby",
-  "version": "2.0.0-alpha.4",
+  "version": "2.0.0",
   "description": "API testing made easy, fast, and fun",
   "homepage": "https://github.com/IcedFrisby/IcedFrisby",
   "bugs": "https://github.com/IcedFrisby/IcedFrisby/issues",
@@ -15,10 +15,7 @@
     "Kevin Morey",
     "Casey Vega"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/IcedFrisby/IcedFrisby"
-  },
+  "repository": "IcedFrisby/IcedFrisby",
   "keywords": [
     "testing",
     "api",
