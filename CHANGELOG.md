@@ -1,6 +1,7 @@
 # IcedFrisby Changelog
 
-[unreleased]: https://github.com/IcedFrisby/IcedFrisby/compare/2.0.0-alpha.4...HEAD
+[unreleased]: https://github.com/IcedFrisby/IcedFrisby/compare/2.0.0-alpha.5...HEAD
+[2.0.0-alpha.5]: https://github.com/IcedFrisby/IcedFrisby/compare/2.0.0-alpha.5...2.0.0-alpha.4
 [2.0.0-alpha.4]: https://github.com/IcedFrisby/IcedFrisby/compare/2.0.0-alpha.4...2.0.0-alpha.3
 [2.0.0-alpha.3]: https://github.com/IcedFrisby/IcedFrisby/compare/2.0.0-alpha.3...2.0.0-alpha.2
 [2.0.0-alpha.2]: https://github.com/IcedFrisby/IcedFrisby/compare/2.0.0-alpha.2...2.0.0-alpha.1
@@ -13,6 +14,12 @@
 [1.1.0]: https://github.com/IcedFrisby/IcedFrisby/compare/1.1.0...1.0.0
 
 ## [Unreleased][]
+
+## [2.0.0-alpha.5][]
+
+### Bug fixes
+
+- Correctly emit exceptions from `after()` and `finally()`
 
 ## [2.0.0-alpha.4][]
 
