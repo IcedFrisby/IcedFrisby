@@ -1069,6 +1069,15 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
+  it('Unreachable hostnames should fail with a 599 status code', async function() {
+    await frisby
+      .create(this.test.title)
+      .get('http://invalid.test/')
+      .expectStatus(599)
+      .timeout(100)
+      .run()
+  })
+
   it('Invalid URLs should fail with a 599 status code', async function() {
     await frisby
       .create(this.test.title)
@@ -1109,7 +1118,7 @@ describe('Frisby matchers', function() {
         .times(retryCount + 1)
         .reply((uri, requestBody) => {
           actualRequestCount += 1
-          return 200, '<html></html>'
+          return [200, '<html></html>']
         })
 
       await expect(
@@ -1122,6 +1131,37 @@ describe('Frisby matchers', function() {
       ).to.be.rejectedWith(
         Error,
         `Request timed out after ${timeout} ms (${retryCount + 1} attempts)`
+      )
+
+      expect(actualRequestCount).to.equal(retryCount + 1)
+      scope.done()
+    })
+
+    it('should fail with the last error when every retry errors out', async function() {
+      const retryCount = 4
+      let actualRequestCount = 0
+
+      const scope = nock('http://example.test')
+        .filteringRequestBody(body => {
+          actualRequestCount += 1
+          return body
+        })
+        .get('/just-dont-come-back-2')
+        .delayBody(50)
+        .times(retryCount + 1)
+        .replyWithError(
+          Error('This could be a network error or an internal error')
+        )
+
+      await expect(
+        frisby
+          .create(this.test.title)
+          .get('http://example.test/just-dont-come-back-2')
+          .retry(retryCount, 0)
+          .run()
+      ).to.be.rejectedWith(
+        Error,
+        'This could be a network error or an internal error'
       )
 
       expect(actualRequestCount).to.equal(retryCount + 1)
@@ -1178,7 +1218,7 @@ describe('Frisby matchers', function() {
         .delayBody(50)
         .reply(200, (uri, requestBody) => {
           gotRequest()
-          return 200
+          return [200]
         })
 
       await expect(
