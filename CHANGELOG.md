@@ -1,5 +1,6 @@
 # IcedFrisby Changelog
 
+[2.0.0]: https://github.com/IcedFrisby/IcedFrisby/compare/2.0.0...1.5.0
 [unreleased]: https://github.com/IcedFrisby/IcedFrisby/compare/2.0.0-alpha.5...HEAD
 [2.0.0-alpha.5]: https://github.com/IcedFrisby/IcedFrisby/compare/2.0.0-alpha.5...2.0.0-alpha.4
 [2.0.0-alpha.4]: https://github.com/IcedFrisby/IcedFrisby/compare/2.0.0-alpha.4...2.0.0-alpha.3
@@ -14,6 +15,46 @@
 [1.1.0]: https://github.com/IcedFrisby/IcedFrisby/compare/1.1.0...1.0.0
 
 ## [Unreleased][]
+
+## [2.0.0][]
+
+This release involves a substantial rewrite and several breaking changes from
+2.0.0. The changes since 1.5.0 are summarized here.
+
+### Breaking changes
+
+- Joi is now an optional dependency. If you are using `expectJSONTypes` you
+  must install Joi on your own.
+- IcedFrisby has dropped support for Node 6 and now requires Node 8+.
+- `globalConfig()` has been removed. Each test can be independently
+  configured using `config()`, which takes the same options. `reset()` has
+  also been removed.
+- The plugin interface has changed. `this.current.expects` has been removed.
+  Plugins should use `after()` instead.
+
+### New features
+
+- An `async run()` method has been added. This allows running IcedFrisby
+  tests within `it()` blocks or using a test runner other than Mocha.
+
+### Bug fixes
+
+- Fix `timeout()` and `retry()` ([PR #71][])
+  - Retry on errors, not just timeouts
+  - Back off between retries
+  - Global setup respects `retryBackoff` option
+  - Configure Mocha’s timeout to accommodate `.timeout()` and `.retry()`
+- Clean up after `useApp()` ([PR #72][])
+
+### Other changes
+
+- Remove `setResponseType` and other `setResponseX` functions which were
+  not part of the public API and were unused internally.
+- Significantly improve API documentation.
+- Rewrite a bunch of internals using `async`.
+- Rewrite tests using `async` and `run()`.
+- Improve test coverage.
+- Update dependencies.
 
 ## [2.0.0-alpha.5][]
 
