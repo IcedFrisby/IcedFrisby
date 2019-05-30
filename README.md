@@ -18,7 +18,7 @@ The [**IcedFrisby** Changelog](https://github.com/IcedFrisby/IcedFrisby/blob/mas
 ## Upgrading from 1.5.0 to 2.0.0
 
 1. Ensure you're using Node 8+.
-2. If using `expectJSONTypes`, add `joi` to `devDependencies`.
+2. If using `expectJSONTypes`, add `@hapi/joi` to `devDependencies`.
 3. Replace calls to `globalConfig()` and `reset()` with calls to `.config()`.
    If necessary, create a helper function which invokes
    `frisby.create().config()`.
@@ -46,7 +46,7 @@ Install IcedFrisby and Mocha from NPM:
 
 If you are using `expectJSONTypes`, install [Joi][] too:
 
-    npm install joi --save-dev
+    npm install @hapi/joi --save-dev
 
 IcedFrisby is built and tested against Node 8 and 10.
 
@@ -60,7 +60,7 @@ Each set of unique sequences or API endpoint tests should be started with new `f
 
 ```javascript
 const frisby = require('icedfrisby')
-const Joi = require('joi')
+const Joi = require('@hapi/joi')
 
 const URL = 'http://localhost:3000/'
 const URL_AUTH = 'http://username:password@localhost:3000/'
