@@ -3,7 +3,7 @@
 const fs = require('fs')
 const path = require('path')
 const util = require('util')
-const Joi = require('joi')
+const Joi = require('@hapi/joi')
 const nock = require('nock')
 const { expect, AssertionError } = require('chai')
 const { MultiError } = require('verror')
@@ -322,7 +322,7 @@ describe('Frisby matchers', function() {
 
   it('expectJSONTypes should fail with a helpful message', async function() {
     const frisbyWithoutJoi = proxyquire('../lib/icedfrisby', {
-      './pathMatch': proxyquire('../lib/pathMatch', { joi: null }),
+      './pathMatch': proxyquire('../lib/pathMatch', { '@hapi/joi': null }),
     })
 
     const scope = nock('http://example.test')
@@ -337,7 +337,7 @@ describe('Frisby matchers', function() {
       .exceptionHandler(err => {
         // TODO How can I assert that this method is called?
         expect(err.message).to.equal(
-          'Joi is required to use expectJSONTypes, and must be installed separately'
+          'Joi is required to use expectJSONTypes, and must be installed separately (npm i @hapi/joi)'
         )
       })
       .run()
@@ -778,6 +778,25 @@ describe('Frisby matchers', function() {
 
     it('TODO: should not be invoked after a test failure')
 
+    it('when a hook raised an exception, it should forward it', async function() {
+      const scope = nock('http://example.test')
+        .get('/')
+        .reply(200, fixtures.singleObject)
+
+      await expect(
+        frisby
+          .create(this.test.title)
+          .get('http://example.test/')
+          .expectStatus(200)
+          .after(() => {
+            throw Error('Error in after()')
+          })
+          .run()
+      ).to.be.rejectedWith(Error, 'Error in after()')
+
+      scope.done()
+    })
+
     // TODO: This is failing; not sure if it's due to the rewrite, or a previous
     // change, or if it was broken before, too.
     it.skip('should not be invoked after a previous after hook raised an exception', async function() {
@@ -958,6 +977,25 @@ describe('Frisby matchers', function() {
       ).to.be.rejectedWith(AssertionError, 'expected 200 to equal 204')
 
       expect(finallyInvoked.calledOnce).to.be.true
+      scope.done()
+    })
+
+    it('when a hook raised an exception, it should forward it', async function() {
+      const scope = nock('http://example.test')
+        .get('/')
+        .reply(200, fixtures.singleObject)
+
+      await expect(
+        frisby
+          .create(this.test.title)
+          .get('http://example.test/')
+          .expectStatus(200)
+          .finally(() => {
+            throw Error('Error in finally()')
+          })
+          .run()
+      ).to.be.rejectedWith(Error, 'Error in finally()')
+
       scope.done()
     })
 

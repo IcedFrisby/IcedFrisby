@@ -27,7 +27,7 @@ jobs:
 
       - run:
           name: Check prettier
-          command: npm run prettier-check
+          command: npm run prettier:check
           when: always
 
   node@8:
@@ -44,16 +44,6 @@ jobs:
       - run:
           name: Run tests
           command: npm run coverage
-
-      - run:
-          name: Check lint
-          command: npm run lint
-          when: always
-
-      - run:
-          name: Check prettier
-          command: npm run prettier-check
-          when: always
 
 workflows:
   version: 2
