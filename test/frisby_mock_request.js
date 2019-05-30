@@ -322,7 +322,7 @@ describe('Frisby matchers', function() {
 
   it('expectJSONTypes should fail with a helpful message', async function() {
     const frisbyWithoutJoi = proxyquire('../lib/icedfrisby', {
-      './pathMatch': proxyquire('../lib/pathMatch', { joi: null }),
+      './pathMatch': proxyquire('../lib/pathMatch', { '@hapi/joi': null }),
     })
 
     const scope = nock('http://example.test')
@@ -337,7 +337,7 @@ describe('Frisby matchers', function() {
       .exceptionHandler(err => {
         // TODO How can I assert that this method is called?
         expect(err.message).to.equal(
-          'Joi is required to use expectJSONTypes, and must be installed separately'
+          'Joi is required to use expectJSONTypes, and must be installed separately (npm i @hapi/joi)'
         )
       })
       .run()
