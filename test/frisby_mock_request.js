@@ -3,7 +3,7 @@
 const fs = require('fs')
 const path = require('path')
 const util = require('util')
-const Joi = require('joi')
+const Joi = require('@hapi/joi')
 const nock = require('nock')
 const { expect, AssertionError } = require('chai')
 const { MultiError } = require('verror')
