@@ -1988,6 +1988,78 @@ describe('Frisby matchers', function() {
     })
   })
 
+  describe('skipped tests', function() {
+    context('when using toss()', function() {
+      let sandbox, globalMock, describeMock
+      beforeEach(function() {
+        sandbox = sinon.sandbox.create()
+        globalMock = sandbox.mock(global, 'describe')
+        globalMock.expects('describe').never()
+        describeMock = sandbox.mock(global.describe)
+        describeMock.expects('skip').once()
+      })
+      afterEach(function() {
+        globalMock.verify()
+        describeMock.verify()
+      })
+      afterEach(function() {
+        sandbox.restore()
+      })
+
+      it('should register skipped tests', function() {
+        frisby
+          .create(this.test.title)
+          .get('http://example.test/test')
+          .skip()
+          .toss()
+      })
+    })
+
+    it('should not run skipped tests', async function() {
+      const scope = nock('http://example.test')
+        .get('/')
+        .reply(200)
+
+      await frisby
+        .create(this.test.title)
+        .get('http://example.test/')
+        .skip()
+        .run()
+
+      expect(scope.isDone()).to.equal(false)
+    })
+
+    describe('conditionally skipped tests', function() {
+      it('when the condition is falsy, the tests are run', async function() {
+        const scope = nock('http://example.test')
+          .get('/')
+          .reply(200)
+
+        await frisby
+          .create(this.test.title)
+          .get('http://example.test/')
+          .skipIf(false)
+          .run()
+
+        expect(scope.isDone()).to.equal(true)
+      })
+
+      it('when the condition is truthy, the tests are skipped', async function() {
+        const scope = nock('http://example.test')
+          .get('/')
+          .reply(200)
+
+        await frisby
+          .create(this.test.title)
+          .get('http://example.test/')
+          .skipIf(true)
+          .run()
+
+        expect(scope.isDone()).to.equal(false)
+      })
+    })
+  })
+
   describe('header checks should ignore case for strings', function() {
     it('expectHeader should pass when the header case is mismatched', async function() {
       const scope = nock('http://example.test')
