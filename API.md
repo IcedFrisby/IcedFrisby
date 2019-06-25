@@ -791,6 +791,12 @@ block. `skip()` takes precedence over `only()`.
 When condition is true, skip this test. `run()` will do nothing and `toss()`
 will wrap the test in `describe.skip`.
 
+### skipWhen(predicate)
+
+When predicate evaluates to true, skip this test. This allows conditional
+skipping based on further manipulation of the Frisby object later in the call
+chain (e.g. for conditionally skipping tests with intercepts).
+
 ### timeout(ms)
 
 Sets the timeout for this request.
