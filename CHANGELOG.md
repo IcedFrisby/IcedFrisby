@@ -1,22 +1,10 @@
 # IcedFrisby Changelog
 
-[2.0.0]: https://github.com/IcedFrisby/IcedFrisby/compare/2.0.0...1.5.0
-[unreleased]: https://github.com/IcedFrisby/IcedFrisby/compare/2.0.0-alpha.5...HEAD
-[2.0.0-alpha.5]: https://github.com/IcedFrisby/IcedFrisby/compare/2.0.0-alpha.5...2.0.0-alpha.4
-[2.0.0-alpha.4]: https://github.com/IcedFrisby/IcedFrisby/compare/2.0.0-alpha.4...2.0.0-alpha.3
-[2.0.0-alpha.3]: https://github.com/IcedFrisby/IcedFrisby/compare/2.0.0-alpha.3...2.0.0-alpha.2
-[2.0.0-alpha.2]: https://github.com/IcedFrisby/IcedFrisby/compare/2.0.0-alpha.2...2.0.0-alpha.1
-[2.0.0-alpha.1]: https://github.com/IcedFrisby/IcedFrisby/compare/2.0.0-alpha.1...1.5.0
-[1.5.0]: https://github.com/IcedFrisby/IcedFrisby/compare/1.5.0...1.4.0
-[1.4.0]: https://github.com/IcedFrisby/IcedFrisby/compare/1.4.0...1.3.0
-[1.3.1]: https://github.com/IcedFrisby/IcedFrisby/compare/1.4.0...1.3.0
-[1.3.0]: https://github.com/IcedFrisby/IcedFrisby/compare/1.3.0...1.2.0
-[1.2.0]: https://github.com/IcedFrisby/IcedFrisby/compare/1.2.0...1.1.0
-[1.1.0]: https://github.com/IcedFrisby/IcedFrisby/compare/1.1.0...1.0.0
+## 2.1.0
 
-## [Unreleased][]
+- Add `skip()` and `skipIf()` methods.
 
-## [2.0.0][]
+## 2.0.0
 
 This release involves a substantial rewrite and several breaking changes from
 2.0.0. The changes since 1.5.0 are summarized here.
@@ -56,13 +44,13 @@ This release involves a substantial rewrite and several breaking changes from
 - Improve test coverage.
 - Update dependencies.
 
-## [2.0.0-alpha.5][]
+## 2.0.0-alpha.5
 
 ### Bug fixes
 
 - Correctly emit exceptions from `after()` and `finally()`
 
-## [2.0.0-alpha.4][]
+## 2.0.0-alpha.4
 
 ### Other changes
 
@@ -70,7 +58,7 @@ This release involves a substantial rewrite and several breaking changes from
 - Rewrite tests using `async` and `run()`.
 - Update `check-types` dependency.
 
-## [2.0.0-alpha.3][]
+## 2.0.0-alpha.3
 
 ### Breaking changes
 
@@ -87,7 +75,7 @@ This release involves a substantial rewrite and several breaking changes from
 - Improve documentation.
 - Update dependencies.
 
-## [2.0.0-alpha.2][]
+## 2.0.0-alpha.2
 
 ### Breaking changes
 
@@ -108,7 +96,7 @@ This release involves a substantial rewrite and several breaking changes from
 [pr #107]: https://github.com/IcedFrisby/IcedFrisby/pull/107
 [pr #108]: https://github.com/IcedFrisby/IcedFrisby/pull/108
 
-## [2.0.0-alpha.1][]
+## 2.0.0-alpha.1
 
 ### Breaking changes
 
@@ -141,7 +129,7 @@ This release involves a substantial rewrite and several breaking changes from
 [pr #94]: https://github.com/IcedFrisby/IcedFrisby/pull/94
 [pr #101]: https://github.com/IcedFrisby/IcedFrisby/pull/101
 
-## [1.5.0][]
+## 1.5.0
 
 - Support header checks when multiple same-name headers exist ([PR #73][])
   - Invoke `expectHeader` or `expectHeaderContains` with a third argument
@@ -154,20 +142,20 @@ This release involves a substantial rewrite and several breaking changes from
 
 [pr #73]: https://github.com/IcedFrisby/IcedFrisby/pull/70
 
-## [1.4.0][]
+## 1.4.0
 
 - Add only() helper ([PR #70][]).
 - Improve documentation
 
 [pr #70]: https://github.com/IcedFrisby/IcedFrisby/pull/70
 
-## [1.3.1][]
+## 1.3.1
 
 - Add expectNoHeader() helper ([PR #63][]).
 
 [pr #63]: https://github.com/IcedFrisby/IcedFrisby/pull/63
 
-## [1.3.0][]
+## 1.3.0
 
 - Async hooks for before(), after(), finally() ([PR #59][]).
 - Update chai assertion checking to ^4.0.1
@@ -175,14 +163,14 @@ This release involves a substantial rewrite and several breaking changes from
 
 [pr #59]: https://github.com/IcedFrisby/IcedFrisby/pull/59
 
-## [1.2.0][]
+## 1.2.0
 
 - Support extending via plugins. Frisby is an ES6 class, and plugins
   themselves are implemented as subclass factories. After being
   composed with plugins, `frisby.create()` will do the right thing.
   For an example, see https://github.com/paulmelnikow/icedfrisby-nock
 
-## [1.1.0][]
+## 1.1.0
 
 - Added `finally()` hooks which run even after an error and can be used for
   cleanup. Throw a [MultiError][] if more than one error occurs. (#45)
