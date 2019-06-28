@@ -3,7 +3,6 @@
 [![Build Status](https://img.shields.io/circleci/project/github/IcedFrisby/IcedFrisby/master.svg)](https://circleci.com/gh/IcedFrisby/IcedFrisby/tree/master)
 [![Coverage Status](https://img.shields.io/coveralls/github/IcedFrisby/IcedFrisby.svg)](https://coveralls.io/github/IcedFrisby/IcedFrisby)
 [![npm](https://img.shields.io/npm/v/icedfrisby.svg)](http://www.npmjs.com/package/icedfrisby)
-[![npm@next](https://img.shields.io/npm/v/icedfrisby/next.svg)](https://github.com/IcedFrisby/IcedFrisby/releases)
 
 **IcedFrisby** is a Node.js library that makes testing API endpoints easy, fast and fun.
 
@@ -14,6 +13,20 @@ The [**IcedFrisby** API Docs](https://github.com/IcedFrisby/IcedFrisby/blob/mast
 ## Changelog
 
 The [**IcedFrisby** Changelog](https://github.com/IcedFrisby/IcedFrisby/blob/master/CHANGELOG.md) is located in [CHANGELOG.md](https://github.com/IcedFrisby/IcedFrisby/blob/master/CHANGELOG.md).
+
+## Upgrading from 1.5.0 to 2.0.0
+
+1. Ensure you're using Node 8+.
+2. If using `expectJSONTypes`, add `@hapi/joi` to `devDependencies`.
+3. Replace calls to `globalConfig()` and `reset()` with calls to `.config()`.
+   If necessary, create a helper function which invokes
+   `frisby.create().config()`.
+4. Consider running your tests using `async run()` instead of `toss()` if it
+   improves your workflow.
+
+The full set of changes is documented [in the changelog][changelog-2.0.0].
+
+[changelog-2.0.0: https://github.com/IcedFrisby/IcedFrisby/blob/master/CHANGELOG.md#2.0.0
 
 ## What makes IcedFrisby different?
 
@@ -32,7 +45,7 @@ Install IcedFrisby and Mocha from NPM:
 
 If you are using `expectJSONTypes`, install [Joi][] too:
 
-    npm install joi --save-dev
+    npm install @hapi/joi --save-dev
 
 IcedFrisby is built and tested against Node 8 and 10.
 
@@ -46,7 +59,7 @@ Each set of unique sequences or API endpoint tests should be started with new `f
 
 ```javascript
 const frisby = require('icedfrisby')
-const Joi = require('joi')
+const Joi = require('@hapi/joi')
 
 const URL = 'http://localhost:3000/'
 const URL_AUTH = 'http://username:password@localhost:3000/'

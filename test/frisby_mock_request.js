@@ -3,7 +3,7 @@
 const fs = require('fs')
 const path = require('path')
 const util = require('util')
-const Joi = require('joi')
+const Joi = require('@hapi/joi')
 const nock = require('nock')
 const { expect, AssertionError } = require('chai')
 const { MultiError } = require('verror')
@@ -322,7 +322,7 @@ describe('Frisby matchers', function() {
 
   it('expectJSONTypes should fail with a helpful message', async function() {
     const frisbyWithoutJoi = proxyquire('../lib/icedfrisby', {
-      './pathMatch': proxyquire('../lib/pathMatch', { joi: null }),
+      './pathMatch': proxyquire('../lib/pathMatch', { '@hapi/joi': null }),
     })
 
     const scope = nock('http://example.test')
@@ -337,7 +337,7 @@ describe('Frisby matchers', function() {
       .exceptionHandler(err => {
         // TODO How can I assert that this method is called?
         expect(err.message).to.equal(
-          'Joi is required to use expectJSONTypes, and must be installed separately'
+          'Joi is required to use expectJSONTypes, and must be installed separately (npm i @hapi/joi)'
         )
       })
       .run()
@@ -2025,6 +2025,115 @@ describe('Frisby matchers', function() {
         .get('http://example.test/test')
         .only()
         .toss()
+    })
+  })
+
+  describe('skipped tests', function() {
+    context('when using toss()', function() {
+      let sandbox, globalMock, describeMock
+      beforeEach(function() {
+        sandbox = sinon.sandbox.create()
+        globalMock = sandbox.mock(global, 'describe')
+        globalMock.expects('describe').never()
+        describeMock = sandbox.mock(global.describe)
+        describeMock.expects('skip').once()
+      })
+      afterEach(function() {
+        globalMock.verify()
+        describeMock.verify()
+      })
+      afterEach(function() {
+        sandbox.restore()
+      })
+
+      it('should register skipped tests', function() {
+        frisby
+          .create(this.test.title)
+          .get('http://example.test/test')
+          .skip()
+          .toss()
+      })
+    })
+
+    it('should not run skipped tests', async function() {
+      const scope = nock('http://example.test')
+        .get('/')
+        .reply(200)
+
+      await frisby
+        .create(this.test.title)
+        .get('http://example.test/')
+        .skip()
+        .run()
+
+      expect(scope.isDone()).to.equal(false)
+    })
+
+    describe('conditionally skipped tests', function() {
+      it('when the condition is falsy, the tests are run', async function() {
+        const scope = nock('http://example.test')
+          .get('/')
+          .reply(200)
+
+        await frisby
+          .create(this.test.title)
+          .get('http://example.test/')
+          .skipIf(false)
+          .run()
+
+        expect(scope.isDone()).to.equal(true)
+      })
+
+      it('when the condition is truthy, the tests are skipped', async function() {
+        const scope = nock('http://example.test')
+          .get('/')
+          .reply(200)
+
+        await frisby
+          .create(this.test.title)
+          .get('http://example.test/')
+          .skipIf(true)
+          .run()
+
+        expect(scope.isDone()).to.equal(false)
+      })
+
+      it('when the predicate returns falsy, the tests are run', async function() {
+        const scope = nock('http://example.test')
+          .get('/')
+          .reply(200)
+
+        await frisby
+          .create(this.test.title)
+          .get('http://example.test/')
+          .skipWhen(() => false)
+          .run()
+
+        expect(scope.isDone()).to.equal(true)
+      })
+
+      it('when the predicate returns truthy, the tests are skipped', async function() {
+        const scope = nock('http://example.test')
+          .get('/')
+          .reply(200)
+
+        await frisby
+          .create(this.test.title)
+          .get('http://example.test/')
+          .skipWhen(() => true)
+          .run()
+
+        expect(scope.isDone()).to.equal(false)
+      })
+
+      it('when the predicate is not a function, raise an error', function() {
+        expect(() =>
+          frisby
+            .create(this.test.title)
+            .get('http://example.test/')
+            .skipWhen(-1)
+        ).to.throw('Expected predicate to be a function')
+      })
     })
   })
 

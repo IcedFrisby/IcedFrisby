@@ -44,6 +44,8 @@
     - [finally()](#finally)
     - [afterJSON()](#afterjson)
     - [only()](#only)
+    - [skip()](#skip)
+    - [skipIf()](#skipif)
     - [timeout(ms)](#timeoutms)
     - [retry(count, backoff)](#retrycount-backoff)
     - [baseUri(uri)](#baseuriuri)
@@ -773,8 +775,27 @@ frisby.create('First test')
 
 ### only()
 
-Exclusively run this test. When `toss()` is invoked, the test is wrapped in a
-Mocha `describe.only` block instead of a `describe` block.
+When running in Mocha, run this test exclusively. When `toss()` is invoked, the
+test is wrapped in a Mocha `describe.only` block instead of a `describe` block.
+
+Has no effect on `run()`.
+
+### skip()
+
+Skip this test. When `run()` is invoked, do nothing. When `toss()` is invoked,
+the test is wrapped in a Mocha `describe.skip` block instead of a `describe`
+block. `skip()` takes precedence over `only()`.
+
+### skipIf(condition)
+
+When condition is true, skip this test. `run()` will do nothing and `toss()`
+will wrap the test in `describe.skip`.
+
+### skipWhen(predicate)
+
+When predicate evaluates to true, skip this test. This allows conditional
+skipping based on further manipulation of the Frisby object later in the call
+chain (e.g. for conditionally skipping tests with intercepts).
 
 ### timeout(ms)
 
