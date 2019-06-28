@@ -3,7 +3,6 @@
 [![Build Status](https://img.shields.io/circleci/project/github/IcedFrisby/IcedFrisby/master.svg)](https://circleci.com/gh/IcedFrisby/IcedFrisby/tree/master)
 [![Coverage Status](https://img.shields.io/coveralls/github/IcedFrisby/IcedFrisby.svg)](https://coveralls.io/github/IcedFrisby/IcedFrisby)
 [![npm](https://img.shields.io/npm/v/icedfrisby.svg)](http://www.npmjs.com/package/icedfrisby)
-[![npm@next](https://img.shields.io/npm/v/icedfrisby/next.svg)](https://github.com/IcedFrisby/IcedFrisby/releases)
 
 **IcedFrisby** is a Node.js library that makes testing API endpoints easy, fast and fun.
 
