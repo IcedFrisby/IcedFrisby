@@ -2057,6 +2057,43 @@ describe('Frisby matchers', function() {
 
         expect(scope.isDone()).to.equal(false)
       })
+
+      it('when the predicate returns falsy, the tests are run', async function() {
+        const scope = nock('http://example.test')
+          .get('/')
+          .reply(200)
+
+        await frisby
+          .create(this.test.title)
+          .get('http://example.test/')
+          .skipWhen(() => false)
+          .run()
+
+        expect(scope.isDone()).to.equal(true)
+      })
+
+      it('when the predicate returns truthy, the tests are skipped', async function() {
+        const scope = nock('http://example.test')
+          .get('/')
+          .reply(200)
+
+        await frisby
+          .create(this.test.title)
+          .get('http://example.test/')
+          .skipWhen(() => true)
+          .run()
+
+        expect(scope.isDone()).to.equal(false)
+      })
+
+      it('when the predicate is not a function, raise an error', function() {
+        expect(() =>
+          frisby
+            .create(this.test.title)
+            .get('http://example.test/')
+            .skipWhen(-1)
+        ).to.throw('Expected predicate to be a function')
+      })
     })
   })
 
