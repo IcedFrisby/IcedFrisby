@@ -1,5 +1,10 @@
 # IcedFrisby Changelog
 
+## 2.2.1
+
+- Bug fix: Emit errors when multiple retries are exhausted.
+- Update tests for nock API changes.
+
 ## 2.2.0
 
 - Add `skipWhen()` method.
