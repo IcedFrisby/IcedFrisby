@@ -46,7 +46,7 @@
   "devDependencies": {
     "chai-as-promised": "^7.1.1",
     "coveralls": "^3.0.0",
-    "eslint": "^5.0.1",
+    "eslint": "^6.0.1",
     "eslint-config-prettier": "^6.0.0",
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-mocha": "^5.0.0",
