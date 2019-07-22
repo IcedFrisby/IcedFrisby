@@ -55,7 +55,7 @@
     "@hapi/joi": "^15.0.3",
     "mocha": "^6.0.0",
     "mocha-lcov-reporter": "^1.2.0",
-    "nock": "11.0.0-beta.24",
+    "nock": "11.0.0-beta.27",
     "nyc": "^14.0.0",
     "prettier": "^1.16.4",
     "proxyquire": "^2.0.1",
