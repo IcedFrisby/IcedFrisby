@@ -1167,16 +1167,15 @@ describe('Frisby matchers', function() {
       let actualRequestCount = 0
 
       const scope = nock('http://example.test')
-        .filteringRequestBody(body => {
-          actualRequestCount += 1
-          return body
-        })
         .get('/just-dont-come-back-2')
         .delayBody(50)
         .times(retryCount + 1)
         .replyWithError(
           Error('This could be a network error or an internal error')
         )
+        .on('request', () => {
+          actualRequestCount += 1
+        })
 
       await expect(
         frisby
