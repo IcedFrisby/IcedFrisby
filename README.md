@@ -79,11 +79,6 @@ frisby
     username: 'johndoe',
     is_admin: false,
   })
-  .expectJSONTypes({
-    id: Joi.number(),
-    username: Joi.string(),
-    is_admin: Joi.boolean(),
-  })
   // 'afterJSON' automatically parses response body as JSON and passes it as an argument
   .afterJSON(user => {
     // You can use any normal assertions here
