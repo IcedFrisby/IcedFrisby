@@ -601,9 +601,7 @@ describe('Path match JSON Types', function() {
       })
     }
 
-    expect(fn).to.throw(
-      'child "nonexistentField" fails because ["nonexistentField" is required]'
-    )
+    expect(fn).to.throw('"nonexistentField" is required')
   })
 
   it('should allow a simple object with isNot set', function() {
@@ -673,7 +671,7 @@ describe('Path match JSON Types', function() {
       })
     }
 
-    expect(fn).to.throw('"num" fails because ["num" must be one of [999]]')
+    expect(fn).to.throw('"num" must be [999]')
   })
 
   it("should allow one object in an array with an 'array.?' path", function() {
@@ -725,7 +723,7 @@ describe('Path match JSON Types', function() {
       })
     }
 
-    expect(fn).to.throw('"num" fails because ["num" must be one of [999]]')
+    expect(fn).to.throw('"num" must be [999]')
   })
 
   it("should allow any object in an array with an 'array.*' path when isNot is set", function() {
