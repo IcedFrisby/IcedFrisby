@@ -41,7 +41,7 @@
     "mocha": "*"
   },
   "optionalDependencies": {
-    "@hapi/joi": "*"
+    "@hapi/joi": ">=16.0.0"
   },
   "devDependencies": {
     "chai-as-promised": "^7.1.1",
