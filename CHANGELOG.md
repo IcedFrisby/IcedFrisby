@@ -1,5 +1,11 @@
 # IcedFrisby Changelog
 
+## 3.0.0
+
+- BREAKING CHANGE: Joi 16.x contains major changes to the API.
+  `.expectJSONTypes()` has been updated for compatibility with
+  Joi 16.x, which is now required.
+
 ## 2.2.1
 
 - Bug fix: Emit errors when multiple retries are exhausted.
