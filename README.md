@@ -26,7 +26,7 @@ The [**IcedFrisby** Changelog](https://github.com/IcedFrisby/IcedFrisby/blob/mas
 
 The full set of changes is documented [in the changelog][changelog-2.0.0].
 
-[changelog-2.0.0: https://github.com/IcedFrisby/IcedFrisby/blob/master/CHANGELOG.md#2.0.0
+[changelog-2.0.0]: https://github.com/IcedFrisby/IcedFrisby/blob/master/CHANGELOG.md#2.0.0
 
 ## What makes IcedFrisby different?
 
