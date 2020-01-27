@@ -59,7 +59,7 @@
     "nyc": "^15.0.0",
     "prettier": "^1.16.4",
     "proxyquire": "^2.0.1",
-    "sinon": "^7.1.1"
+    "sinon": "^8.1.1"
   },
   "main": "lib/icedfrisby",
   "files": [
