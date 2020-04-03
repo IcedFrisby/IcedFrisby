@@ -103,6 +103,7 @@ describe('Frisby live running httpbin tests', function() {
               .required()
               .valid('1024'),
             Host: Joi.any(),
+            'X-Amzn-Trace-Id': Joi.any(),
           }),
         args: Joi.any(),
         files: Joi.any(),
@@ -185,6 +186,7 @@ describe('Frisby live running httpbin tests', function() {
               .required()
               .valid('' + patchCommand.length),
             Host: Joi.any(),
+            'X-Amzn-Trace-Id': Joi.any(),
           }),
         args: Joi.any(),
         files: Joi.any(),
@@ -225,6 +227,7 @@ describe('Frisby live running httpbin tests', function() {
               .required()
               .valid('' + patchCommand.length),
             Host: Joi.any(),
+            'X-Amzn-Trace-Id': Joi.any(),
           }),
         args: Joi.any(),
         files: Joi.any(),
