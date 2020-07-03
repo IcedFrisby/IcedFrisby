@@ -3,6 +3,7 @@
 const chai = require('chai')
 const intercept = require('intercept-stdout')
 const nock = require('nock')
+const stripAnsi = require('strip-ansi')
 const frisby = require('../lib/icedfrisby')
 const { expect } = chai
 
@@ -42,8 +43,8 @@ describe('console output', function() {
       .expectStatus(201)
       .run()
 
-    expect(stdout).to.equal(
-      '\u001b[33m\u001b[1mWARNING - content-type is json but body type is not set\u001b[22m\u001b[39m\n'
+    expect(stripAnsi(stdout)).to.equal(
+      'WARNING - content-type is json but body type is not set\n'
     )
     scope.done()
   })
