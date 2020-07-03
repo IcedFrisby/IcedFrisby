@@ -69,7 +69,7 @@
     "API.md"
   ],
   "engines": {
-    "node": ">= 8"
+    "node": ">= 10"
   },
   "scripts": {
     "coverage": "nyc --reporter=lcovonly --reporter=text npm run test:js",
