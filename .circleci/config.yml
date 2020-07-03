@@ -51,7 +51,7 @@ workflows:
   on-commit:
     jobs:
       - node@latest
-      - node@8
+      - node@10
 
   daily:
     triggers:
@@ -62,4 +62,4 @@ workflows:
               only: master
     jobs:
       - node@latest
-      - node@8
+      - node@10
