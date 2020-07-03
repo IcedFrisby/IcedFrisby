@@ -6,6 +6,12 @@ const util = require('util')
 const Readable = require('stream').Readable
 const Joi = require('@hapi/joi')
 const frisby = require('../lib/icedfrisby')
+const sinon = require('sinon')
+const chai = require('chai')
+
+chai.use(require('sinon-chai'))
+chai.use(require('dirty-chai'))
+const { expect } = chai
 
 function StringStream(string, options) {
   Readable.call(this, options)
@@ -58,14 +64,21 @@ describe('Frisby live running httpbin tests', function() {
   })
 
   it('should pass in param hash to request call dependency', async function() {
+    const onJsonReviver = sinon.spy()
+
     await frisby
       .create('test with httpbin for valid basic auth')
-      .get('http://httpbin.org/redirect/3', {
-        followRedirect: false,
-        maxRedirects: 1,
+      .get('http://httpbin.org/json', {
+        json: true,
+        jsonReviver: data => {
+          onJsonReviver()
+          return JSON.parse(data)
+        },
       })
-      .expectStatus(302)
+      .expectStatus(200)
       .run()
+
+    expect(onJsonReviver).to.be.calledOnce()
   })
 
   it('sending binary data via put or post requests using Buffer objects should work', async function() {
@@ -77,9 +90,7 @@ describe('Frisby live running httpbin tests', function() {
       .create('POST random binary data via Buffer object')
       .post('https://httpbin.org/post', Buffer.from(data), {
         json: false,
-        headers: {
-          'content-type': 'application/octet-stream',
-        },
+        headers: { 'content-type': 'application/octet-stream' },
       })
       .expectStatus(200)
       .expectHeaderContains('content-type', 'application/json')
@@ -103,6 +114,7 @@ describe('Frisby live running httpbin tests', function() {
               .required()
               .valid('1024'),
             Host: Joi.any(),
+            'X-Amzn-Trace-Id': Joi.any(),
           }),
         args: Joi.any(),
         files: Joi.any(),
@@ -119,9 +131,7 @@ describe('Frisby live running httpbin tests', function() {
       .create('PUT random binary data via Buffer object')
       .put('https://httpbin.org/put', Buffer.from(data), {
         json: false,
-        headers: {
-          'content-type': 'application/octet-stream',
-        },
+        headers: { 'content-type': 'application/octet-stream' },
       })
       .expectStatus(200)
       .expectHeaderContains('content-type', 'application/json')
@@ -144,6 +154,7 @@ describe('Frisby live running httpbin tests', function() {
             .required()
             .valid('1024'),
           Host: Joi.any(),
+          'X-Amzn-Trace-Id': Joi.any(),
         }),
         args: Joi.any(),
         files: Joi.any(),
@@ -185,6 +196,7 @@ describe('Frisby live running httpbin tests', function() {
               .required()
               .valid('' + patchCommand.length),
             Host: Joi.any(),
+            'X-Amzn-Trace-Id': Joi.any(),
           }),
         args: Joi.any(),
         files: Joi.any(),
@@ -225,6 +237,7 @@ describe('Frisby live running httpbin tests', function() {
               .required()
               .valid('' + patchCommand.length),
             Host: Joi.any(),
+            'X-Amzn-Trace-Id': Joi.any(),
           }),
         args: Joi.any(),
         files: Joi.any(),
@@ -277,6 +290,7 @@ describe('Frisby live running httpbin tests', function() {
             'Content-Type': Joi.string().valid('application/octet-stream'),
             'Content-Length': Joi.string().valid('' + fileSize),
             Host: Joi.any(),
+            'X-Amzn-Trace-Id': Joi.any(),
           }),
         args: Joi.any(),
         files: Joi.any(),
@@ -313,6 +327,7 @@ describe('Frisby live running httpbin tests', function() {
           'Content-Type': Joi.string().valid('application/octet-stream'),
           'Content-Length': Joi.string().valid('' + fileSize),
           Host: Joi.any(),
+            'X-Amzn-Trace-Id': Joi.any(),
         }),
         args: Joi.any(),
         files: Joi.any(),
