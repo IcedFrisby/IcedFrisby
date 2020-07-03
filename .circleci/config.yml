@@ -30,9 +30,9 @@ jobs:
           command: npm run prettier:check
           when: always
 
-  node@8:
+  node@10:
     docker:
-      - image: circleci/node:8
+      - image: circleci/node:10
 
     steps:
       - checkout
