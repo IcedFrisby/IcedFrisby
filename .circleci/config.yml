@@ -30,9 +30,9 @@ jobs:
           command: npm run prettier:check
           when: always
 
-  node@8:
+  node@10:
     docker:
-      - image: circleci/node:8
+      - image: circleci/node:10
 
     steps:
       - checkout
@@ -51,7 +51,7 @@ workflows:
   on-commit:
     jobs:
       - node@latest
-      - node@8
+      - node@10
 
   daily:
     triggers:
@@ -62,4 +62,4 @@ workflows:
               only: master
     jobs:
       - node@latest
-      - node@8
+      - node@10
