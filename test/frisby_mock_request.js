@@ -2027,20 +2027,15 @@ describe('Frisby matchers', function() {
   })
 
   describe('exclusive tests', function() {
-    let sandbox, globalMock, describeMock
+    let globalMock, describeMock
     beforeEach(function() {
-      sandbox = sinon.sandbox.create()
-      globalMock = sandbox.mock(global, 'describe')
+      globalMock = sinon.mock(global, 'describe')
       globalMock.expects('describe').never()
-      describeMock = sandbox.mock(global.describe)
+      describeMock = sinon.mock(global.describe)
       describeMock.expects('only').once()
     })
     afterEach(function() {
-      globalMock.verify()
-      describeMock.verify()
-    })
-    afterEach(function() {
-      sandbox.restore()
+      sinon.verifyAndRestore()
     })
 
     it('should register exclusive tests', function() {
@@ -2054,20 +2049,15 @@ describe('Frisby matchers', function() {
 
   describe('skipped tests', function() {
     context('when using toss()', function() {
-      let sandbox, globalMock, describeMock
+      let globalMock, describeMock
       beforeEach(function() {
-        sandbox = sinon.sandbox.create()
-        globalMock = sandbox.mock(global, 'describe')
+        globalMock = sinon.mock(global, 'describe')
         globalMock.expects('describe').never()
-        describeMock = sandbox.mock(global.describe)
+        describeMock = sinon.mock(global.describe)
         describeMock.expects('skip').once()
       })
       afterEach(function() {
-        globalMock.verify()
-        describeMock.verify()
-      })
-      afterEach(function() {
-        sandbox.restore()
+        sinon.verifyAndRestore()
       })
 
       it('should register skipped tests', function() {
