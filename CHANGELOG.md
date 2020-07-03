@@ -1,5 +1,10 @@
 # IcedFrisby Changelog
 
+## 4.0.0
+
+- BREAKING CHANGE: Require Node 10+.
+- Update chalk and check-types dependencies.
+
 ## 3.0.0
 
 - BREAKING CHANGE: Joi 16.x contains major changes to the API.
