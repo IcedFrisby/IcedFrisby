@@ -5,9 +5,9 @@ const path = require('path')
 const util = require('util')
 const Readable = require('stream').Readable
 const Joi = require('@hapi/joi')
-const frisby = require('../lib/icedfrisby')
 const sinon = require('sinon')
 const chai = require('chai')
+const frisby = require('../lib/icedfrisby')
 
 chai.use(require('sinon-chai'))
 chai.use(require('dirty-chai'))
@@ -327,7 +327,7 @@ describe('Frisby live running httpbin tests', function() {
           'Content-Type': Joi.string().valid('application/octet-stream'),
           'Content-Length': Joi.string().valid('' + fileSize),
           Host: Joi.any(),
-            'X-Amzn-Trace-Id': Joi.any(),
+          'X-Amzn-Trace-Id': Joi.any(),
         }),
         args: Joi.any(),
         files: Joi.any(),
