@@ -488,14 +488,10 @@ frisby
   .expectJSONTypes(
     'args.json',
     Joi.object().keys({
-      arr: Joi.array()
-        .items(Joi.number())
-        .required(),
+      arr: Joi.array().items(Joi.number()).required(),
       foo: Joi.string().required(),
       bar: Joi.string().required(),
-      answer: Joi.number()
-        .integer()
-        .required(),
+      answer: Joi.number().integer().required(),
     })
   )
   .toss()
@@ -589,9 +585,7 @@ frisby
   .expectJSONTypes(
     'args.json',
     Joi.object().keys({
-      answer: Joi.number()
-        .integer()
-        .required(),
+      answer: Joi.number().integer().required(),
     })
   )
   .toss()
@@ -664,13 +658,13 @@ This is similar to [supertest's](https://github.com/visionmedia/supertest) reque
 var express = require('express')
 var app = express()
 
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
   res.send('Hello World!')
 })
 
 // prevent the app from starting if it is required as a module (it is in this example!)
 if (!module.parent) {
-  var server = app.listen(3000, function() {
+  var server = app.listen(3000, function () {
     var host = server.address().address
     var port = server.address().port
     console.log('Example app listening at http://%s:%s', host, port)
@@ -685,7 +679,7 @@ module.exports = app // export the application
 ```javascript
 var app = require('./app')
 
-describe('Express app integration', function() {
+describe('Express app integration', function () {
   frisby
     .create('should start the app and request')
     .useApp(app)
@@ -705,10 +699,10 @@ Callback function to run before the tested request is executed. Can be used to s
 ```javascript
 frisby
   .create('Upcheck test')
-  .before(function() {
+  .before(function () {
     this._pluginContext = 123
   })
-  .before(function(done) {
+  .before(function (done) {
     http.createServer().listen(80, done)
   })
   .get('http://localhost/upCheck')
@@ -724,11 +718,11 @@ Callback function to run after test is completed successfully. Can be used to ru
 frisby
   .create('First test')
   .get('http://httpbin.org/get?foo=bar')
-  .after(function(err, res, body, headers, done) {
+  .after(function (err, res, body, headers, done) {
     // async, don't forget to invoke done()
     setImmediate(done)
   })
-  .after(function(err, res, body, headers) {
+  .after(function (err, res, body, headers) {
     frisby
       .create('Second test, run after first is completed')
       .get('http://httpbin.org/get?bar=baz')
@@ -745,10 +739,10 @@ Callback function to run after test is done, either successfully or not. Can be 
 frisby
   .create('First test')
   .get('http://httpbin.org/get?foo=bar')
-  .finally(function() {
+  .finally(function () {
     // sync
   })
-  .finally(function(done) {
+  .finally(function (done) {
     // async, don't forget to invoke done()
     setImmediate(done)
   })
@@ -862,7 +856,7 @@ const myUser = { name: 'Jane Doe' }
 frisby
   .create('Create Item')
   .post('http://example.com/users/create', myUser)
-  .after(function(err, res, body, headers) {
+  .after(function (err, res, body, headers) {
     frisby
       .create('Check Item Exists')
       .get('http://example.com/users/list')
@@ -917,7 +911,7 @@ Callback Parameters:
 frisby
   .create('Inspecting some data')
   .get('http://httpbin.org/get?foo=bar&bar=baz')
-  .inspect(function(err, req, res, body, headers) {
+  .inspect(function (err, req, res, body, headers) {
     console.log('Got args:' + body.args)
   })
   .toss()

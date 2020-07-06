@@ -6,18 +6,18 @@ const sinon = require('sinon')
 const frisby = require('../lib/icedfrisby')
 const fixtures = require('./fixtures/repetition_fixture.json')
 
-describe('IcedFrisby inspect methods', function() {
+describe('IcedFrisby inspect methods', function () {
   let scope
-  beforeEach(function() {
+  beforeEach(function () {
     scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.singleObject)
   })
-  afterEach(function() {
+  afterEach(function () {
     scope.done()
   })
 
-  it('should perform no action if null is provided to the inspect() callback', async function() {
+  it('should perform no action if null is provided to the inspect() callback', async function () {
     await frisby
       .create(this.test.title)
       .get('http://example.test/', { json: true })
@@ -25,7 +25,7 @@ describe('IcedFrisby inspect methods', function() {
       .run()
   })
 
-  it('should allow a call to inspect the request and response', async function() {
+  it('should allow a call to inspect the request and response', async function () {
     const inspectInvoked = sinon.spy()
 
     await frisby
@@ -44,7 +44,7 @@ describe('IcedFrisby inspect methods', function() {
     expect(inspectInvoked.calledOnce).to.be.true
   })
 
-  it('inspectRequest should work', async function() {
+  it('inspectRequest should work', async function () {
     await frisby
       .create(this.test.title)
       .get('http://example.test/', { json: true })
@@ -52,7 +52,7 @@ describe('IcedFrisby inspect methods', function() {
       .run()
   })
 
-  it('inspectRequest should work when passed no message', async function() {
+  it('inspectRequest should work when passed no message', async function () {
     await frisby
       .create(this.test.title)
       .get('http://example.test/', { json: true })
@@ -60,7 +60,7 @@ describe('IcedFrisby inspect methods', function() {
       .run()
   })
 
-  it('inspectResponse should work', async function() {
+  it('inspectResponse should work', async function () {
     await frisby
       .create(this.test.title)
       .get('http://example.test/', { json: true })
@@ -68,7 +68,7 @@ describe('IcedFrisby inspect methods', function() {
       .run()
   })
 
-  it('inspectResponse should work when passed no message', async function() {
+  it('inspectResponse should work when passed no message', async function () {
     await frisby
       .create(this.test.title)
       .get('http://example.test/', { json: true })
@@ -76,7 +76,7 @@ describe('IcedFrisby inspect methods', function() {
       .run()
   })
 
-  it('inspectHeaders should work', async function() {
+  it('inspectHeaders should work', async function () {
     await frisby
       .create(this.test.title)
       .get('http://example.test/', { json: true })
@@ -84,7 +84,7 @@ describe('IcedFrisby inspect methods', function() {
       .run()
   })
 
-  it('inspectHeaders should work when passed no message', async function() {
+  it('inspectHeaders should work when passed no message', async function () {
     await frisby
       .create(this.test.title)
       .get('http://example.test/', { json: true })
@@ -92,7 +92,7 @@ describe('IcedFrisby inspect methods', function() {
       .run()
   })
 
-  it('inspectBody should work', async function() {
+  it('inspectBody should work', async function () {
     await frisby
       .create(this.test.title)
       .get('http://example.test/', { json: true })
@@ -100,7 +100,7 @@ describe('IcedFrisby inspect methods', function() {
       .run()
   })
 
-  it('inspectBody should work when passed no message', async function() {
+  it('inspectBody should work when passed no message', async function () {
     await frisby
       .create(this.test.title)
       .get('http://example.test/', { json: true })
@@ -108,7 +108,7 @@ describe('IcedFrisby inspect methods', function() {
       .run()
   })
 
-  it('inspectJSON should work', async function() {
+  it('inspectJSON should work', async function () {
     await frisby
       .create(this.test.title)
       .get('http://example.test/', { json: true })
@@ -116,7 +116,7 @@ describe('IcedFrisby inspect methods', function() {
       .run()
   })
 
-  it('inspectJSON should work when passed no message', async function() {
+  it('inspectJSON should work when passed no message', async function () {
     await frisby
       .create(this.test.title)
       .get('http://example.test/', { json: true })
@@ -124,7 +124,7 @@ describe('IcedFrisby inspect methods', function() {
       .run()
   })
 
-  it('inspectStatus should work', async function() {
+  it('inspectStatus should work', async function () {
     await frisby
       .create(this.test.title)
       .get('http://example.test/', { json: true })
@@ -132,7 +132,7 @@ describe('IcedFrisby inspect methods', function() {
       .run()
   })
 
-  it('inspectStatus should work when passed no message', async function() {
+  it('inspectStatus should work when passed no message', async function () {
     await frisby
       .create(this.test.title)
       .get('http://example.test/', { json: true })

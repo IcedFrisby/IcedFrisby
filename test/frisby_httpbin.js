@@ -22,7 +22,7 @@ function StringStream(string, options) {
 }
 util.inherits(StringStream, Readable)
 
-StringStream.prototype._read = function(ignore) {
+StringStream.prototype._read = function (ignore) {
   this.push(this.string)
   this.push(null)
 }
@@ -31,8 +31,8 @@ StringStream.prototype._read = function(ignore) {
 // Tests run like normal Frisby specs but with 'mock' specified with a 'mock-request' object
 // These work without further 'expects' statements because Frisby generates and runs Jasmine tests
 //
-describe('Frisby live running httpbin tests', function() {
-  it('Frisby basicAuth should work', async function() {
+describe('Frisby live running httpbin tests', function () {
+  it('Frisby basicAuth should work', async function () {
     await frisby
       .create('test with httpbin for valid basic auth')
       .get('http://httpbin.org/basic-auth/frisby/passwd')
@@ -41,8 +41,8 @@ describe('Frisby live running httpbin tests', function() {
       .run()
   })
 
-  describe('Frisby digestAuth', function() {
-    it('should not work if digest not set', async function() {
+  describe('Frisby digestAuth', function () {
+    it('should not work if digest not set', async function () {
       await frisby
         .create('test with httpbin for invalid digest auth')
         .auth('frisby', 'passwd')
@@ -53,7 +53,7 @@ describe('Frisby live running httpbin tests', function() {
 
     // Digest auth against httpbin not working for some reason
     // but working fine against my own servers running digest auth
-    it('should work if digest set', async function() {
+    it('should work if digest set', async function () {
       await frisby
         .create('test with httpbin for valid digest auth')
         .auth('frisby', 'passwd', true)
@@ -63,7 +63,7 @@ describe('Frisby live running httpbin tests', function() {
     })
   })
 
-  it('should pass in param hash to request call dependency', async function() {
+  it('should pass in param hash to request call dependency', async function () {
     const onJsonReviver = sinon.spy()
 
     await frisby
@@ -81,7 +81,7 @@ describe('Frisby live running httpbin tests', function() {
     expect(onJsonReviver).to.be.calledOnce()
   })
 
-  it('sending binary data via put or post requests using Buffer objects should work', async function() {
+  it('sending binary data via put or post requests using Buffer objects should work', async function () {
     const data = []
 
     for (let i = 0; i < 1024; i++) data.push(Math.round(Math.random() * 256))
@@ -110,9 +110,7 @@ describe('Frisby live running httpbin tests', function() {
             'Content-Type': Joi.string()
               .required()
               .valid('application/octet-stream'),
-            'Content-Length': Joi.string()
-              .required()
-              .valid('1024'),
+            'Content-Length': Joi.string().required().valid('1024'),
             Host: Joi.any(),
             'X-Amzn-Trace-Id': Joi.any(),
           }),
@@ -121,9 +119,7 @@ describe('Frisby live running httpbin tests', function() {
         form: Joi.any(),
         json: Joi.any(),
         origin: Joi.any(),
-        url: Joi.string()
-          .required()
-          .valid('https://httpbin.org/post'),
+        url: Joi.string().required().valid('https://httpbin.org/post'),
       })
       .run()
 
@@ -150,9 +146,7 @@ describe('Frisby live running httpbin tests', function() {
           'Content-Type': Joi.string()
             .required()
             .valid('application/octet-stream'),
-          'Content-Length': Joi.string()
-            .required()
-            .valid('1024'),
+          'Content-Length': Joi.string().required().valid('1024'),
           Host: Joi.any(),
           'X-Amzn-Trace-Id': Joi.any(),
         }),
@@ -161,14 +155,12 @@ describe('Frisby live running httpbin tests', function() {
         form: Joi.any(),
         json: Joi.any(),
         origin: Joi.any(),
-        url: Joi.string()
-          .required()
-          .valid('https://httpbin.org/put'),
+        url: Joi.string().required().valid('https://httpbin.org/put'),
       })
       .run()
   })
 
-  it('PATCH requests with Buffer and Stream objects should work.', async function() {
+  it('PATCH requests with Buffer and Stream objects should work.', async function () {
     const patchCommand = 'Patch me!'
 
     await frisby
@@ -189,9 +181,7 @@ describe('Frisby live running httpbin tests', function() {
             Accept: Joi.any(),
             'Accept-Encoding': Joi.any(),
             Connection: Joi.any(),
-            'Content-Type': Joi.string()
-              .required()
-              .valid('text/plain'),
+            'Content-Type': Joi.string().required().valid('text/plain'),
             'Content-Length': Joi.string()
               .required()
               .valid('' + patchCommand.length),
@@ -203,9 +193,7 @@ describe('Frisby live running httpbin tests', function() {
         form: Joi.any(),
         json: Joi.any(),
         origin: Joi.any(),
-        url: Joi.string()
-          .required()
-          .valid('https://httpbin.org/patch'),
+        url: Joi.string().required().valid('https://httpbin.org/patch'),
       })
       .run()
 
@@ -221,18 +209,14 @@ describe('Frisby live running httpbin tests', function() {
       .expectStatus(200)
       .expectHeaderContains('content-type', 'application/json')
       .expectJSONTypes({
-        data: Joi.string()
-          .required()
-          .valid(patchCommand.toString()),
+        data: Joi.string().required().valid(patchCommand.toString()),
         headers: Joi.object()
           .required()
           .keys({
             Accept: Joi.any(),
             'Accept-Encoding': Joi.any(),
             Connection: Joi.any(),
-            'Content-Type': Joi.string()
-              .required()
-              .valid('text/plain'),
+            'Content-Type': Joi.string().required().valid('text/plain'),
             'Content-Length': Joi.string()
               .required()
               .valid('' + patchCommand.length),
@@ -244,14 +228,12 @@ describe('Frisby live running httpbin tests', function() {
         form: Joi.any(),
         json: Joi.any(),
         origin: Joi.any(),
-        url: Joi.string()
-          .required()
-          .valid('https://httpbin.org/patch'),
+        url: Joi.string().required().valid('https://httpbin.org/patch'),
       })
       .run()
   })
 
-  it('sending binary data via put or post requests using Stream objects should work', async function() {
+  it('sending binary data via put or post requests using Stream objects should work', async function () {
     const filePath = path.resolve(__dirname, './logo-frisby.png')
     const fileSize = fs.statSync(filePath).size
     const fileContent = fs.readFileSync(filePath)
@@ -297,9 +279,7 @@ describe('Frisby live running httpbin tests', function() {
         form: Joi.any(),
         json: Joi.any(),
         origin: Joi.any(),
-        url: Joi.string()
-          .required()
-          .valid('https://httpbin.org/post'),
+        url: Joi.string().required().valid('https://httpbin.org/post'),
       })
       .run()
 
@@ -503,7 +483,7 @@ describe('Frisby live running httpbin tests', function() {
   //
   // })
 
-  it('should send all headers when you bootstrap them with config', async function() {
+  it('should send all headers when you bootstrap them with config', async function () {
     await frisby
       .create(this.test.title)
       .baseUri('http://httpbin.org')
@@ -519,7 +499,7 @@ describe('Frisby live running httpbin tests', function() {
       .run()
   })
 
-  it('should send all headers when you bootstrap them with parameters', async function() {
+  it('should send all headers when you bootstrap them with parameters', async function () {
     await frisby
       .create(this.test.title)
       .baseUri('http://httpbin.org')
@@ -534,7 +514,7 @@ describe('Frisby live running httpbin tests', function() {
       .run()
   })
 
-  it('should respect overridden headers - params > config', async function() {
+  it('should respect overridden headers - params > config', async function () {
     await frisby
       .create(this.test.title)
       .baseUri('http://httpbin.org')
@@ -548,7 +528,7 @@ describe('Frisby live running httpbin tests', function() {
   })
 
   // Doesn't currently pass, not sure it should. TBC in conversation on #106.
-  it.skip('should respect overridden headers - addHeader > params', async function() {
+  it.skip('should respect overridden headers - addHeader > params', async function () {
     await frisby
       .create(this.test.title)
       .baseUri('http://httpbin.org')

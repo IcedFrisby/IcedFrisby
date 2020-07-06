@@ -58,7 +58,7 @@
     "mocha-lcov-reporter": "^1.2.0",
     "nock": "13.0.2",
     "nyc": "^15.0.0",
-    "prettier": "^1.16.4",
+    "prettier": "^2.0.5",
     "proxyquire": "^2.0.1",
     "sinon": "^9.0.2",
     "sinon-chai": "^3.5.0",
