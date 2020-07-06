@@ -10,11 +10,11 @@ const frisby = require('./../lib/icedfrisby')
 // The following tests were adapted from:
 // https://github.com/visionmedia/supertest/blob/master/test/supertest.js
 
-describe('IcedFrisby useApp(app)', function() {
-  it('should start the http server on an ephemeral port', function() {
+describe('IcedFrisby useApp(app)', function () {
+  it('should start the http server on an ephemeral port', function () {
     const app = express()
 
-    app.get('/', function(req, res) {
+    app.get('/', function (req, res) {
       res.send('^.^')
     })
 
@@ -27,7 +27,7 @@ describe('IcedFrisby useApp(app)', function() {
       .toss()
   })
 
-  it('should work with an active http server', function() {
+  it('should work with an active http server', function () {
     const app = express()
 
     app.get('/', (req, res) => {
@@ -46,14 +46,14 @@ describe('IcedFrisby useApp(app)', function() {
     })
   })
 
-  it('should start the https server on an ephemeral port', function() {
+  it('should start the https server on an ephemeral port', function () {
     // disable rejecting self signed certs for testing purposes
     // Attn Everyone: DO NOT USE THIS IN PRODUCTION
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
     const app = express()
 
-    app.get('/', function(req, res) {
+    app.get('/', function (req, res) {
       res.send('^.^')
     })
 
@@ -75,14 +75,14 @@ describe('IcedFrisby useApp(app)', function() {
       .toss()
   })
 
-  it('should work with an active https server', function() {
+  it('should work with an active https server', function () {
     // disable rejecting self signed certs for testing purposes
     // Attn Everyone: DO NOT USE THIS IN PRODUCTION
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
     const app = express()
 
-    app.get('/', function(req, res) {
+    app.get('/', function (req, res) {
       res.send('^.^')
     })
 
@@ -106,10 +106,10 @@ describe('IcedFrisby useApp(app)', function() {
       .toss()
   })
 
-  it('should work with an app with a base path component', function() {
+  it('should work with an app with a base path component', function () {
     const app = express()
 
-    app.get('/api/foo', function(req, res) {
+    app.get('/api/foo', function (req, res) {
       res.send('bar')
     })
 
@@ -119,20 +119,17 @@ describe('IcedFrisby useApp(app)', function() {
       .get('/foo')
       .expectStatus(200)
       .expectBodyContains('bar')
-      .after(function(err, res, body) {
+      .after(function (err, res, body) {
         expect(err).to.not.exist
       })
       .toss()
   })
 
-  it('should throw an exception if app is not defined', function() {
+  it('should throw an exception if app is not defined', function () {
     const self = this
 
-    const fn = function() {
-      frisby
-        .create(self.test.title)
-        .useApp(undefined)
-        .toss()
+    const fn = function () {
+      frisby.create(self.test.title).useApp(undefined).toss()
     }
 
     expect(fn).to.throw('No app provided')

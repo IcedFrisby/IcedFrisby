@@ -14,18 +14,16 @@ const fixtures = require('./fixtures/repetition_fixture.json')
 
 require('chai').use(require('chai-as-promised'))
 
-afterEach(function() {
+afterEach(function () {
   nock.restore()
   nock.cleanAll()
   nock.enableNetConnect()
   nock.activate()
 })
 
-describe('Frisby matchers', function() {
-  it('expectStatus for mock request should return 404', async function() {
-    const scope = nock('http://example.test')
-      .get('/')
-      .reply(404)
+describe('Frisby matchers', function () {
+  it('expectStatus for mock request should return 404', async function () {
+    const scope = nock('http://example.test').get('/').reply(404)
 
     await frisby
       .create(this.test.title)
@@ -36,8 +34,8 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  describe('before callbacks', function() {
-    it('should be invoked in sequence before the request', async function() {
+  describe('before callbacks', function () {
+    it('should be invoked in sequence before the request', async function () {
       const sequence = []
 
       const scope = nock('http://example.test')
@@ -65,7 +63,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it.skip('should respect the exception handler', async function() {
+    it.skip('should respect the exception handler', async function () {
       const gotException = sinon.spy()
 
       const message = 'this is the error'
@@ -86,26 +84,24 @@ describe('Frisby matchers', function() {
       expect(gotException.calledOnce).to.equal(true)
     })
 
-    it('should error gracefully when passed no function', async function() {
+    it('should error gracefully when passed no function', async function () {
       expect(() => frisby.create(this.test.title).before()).to.throw(
         Error,
         'Expected Function object in before(), but got undefined'
       )
     })
 
-    it('should error gracefully when passed a string instead of function', async function() {
+    it('should error gracefully when passed a string instead of function', async function () {
       expect(() => frisby.create(this.test.title).before('something')).to.throw(
         Error,
         'Expected Function object in before(), but got string'
       )
     })
 
-    it('should wait the configured period before proceeding to the request', async function() {
+    it('should wait the configured period before proceeding to the request', async function () {
       const waits = 75
 
-      const scope = nock('http://example.test')
-        .get('/')
-        .reply(404)
+      const scope = nock('http://example.test').get('/').reply(404)
 
       let timeDelta = new Date().getTime()
 
@@ -122,10 +118,8 @@ describe('Frisby matchers', function() {
       expect(timeDelta).to.be.below(waits + 50)
     })
 
-    it('when an error is thrown in before(), it should not proceed to the request', async function() {
-      const scope = nock('http://example.test')
-        .get('/')
-        .reply(404)
+    it('when an error is thrown in before(), it should not proceed to the request', async function () {
+      const scope = nock('http://example.test').get('/').reply(404)
 
       expect(
         frisby
@@ -141,8 +135,8 @@ describe('Frisby matchers', function() {
     })
   })
 
-  describe('before callbacks (async)', function() {
-    it('should be invoked in sequence before the request', async function() {
+  describe('before callbacks (async)', function () {
+    it('should be invoked in sequence before the request', async function () {
       const sequence = []
 
       nock('http://example.test')
@@ -155,7 +149,7 @@ describe('Frisby matchers', function() {
       await frisby
         .create(this.test.title)
         .before(done => {
-          setTimeout(function() {
+          setTimeout(function () {
             sequence.push('before-one')
             done()
           }, 10)
@@ -164,7 +158,7 @@ describe('Frisby matchers', function() {
           sequence.push('before-two')
         })
         .before(done => {
-          setTimeout(function() {
+          setTimeout(function () {
             sequence.push('before-three')
             done()
           }, 10)
@@ -183,7 +177,7 @@ describe('Frisby matchers', function() {
     // The behavior of the exception handler doesn't make a lot of sense. Why
     // continue with the request after `before()` throws an error? What is the
     // use case for `exceptionHandler()`?
-    it.skip('should respect the exception handler', async function() {
+    it.skip('should respect the exception handler', async function () {
       const gotException = sinon.spy()
       const message = 'this is the error'
 
@@ -208,7 +202,7 @@ describe('Frisby matchers', function() {
     })
   })
 
-  it('expectJSON should test EQUALITY for a SINGLE object', async function() {
+  it('expectJSON should test EQUALITY for a SINGLE object', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.singleObject)
@@ -227,7 +221,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectJSON should test INEQUALITY for a SINGLE object', async function() {
+  it('expectJSON should test INEQUALITY for a SINGLE object', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.singleObject)
@@ -247,7 +241,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectJSON should test EQUALITY for EACH object in an array with an asterisk path', async function() {
+  it('expectJSON should test EQUALITY for EACH object in an array with an asterisk path', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.sameNumbers)
@@ -261,7 +255,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectJSON should test INEQUALITY for EACH object in an array with an asterisk path', async function() {
+  it('expectJSON should test INEQUALITY for EACH object in an array with an asterisk path', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.sameNumbers)
@@ -276,7 +270,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectJSON should test EACH object in an array with path ending with asterisk', async function() {
+  it('expectJSON should test EACH object in an array with path ending with asterisk', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.arrayOfObjects)
@@ -296,7 +290,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectJSON should match ONE object in an array with path ending with question mark', async function() {
+  it('expectJSON should match ONE object in an array with path ending with question mark', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.arrayOfObjects)
@@ -316,13 +310,11 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectJSON should throw an error when response is not JSON', async function() {
+  it('expectJSON should throw an error when response is not JSON', async function () {
     const gotException = sinon.spy()
     const responseBody = 'Payload'
 
-    const scope = nock('http://example.test')
-      .post('/')
-      .reply(200, responseBody)
+    const scope = nock('http://example.test').post('/').reply(200, responseBody)
 
     await frisby
       .create(this.test.title)
@@ -341,7 +333,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectJSONTypes should fail with a helpful message', async function() {
+  it('expectJSONTypes should fail with a helpful message', async function () {
     const frisbyWithoutJoi = proxyquire('../lib/icedfrisby', {
       './pathMatch': proxyquire('../lib/pathMatch', { '@hapi/joi': null }),
     })
@@ -366,7 +358,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectJSON should NOT match ONE object in an array with path ending with question mark', async function() {
+  it('expectJSON should NOT match ONE object in an array with path ending with question mark', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.arrayOfObjects)
@@ -385,7 +377,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectContainsJSON should MATCH fields for a SINGLE object', async function() {
+  it('expectContainsJSON should MATCH fields for a SINGLE object', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.singleObject)
@@ -404,7 +396,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectContainsJSON should NOT MATCH for a SINGLE object', async function() {
+  it('expectContainsJSON should NOT MATCH for a SINGLE object', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.singleObject)
@@ -424,7 +416,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectContainsJSON should NOT MATCH for a SINGLE object with a single field', async function() {
+  it('expectContainsJSON should NOT MATCH for a SINGLE object with a single field', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.singleObject)
@@ -444,7 +436,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectContainsJSON should MATCH for EACH object in an array with an asterisk path', async function() {
+  it('expectContainsJSON should MATCH for EACH object in an array with an asterisk path', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.sameNumbers)
@@ -458,7 +450,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectContainsJSON should NOT MATCH for EACH object in an array with an asterisk path', async function() {
+  it('expectContainsJSON should NOT MATCH for EACH object in an array with an asterisk path', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.sameNumbers)
@@ -473,7 +465,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectContainsJSON should MATCH for EACH object in an array with path ending with asterisk', async function() {
+  it('expectContainsJSON should MATCH for EACH object in an array with path ending with asterisk', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.arrayOfObjects)
@@ -490,7 +482,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectContainsJSON should MATCH ONE object in an array with path ending with question mark', async function() {
+  it('expectContainsJSON should MATCH ONE object in an array with path ending with question mark', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.arrayOfObjects)
@@ -507,7 +499,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectContainsJSON should NOT MATCH ONE object in an array with path ending with question mark', async function() {
+  it('expectContainsJSON should NOT MATCH ONE object in an array with path ending with question mark', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.arrayOfObjects)
@@ -525,7 +517,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectJSONTypes should NOT match ONE object in an array with path ending with question mark', async function() {
+  it('expectJSONTypes should NOT match ONE object in an array with path ending with question mark', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.arrayOfObjects)
@@ -544,7 +536,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectJSONLength should properly count arrays, strings, and objects', async function() {
+  it('expectJSONLength should properly count arrays, strings, and objects', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.arrayOfObjects)
@@ -560,7 +552,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectJSONLength should support an asterisk in the path to test all elements of an array', async function() {
+  it('expectJSONLength should support an asterisk in the path to test all elements of an array', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.arrayOfObjects)
@@ -574,7 +566,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectJSONLength should support an asterisk in the path to test that all elements of an array do NOT have a specified length', async function() {
+  it('expectJSONLength should support an asterisk in the path to test that all elements of an array do NOT have a specified length', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.arrayOfObjects)
@@ -590,7 +582,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectJSONLength should properly count arrays, strings, and objects using <=', async function() {
+  it('expectJSONLength should properly count arrays, strings, and objects using <=', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.arrayOfObjects)
@@ -606,7 +598,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectJSONLength should support an asterisk in the path to test all elements of an array using <=', async function() {
+  it('expectJSONLength should support an asterisk in the path to test all elements of an array using <=', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.arrayOfObjects)
@@ -620,7 +612,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectJSONLength should properly count arrays, strings, and objects using <', async function() {
+  it('expectJSONLength should properly count arrays, strings, and objects using <', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.arrayOfObjects)
@@ -636,7 +628,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectJSONLength should support an asterisk in the path to test all elements of an array using <', async function() {
+  it('expectJSONLength should support an asterisk in the path to test all elements of an array using <', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.arrayOfObjects)
@@ -650,7 +642,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectJSONLength should properly count arrays, strings, and objects using >=', async function() {
+  it('expectJSONLength should properly count arrays, strings, and objects using >=', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.arrayOfObjects)
@@ -666,7 +658,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectJSONLength should support an asterisk in the path to test all elements of an array using >=', async function() {
+  it('expectJSONLength should support an asterisk in the path to test all elements of an array using >=', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.arrayOfObjects)
@@ -680,7 +672,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectJSONLength should properly count arrays, strings, and objects using >', async function() {
+  it('expectJSONLength should properly count arrays, strings, and objects using >', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.arrayOfObjects)
@@ -696,7 +688,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectJSONLength should support an asterisk in the path to test all elements of an array using >', async function() {
+  it('expectJSONLength should support an asterisk in the path to test all elements of an array using >', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.arrayOfObjects)
@@ -710,7 +702,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectJSONLength should properly count arrays, strings, and objects testing string number', async function() {
+  it('expectJSONLength should properly count arrays, strings, and objects testing string number', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.arrayOfObjects)
@@ -726,7 +718,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('expectJSONLength should support an asterisk in the path to test all elements of an array testing string number', async function() {
+  it('expectJSONLength should support an asterisk in the path to test all elements of an array testing string number', async function () {
     const scope = nock('http://example.test')
       .get('/')
       .reply(200, fixtures.arrayOfObjects)
@@ -740,8 +732,8 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  describe('after() callbacks', function() {
-    it('should be invoked in sequence after a successful request', async function() {
+  describe('after() callbacks', function () {
+    it('should be invoked in sequence after a successful request', async function () {
       const sequence = []
 
       const scope = nock('http://example.test')
@@ -758,7 +750,7 @@ describe('Frisby matchers', function() {
         .after(() => {
           sequence.push('after-one')
         })
-        .after(function() {
+        .after(function () {
           this.after(() => {
             sequence.push('after-dynamic')
           })
@@ -777,7 +769,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('should not be invoked after an failed expectation', async function() {
+    it('should not be invoked after an failed expectation', async function () {
       const afterInvoked = sinon.spy()
 
       const scope = nock('http://example.test')
@@ -799,7 +791,7 @@ describe('Frisby matchers', function() {
 
     it('TODO: should not be invoked after a test failure')
 
-    it('when a hook raised an exception, it should forward it', async function() {
+    it('when a hook raised an exception, it should forward it', async function () {
       const scope = nock('http://example.test')
         .get('/')
         .reply(200, fixtures.singleObject)
@@ -820,7 +812,7 @@ describe('Frisby matchers', function() {
 
     // TODO: This is failing; not sure if it's due to the rewrite, or a previous
     // change, or if it was broken before, too.
-    it.skip('should not be invoked after a previous after hook raised an exception', async function() {
+    it.skip('should not be invoked after a previous after hook raised an exception', async function () {
       const afterCalled = sinon.spy()
 
       const scope = nock('http://example.test')
@@ -845,19 +837,16 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('should error gracefully when passed no function', function() {
+    it('should error gracefully when passed no function', function () {
       expect(() =>
-        frisby
-          .create(this.test.title)
-          .get('http://example.test/')
-          .after()
+        frisby.create(this.test.title).get('http://example.test/').after()
       ).to.throw(
         Error,
         'Expected Function object in after(), but got undefined'
       )
     })
 
-    it('should error gracefully when passed a string instead of function', function() {
+    it('should error gracefully when passed a string instead of function', function () {
       expect(() =>
         frisby
           .create(this.test.title)
@@ -867,8 +856,8 @@ describe('Frisby matchers', function() {
     })
   })
 
-  describe('after() callbacks (async)', function() {
-    it('should be invoked in sequence after a successful request', async function() {
+  describe('after() callbacks (async)', function () {
+    it('should be invoked in sequence after a successful request', async function () {
       const sequence = []
 
       const scope = nock('http://example.test')
@@ -885,7 +874,7 @@ describe('Frisby matchers', function() {
         .after(() => {
           sequence.push('after-one')
         })
-        .after(function(error, res, body, headers, done) {
+        .after(function (error, res, body, headers, done) {
           setTimeout(() => {
             sequence.push('after-two')
             this.after(() => {
@@ -911,10 +900,10 @@ describe('Frisby matchers', function() {
     })
   })
 
-  describe('finally() hooks', function() {
+  describe('finally() hooks', function () {
     // Not sure if this is a new problem, or has just surfaced because it's
     // been rewritten.
-    it.skip('should be invoked in sequence after after() hooks', async function() {
+    it.skip('should be invoked in sequence after after() hooks', async function () {
       const sequence = []
 
       const scope = nock('http://example.test')
@@ -934,7 +923,7 @@ describe('Frisby matchers', function() {
         .after(() => {
           sequence.push('after-two')
         })
-        .after(function() {
+        .after(function () {
           this.finally(() => {
             sequence.push('finally-dynamic')
           })
@@ -958,19 +947,16 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('should error gracefully when passed no function', function() {
+    it('should error gracefully when passed no function', function () {
       expect(() =>
-        frisby
-          .create(this.test.title)
-          .get('http://example.test/')
-          .finally()
+        frisby.create(this.test.title).get('http://example.test/').finally()
       ).to.throw(
         Error,
         'Expected Function object in finally(), but got undefined'
       )
     })
 
-    it('should error gracefully when passed a string instead of function', function() {
+    it('should error gracefully when passed a string instead of function', function () {
       expect(() =>
         frisby
           .create(this.test.title)
@@ -979,7 +965,7 @@ describe('Frisby matchers', function() {
       ).to.throw(Error, 'Expected Function object in finally(), but got string')
     })
 
-    it('should be invoked after an failed expectation', async function() {
+    it('should be invoked after an failed expectation', async function () {
       const finallyInvoked = sinon.spy()
 
       const scope = nock('http://example.test')
@@ -1001,7 +987,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('when a hook raised an exception, it should forward it', async function() {
+    it('when a hook raised an exception, it should forward it', async function () {
       const scope = nock('http://example.test')
         .get('/')
         .reply(200, fixtures.singleObject)
@@ -1020,7 +1006,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('before hook errors are bundled together', async function() {
+    it('before hook errors are bundled together', async function () {
       const beforeErrorMessage = 'this-is-the-before-error'
       const finallyErrorMessage = 'this-is-the-finally-error'
 
@@ -1047,7 +1033,7 @@ describe('Frisby matchers', function() {
     })
   })
 
-  it('Frisby basicAuth should set the correct HTTP Authorization header', async function() {
+  it('Frisby basicAuth should set the correct HTTP Authorization header', async function () {
     const scope = nock('http://example.test', {
       reqheaders: {
         Authorization: `Basic ${Buffer.from('frisby:passwd').toString(
@@ -1076,10 +1062,8 @@ describe('Frisby matchers', function() {
   })
 
   // reference: https://github.com/vlucas/frisby/issues/213 (does not appear to be an issue in IcedFrisby)
-  it('should work with a HTTP 204 responses', async function() {
-    const scope = nock('http://example.test')
-      .get('/')
-      .reply(204)
+  it('should work with a HTTP 204 responses', async function () {
+    const scope = nock('http://example.test').get('/').reply(204)
 
     await frisby
       .create(this.test.title)
@@ -1090,7 +1074,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('Nonexistent hostnames should fail with ENOTFOUND error', async function() {
+  it('Nonexistent hostnames should fail with ENOTFOUND error', async function () {
     expect(
       frisby
         .create(this.test.title)
@@ -1101,7 +1085,7 @@ describe('Frisby matchers', function() {
     ).to.be.rejectedWith('getaddrinfo ENOTFOUND invalid.test invalid.test:80')
   })
 
-  it('Invalid URLs should fail with Invalid URL error', async function() {
+  it('Invalid URLs should fail with Invalid URL error', async function () {
     expect(
       frisby
         .create(this.test.title)
@@ -1112,8 +1096,8 @@ describe('Frisby matchers', function() {
     ).to.be.rejectedWith('Invalid URI "invalid-url"')
   })
 
-  describe('timeouts and retries', function() {
-    it('should fail with the expected timeout message', async function() {
+  describe('timeouts and retries', function () {
+    it('should fail with the expected timeout message', async function () {
       const scope = nock('http://example.test')
         .get('/just-dont-come-back-1')
         .delayBody(30)
@@ -1132,7 +1116,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('should retry the expected number of times after a timeout', async function() {
+    it('should retry the expected number of times after a timeout', async function () {
       const retryCount = 4
       let actualRequestCount = 0
       const timeout = 5
@@ -1162,7 +1146,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('should fail with the last error when every retry errors out', async function() {
+    it('should fail with the last error when every retry errors out', async function () {
       const retryCount = 4
       let actualRequestCount = 0
 
@@ -1192,7 +1176,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('should delay retries by the backoff amount', async function() {
+    it('should delay retries by the backoff amount', async function () {
       let actualRequestCount = 0
       let firstRequestTime
       let secondRequestTime
@@ -1234,7 +1218,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('should not retry POST requests', async function() {
+    it('should not retry POST requests', async function () {
       const gotRequest = sinon.spy()
 
       nock('http://example.test')
@@ -1259,7 +1243,7 @@ describe('Frisby matchers', function() {
       nock.cleanAll()
     })
 
-    it('should pass the expected timeout to mocha, and not cause mocha to time out', async function() {
+    it('should pass the expected timeout to mocha, and not cause mocha to time out', async function () {
       let requestCount = 0
 
       nock('http://example.test')
@@ -1291,7 +1275,7 @@ describe('Frisby matchers', function() {
       await test.run()
     })
 
-    it('should return the current timeout value when not setting a new one', function() {
+    it('should return the current timeout value when not setting a new one', function () {
       const thisFrisby = frisby.create(this.test.title)
       const defaultTimeout = thisFrisby.timeout()
       const newTimeout = thisFrisby.timeout(1000).timeout()
@@ -1300,13 +1284,13 @@ describe('Frisby matchers', function() {
       expect(newTimeout).to.equal(1000)
     })
 
-    it('should set the timeout correctly via config()', function() {
+    it('should set the timeout correctly via config()', function () {
       const thisFrisby = frisby.create(this.test.title).config({ timeout: 100 })
       const currentTimeout = thisFrisby.timeout()
       expect(currentTimeout).to.equal(100)
     })
 
-    it('should retry the expected number of times after a timeout when set via config()', async function() {
+    it('should retry the expected number of times after a timeout when set via config()', async function () {
       const retryCount = 4
       const timeout = 5
 
@@ -1334,7 +1318,7 @@ describe('Frisby matchers', function() {
     })
   })
 
-  it('should handle file uploads', async function() {
+  it('should handle file uploads', async function () {
     const scope = nock('http://example.test')
       .post('/')
       .reply(200, { result: 'ok' })
@@ -1355,7 +1339,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('should allow for passing raw request body', async function() {
+  it('should allow for passing raw request body', async function () {
     const scope = nock('http://example.test')
       .post('/')
       // Echo the body back to the client.
@@ -1377,11 +1361,9 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  describe('expectBodyContains', function() {
-    it('should fail when the response body is empty', async function() {
-      const scope = nock('http://example.test')
-        .post('/')
-        .reply(201)
+  describe('expectBodyContains', function () {
+    it('should fail when the response body is empty', async function () {
+      const scope = nock('http://example.test').post('/').reply(201)
 
       await expect(
         frisby
@@ -1398,8 +1380,8 @@ describe('Frisby matchers', function() {
     })
   })
 
-  describe('Aliased functions backwards compatibility', function() {
-    it('should allow the use of expectHeaderToMatch as an alias for expectHeader', async function() {
+  describe('Aliased functions backwards compatibility', function () {
+    it('should allow the use of expectHeaderToMatch as an alias for expectHeader', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'The payload', { myheader: 'myvalue' })
@@ -1415,10 +1397,10 @@ describe('Frisby matchers', function() {
     })
   })
 
-  describe('expectHeader with string', function() {
+  describe('expectHeader with string', function () {
     // This feels like it's covered in other places, but not explicitly.
     // Included for completeness.
-    it('should pass when the header value passed exactly matches the content', async function() {
+    it('should pass when the header value passed exactly matches the content', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'Payload', [
@@ -1437,7 +1419,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('should fail when the header value passed is a substring of the content', async function() {
+    it('should fail when the header value passed is a substring of the content', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'Payload', [
@@ -1461,7 +1443,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('should fail when the header is not present', async function() {
+    it('should fail when the header is not present', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'Payload', [
@@ -1482,7 +1464,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('should fail when the content is not a string or regex', async function() {
+    it('should fail when the content is not a string or regex', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'Payload', [
@@ -1503,7 +1485,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('should fail when multiple same-name headers match and the allowMultipleHeaders option is not passed', async function() {
+    it('should fail when multiple same-name headers match and the allowMultipleHeaders option is not passed', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
@@ -1522,7 +1504,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('should fail when multiple same-name headers match and the allowMultipleHeaders option is false', async function() {
+    it('should fail when multiple same-name headers match and the allowMultipleHeaders option is false', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
@@ -1541,7 +1523,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('should pass when one of multiple same-name headers matches and the allowMultipleHeaders option is true', async function() {
+    it('should pass when one of multiple same-name headers matches and the allowMultipleHeaders option is true', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
@@ -1557,8 +1539,8 @@ describe('Frisby matchers', function() {
     })
   })
 
-  describe('expectHeader with regex', function() {
-    it('should pass when regex matches', async function() {
+  describe('expectHeader with regex', function () {
+    it('should pass when regex matches', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .once()
@@ -1574,7 +1556,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('should fail when the regex does not match', async function() {
+    it('should fail when the regex does not match', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'The payload', { Location: '/something-else/23' })
@@ -1593,10 +1575,8 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('should fail when the header is absent', async function() {
-      const scope = nock('http://example.test')
-        .post('/')
-        .reply(201)
+    it('should fail when the header is absent', async function () {
+      const scope = nock('http://example.test').post('/').reply(201)
 
       await expect(
         frisby
@@ -1612,7 +1592,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('should fail when multiple same-name headers match and the allowMultipleHeaders option is not passed', async function() {
+    it('should fail when multiple same-name headers match and the allowMultipleHeaders option is not passed', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
@@ -1631,7 +1611,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('should fail when multiple same-name headers match and the allowMultipleHeaders option is false', async function() {
+    it('should fail when multiple same-name headers match and the allowMultipleHeaders option is false', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
@@ -1650,7 +1630,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('should pass when one of multiple same-name headers matches and the allowMultipleHeaders option is true', async function() {
+    it('should pass when one of multiple same-name headers matches and the allowMultipleHeaders option is true', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
@@ -1666,8 +1646,8 @@ describe('Frisby matchers', function() {
     })
   })
 
-  describe('expectHeaderContains', function() {
-    it('should pass when the value passed exactly matches the header content', async function() {
+  describe('expectHeaderContains', function () {
+    it('should pass when the value passed exactly matches the header content', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'Payload', [
@@ -1686,7 +1666,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('should pass when the value passed is a substring of the header content', async function() {
+    it('should pass when the value passed is a substring of the header content', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'Payload', [
@@ -1705,7 +1685,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('should fail when the value passed is not a substring of the header content', async function() {
+    it('should fail when the value passed is not a substring of the header content', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'Payload', [
@@ -1729,7 +1709,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('should fail when the header is not present', async function() {
+    it('should fail when the header is not present', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'Payload', [
@@ -1750,7 +1730,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('should fail when multiple same-name headers are found and the allowMultipleHeaders option is not passed', async function() {
+    it('should fail when multiple same-name headers are found and the allowMultipleHeaders option is not passed', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
@@ -1769,7 +1749,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('should fail when multiple same-name headers are found and the allowMultipleHeaders option is false', async function() {
+    it('should fail when multiple same-name headers are found and the allowMultipleHeaders option is false', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
@@ -1790,7 +1770,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('should pass when one of multiple same-name headers contains the string and the allowMultipleHeaders option is true', async function() {
+    it('should pass when one of multiple same-name headers contains the string and the allowMultipleHeaders option is true', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
@@ -1809,7 +1789,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('should fail when none of multiple same-name headers contains the string', async function() {
+    it('should fail when none of multiple same-name headers contains the string', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'Payload', ['Set-Cookie', 'a=123', 'Set-Cookie', 'b=456'])
@@ -1831,8 +1811,8 @@ describe('Frisby matchers', function() {
     })
   })
 
-  describe('expectNoHeader', function() {
-    it('should pass when a header is absent', async function() {
+  describe('expectNoHeader', function () {
+    it('should pass when a header is absent', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'The payload')
@@ -1848,7 +1828,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('should fail when a header is present', async function() {
+    it('should fail when a header is present', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'The payload', { Location: '/something-else/23' })
@@ -1868,8 +1848,8 @@ describe('Frisby matchers', function() {
     })
   })
 
-  describe('expectMaxResponseTime', function() {
-    it('should pass when the time is less than the threshold', async function() {
+  describe('expectMaxResponseTime', function () {
+    it('should pass when the time is less than the threshold', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(200, 'The payload')
@@ -1883,7 +1863,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('should fail when the time is more than the threshold', async function() {
+    it('should fail when the time is more than the threshold', async function () {
       const maxResponseTime = 25
       const delay = maxResponseTime + 25
 
@@ -1904,7 +1884,7 @@ describe('Frisby matchers', function() {
     })
   })
 
-  it('afterJSON should be invoked with the body json', async function() {
+  it('afterJSON should be invoked with the body json', async function () {
     const afterJSONInvoked = sinon.spy()
 
     const scope = nock('http://example.test')
@@ -1926,7 +1906,7 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  it('baseUri should set the outgoing URI', async function() {
+  it('baseUri should set the outgoing URI', async function () {
     const scope = nock('http://host.example.test')
       .post('/deeplink/item.json')
       .once()
@@ -1954,8 +1934,8 @@ describe('Frisby matchers', function() {
     scope.done()
   })
 
-  describe('Other HTTP methods', function() {
-    it('delete()', async function() {
+  describe('Other HTTP methods', function () {
+    it('delete()', async function () {
       const scope = nock('http://example.test')
         .delete('/')
         .query({ name: 'sally' })
@@ -1978,7 +1958,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('head()', async function() {
+    it('head()', async function () {
       const scope = nock('http://example.test')
         .head('/')
         .query({ name: 'sally' })
@@ -1995,7 +1975,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('options()', async function() {
+    it('options()', async function () {
       const scope = nock('http://example.test')
         .options('/')
         .query({ name: 'sally' })
@@ -2013,7 +1993,7 @@ describe('Frisby matchers', function() {
     })
   })
 
-  it('util.inspect should not have side effects', function() {
+  it('util.inspect should not have side effects', function () {
     // Invoking console.log() on a frisby object invokes util.inspect, which
     // in turn invokes inspect() on the frisby object. This causes side
     // effects which trigger a ("cb.call is not a function") error, which is
@@ -2026,19 +2006,19 @@ describe('Frisby matchers', function() {
     expect(test._inspects).to.have.lengthOf(1)
   })
 
-  describe('exclusive tests', function() {
+  describe('exclusive tests', function () {
     let globalMock, describeMock
-    beforeEach(function() {
+    beforeEach(function () {
       globalMock = sinon.mock(global, 'describe')
       globalMock.expects('describe').never()
       describeMock = sinon.mock(global.describe)
       describeMock.expects('only').once()
     })
-    afterEach(function() {
+    afterEach(function () {
       sinon.verifyAndRestore()
     })
 
-    it('should register exclusive tests', function() {
+    it('should register exclusive tests', function () {
       frisby
         .create(this.test.title)
         .get('http://example.test/test')
@@ -2047,20 +2027,20 @@ describe('Frisby matchers', function() {
     })
   })
 
-  describe('skipped tests', function() {
-    context('when using toss()', function() {
+  describe('skipped tests', function () {
+    context('when using toss()', function () {
       let globalMock, describeMock
-      beforeEach(function() {
+      beforeEach(function () {
         globalMock = sinon.mock(global, 'describe')
         globalMock.expects('describe').never()
         describeMock = sinon.mock(global.describe)
         describeMock.expects('skip').once()
       })
-      afterEach(function() {
+      afterEach(function () {
         sinon.verifyAndRestore()
       })
 
-      it('should register skipped tests', function() {
+      it('should register skipped tests', function () {
         frisby
           .create(this.test.title)
           .get('http://example.test/test')
@@ -2069,10 +2049,8 @@ describe('Frisby matchers', function() {
       })
     })
 
-    it('should not run skipped tests', async function() {
-      const scope = nock('http://example.test')
-        .get('/')
-        .reply(200)
+    it('should not run skipped tests', async function () {
+      const scope = nock('http://example.test').get('/').reply(200)
 
       await frisby
         .create(this.test.title)
@@ -2083,11 +2061,9 @@ describe('Frisby matchers', function() {
       expect(scope.isDone()).to.equal(false)
     })
 
-    describe('conditionally skipped tests', function() {
-      it('when the condition is falsy, the tests are run', async function() {
-        const scope = nock('http://example.test')
-          .get('/')
-          .reply(200)
+    describe('conditionally skipped tests', function () {
+      it('when the condition is falsy, the tests are run', async function () {
+        const scope = nock('http://example.test').get('/').reply(200)
 
         await frisby
           .create(this.test.title)
@@ -2098,10 +2074,8 @@ describe('Frisby matchers', function() {
         expect(scope.isDone()).to.equal(true)
       })
 
-      it('when the condition is truthy, the tests are skipped', async function() {
-        const scope = nock('http://example.test')
-          .get('/')
-          .reply(200)
+      it('when the condition is truthy, the tests are skipped', async function () {
+        const scope = nock('http://example.test').get('/').reply(200)
 
         await frisby
           .create(this.test.title)
@@ -2112,10 +2086,8 @@ describe('Frisby matchers', function() {
         expect(scope.isDone()).to.equal(false)
       })
 
-      it('when the predicate returns falsy, the tests are run', async function() {
-        const scope = nock('http://example.test')
-          .get('/')
-          .reply(200)
+      it('when the predicate returns falsy, the tests are run', async function () {
+        const scope = nock('http://example.test').get('/').reply(200)
 
         await frisby
           .create(this.test.title)
@@ -2126,10 +2098,8 @@ describe('Frisby matchers', function() {
         expect(scope.isDone()).to.equal(true)
       })
 
-      it('when the predicate returns truthy, the tests are skipped', async function() {
-        const scope = nock('http://example.test')
-          .get('/')
-          .reply(200)
+      it('when the predicate returns truthy, the tests are skipped', async function () {
+        const scope = nock('http://example.test').get('/').reply(200)
 
         await frisby
           .create(this.test.title)
@@ -2140,7 +2110,7 @@ describe('Frisby matchers', function() {
         expect(scope.isDone()).to.equal(false)
       })
 
-      it('when the predicate is not a function, raise an error', function() {
+      it('when the predicate is not a function, raise an error', function () {
         expect(() =>
           frisby
             .create(this.test.title)
@@ -2151,8 +2121,8 @@ describe('Frisby matchers', function() {
     })
   })
 
-  describe('header checks should ignore case for strings', function() {
-    it('expectHeader should pass when the header case is mismatched', async function() {
+  describe('header checks should ignore case for strings', function () {
+    it('expectHeader should pass when the header case is mismatched', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'The payload', { myHEADER: 'myvalue' })
@@ -2167,7 +2137,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('expectHeader should pass when the content case is mismatched', async function() {
+    it('expectHeader should pass when the content case is mismatched', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'The payload', { myheader: 'myVALUE' })
@@ -2182,7 +2152,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('expectNoHeader should fail (detect the header) when the header case is mismatched', async function() {
+    it('expectNoHeader should fail (detect the header) when the header case is mismatched', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'The payload', { myHEADER: 'myVALUE' })
@@ -2202,7 +2172,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('expectHeaderContains should pass when the header case is mismatched', async function() {
+    it('expectHeaderContains should pass when the header case is mismatched', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'The payload', { myHEADER: 'myvalue' })
@@ -2217,7 +2187,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('expectHeaderContains should pass when the content case is mismatched', async function() {
+    it('expectHeaderContains should pass when the content case is mismatched', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'The payload', { myheader: 'myVALUE' })
@@ -2232,7 +2202,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('expectHeader with regex should fail when the content case is mismatched', async function() {
+    it('expectHeader with regex should fail when the content case is mismatched', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'The payload', { myHEADER: 'myVALUE' })
@@ -2252,7 +2222,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('expectHeader with regex should pass when the case is mismatched and the regex is case-insensitive', async function() {
+    it('expectHeader with regex should pass when the case is mismatched and the regex is case-insensitive', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'The payload', { myHEADER: 'myVALUE' })
@@ -2267,7 +2237,7 @@ describe('Frisby matchers', function() {
       scope.done()
     })
 
-    it('expectHeader with regex should pass when the case is matched', async function() {
+    it('expectHeader with regex should pass when the case is matched', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(201, 'The payload', { myHEADER: 'myVALUE' })
@@ -2284,12 +2254,12 @@ describe('Frisby matchers', function() {
   })
 })
 
-describe('request headers', function() {
-  it('addHeaders should add the normalized header to the outgoing request', async function() {
+describe('request headers', function () {
+  it('addHeaders should add the normalized header to the outgoing request', async function () {
     let headers
     const scope = nock('http://example.test')
       .get('/')
-      .reply(200, function(uri, requestBody) {
+      .reply(200, function (uri, requestBody) {
         headers = this.req.headers
         return fixtures.arrayOfObjects
       })
@@ -2307,12 +2277,12 @@ describe('request headers', function() {
     scope.done()
   })
 
-  context('when configured with { json: true }', function() {
-    it('applies the expected json header', async function() {
+  context('when configured with { json: true }', function () {
+    it('applies the expected json header', async function () {
       let headers
       const scope = nock('http://example.test')
         .post('/')
-        .reply(200, function(uri, requestBody) {
+        .reply(200, function (uri, requestBody) {
           headers = this.req.headers
           return fixtures.arrayOfObjects
         })
@@ -2328,12 +2298,12 @@ describe('request headers', function() {
       scope.done()
     })
 
-    context('when configured after _request() is invoked', function() {
-      it('still applies the expected json header', async function() {
+    context('when configured after _request() is invoked', function () {
+      it('still applies the expected json header', async function () {
         let headers
         const scope = nock('http://example.test')
           .post('/')
-          .reply(200, function(uri, requestBody) {
+          .reply(200, function (uri, requestBody) {
             headers = this.req.headers
             return fixtures.arrayOfObjects
           })
@@ -2351,8 +2321,8 @@ describe('request headers', function() {
     })
   })
 
-  context('when passing params to _request', function() {
-    it('should allow for passing raw request body and preserve json:true option', async function() {
+  context('when passing params to _request', function () {
+    it('should allow for passing raw request body and preserve json:true option', async function () {
       const scope = nock('http://example.test')
         .post('/')
         .reply(200, { foo: 'bar' })
@@ -2373,7 +2343,7 @@ describe('request headers', function() {
       scope.done()
     })
 
-    it('preserves a custom json header with json:true option', async function() {
+    it('preserves a custom json header with json:true option', async function () {
       const scope = nock('http://example.test')
         .post('/json')
         .reply(200, { foo: 'bar' })
@@ -2397,12 +2367,12 @@ describe('request headers', function() {
     })
   })
 
-  context('when passing headers by config()', function() {
-    it('config should add the normalized headers to the outgoing request', async function() {
+  context('when passing headers by config()', function () {
+    it('config should add the normalized headers to the outgoing request', async function () {
       let headers
       const scope = nock('http://example.test')
         .get('/')
-        .reply(200, function(uri, requestBody) {
+        .reply(200, function (uri, requestBody) {
           headers = this.req.headers
           return fixtures.arrayOfObjects
         })
@@ -2425,12 +2395,12 @@ describe('request headers', function() {
     })
   })
 
-  context('when passing headers by config() and addHeader', function() {
-    it('should send all configured headers', async function() {
+  context('when passing headers by config() and addHeader', function () {
+    it('should send all configured headers', async function () {
       let headers
       const scope = nock('http://example.test')
         .get('/')
-        .reply(200, function(uri, requestBody) {
+        .reply(200, function (uri, requestBody) {
           headers = this.req.headers
           return fixtures.arrayOfObjects
         })
@@ -2454,11 +2424,11 @@ describe('request headers', function() {
       scope.done()
     })
 
-    it('addHeader should override config()', async function() {
+    it('addHeader should override config()', async function () {
       let headers
       const scope = nock('http://example.test')
         .get('/')
-        .reply(200, function(uri, requestBody) {
+        .reply(200, function (uri, requestBody) {
           headers = this.req.headers
           return fixtures.arrayOfObjects
         })
@@ -2481,12 +2451,12 @@ describe('request headers', function() {
     })
   })
 
-  context('when passing headers by params and addHeader', function() {
-    it('should send all configured headers', async function() {
+  context('when passing headers by params and addHeader', function () {
+    it('should send all configured headers', async function () {
       let headers
       const scope = nock('http://example.test')
         .get('/')
-        .reply(200, function(uri, requestBody) {
+        .reply(200, function (uri, requestBody) {
           headers = this.req.headers
           return fixtures.arrayOfObjects
         })
@@ -2507,12 +2477,12 @@ describe('request headers', function() {
       scope.done()
     })
 
-    it.skip('addHeader should override params', async function() {
+    it.skip('addHeader should override params', async function () {
       //Issue #106
       let headers
       const scope = nock('http://example.test')
         .get('/')
-        .reply(200, function(uri, requestBody) {
+        .reply(200, function (uri, requestBody) {
           headers = this.req.headers
           return fixtures.arrayOfObjects
         })
@@ -2532,12 +2502,12 @@ describe('request headers', function() {
     })
   })
 
-  context('when removing headers via removeHeader', function() {
-    it('should not send a removed header when it was added via addHeader', async function() {
+  context('when removing headers via removeHeader', function () {
+    it('should not send a removed header when it was added via addHeader', async function () {
       let headers
       const scope = nock('http://example.test')
         .get('/')
-        .reply(200, function(uri, requestBody) {
+        .reply(200, function (uri, requestBody) {
           headers = this.req.headers
           return fixtures.arrayOfObjects
         })
@@ -2556,12 +2526,12 @@ describe('request headers', function() {
       scope.done()
     })
 
-    it.skip('should not send a removed header when it was added via params', async function() {
+    it.skip('should not send a removed header when it was added via params', async function () {
       //Issue #122
       let headers
       const scope = nock('http://example.test')
         .get('/')
-        .reply(200, function(uri, requestBody) {
+        .reply(200, function (uri, requestBody) {
           headers = this.req.headers
           return fixtures.arrayOfObjects
         })
@@ -2581,11 +2551,11 @@ describe('request headers', function() {
       scope.done()
     })
 
-    it('should not send a removed header when it was added via config()', async function() {
+    it('should not send a removed header when it was added via config()', async function () {
       let headers
       const scope = nock('http://example.test')
         .get('/')
-        .reply(200, function(uri, requestBody) {
+        .reply(200, function (uri, requestBody) {
           headers = this.req.headers
           return fixtures.arrayOfObjects
         })
@@ -2608,11 +2578,11 @@ describe('request headers', function() {
       scope.done()
     })
 
-    it('should not send a removed header, regardless of casing', async function() {
+    it('should not send a removed header, regardless of casing', async function () {
       let headers
       const scope = nock('http://example.test')
         .get('/')
-        .reply(200, function(uri, requestBody) {
+        .reply(200, function (uri, requestBody) {
           headers = this.req.headers
           return fixtures.arrayOfObjects
         })
@@ -2631,11 +2601,11 @@ describe('request headers', function() {
       scope.done()
     })
 
-    it('should not error when removing a non-existant header', async function() {
+    it('should not error when removing a non-existant header', async function () {
       let headers
       const scope = nock('http://example.test')
         .get('/')
-        .reply(200, function(uri, requestBody) {
+        .reply(200, function (uri, requestBody) {
           headers = this.req.headers
           return fixtures.arrayOfObjects
         })
@@ -2658,9 +2628,9 @@ describe('request headers', function() {
   })
 })
 
-describe('Error Handling', function() {
-  context('the exceptionHandler function', function() {
-    it('should return false when not set and called with no function', function() {
+describe('Error Handling', function () {
+  context('the exceptionHandler function', function () {
+    it('should return false when not set and called with no function', function () {
       const thisFrisby = frisby
         .create(this.test.title)
         .get('http://example.test')
@@ -2668,7 +2638,7 @@ describe('Error Handling', function() {
       expect(thisFrisby.exceptionHandler()).to.equal(false)
     })
 
-    it('should return the currently assigned error handler function when called with no function', function() {
+    it('should return the currently assigned error handler function when called with no function', function () {
       const myExceptionHandler = () => {}
 
       const thisFrisby = frisby
@@ -2681,12 +2651,12 @@ describe('Error Handling', function() {
   })
 })
 
-describe('toss()', function() {
+describe('toss()', function () {
   const afterInvoked = sinon.spy()
 
-  it('Make sure the after() block runs', function() {})
+  it('Make sure the after() block runs', function () {})
 
-  after(function() {
+  after(function () {
     expect(afterInvoked.calledOnce).to.be.true
   })
 
@@ -2695,9 +2665,7 @@ describe('toss()', function() {
     .create('toss()')
     .get('http://example.test/')
     .before(() => {
-      scope = nock('http://example.test')
-        .get('/')
-        .reply(404)
+      scope = nock('http://example.test').get('/').reply(404)
     })
     .expectStatus(404)
     .after(() => afterInvoked())

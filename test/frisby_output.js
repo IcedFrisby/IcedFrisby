@@ -11,24 +11,21 @@ const { expect } = chai
 // This spec tests and showcases the dev-friendy output features of IcedFrisby
 //
 
-describe('console output', function() {
+describe('console output', function () {
   let stdout, unhook
-  beforeEach(function() {
+  beforeEach(function () {
     stdout = ''
     unhook = intercept(txt => {
       stdout += txt
     })
   })
-  afterEach(function() {
+  afterEach(function () {
     unhook()
     unhook = undefined
   })
 
-  it("should warn developers if there is a header with 'json' but the body type is not JSON", async function() {
-    const scope = nock('http://example.test/')
-      .post('/')
-      .once()
-      .reply(201)
+  it("should warn developers if there is a header with 'json' but the body type is not JSON", async function () {
+    const scope = nock('http://example.test/').post('/').once().reply(201)
 
     await frisby
       .create(this.test.title)
@@ -49,7 +46,7 @@ describe('console output', function() {
     scope.done()
   })
 
-  it('should NOT warn developers that "there is a header with \'json\' but the body type is not JSON" because there is no body provided', async function() {
+  it('should NOT warn developers that "there is a header with \'json\' but the body type is not JSON" because there is no body provided', async function () {
     const scope = nock('http://example.test')
       .post('/')
       .once()
@@ -65,19 +62,19 @@ describe('console output', function() {
     scope.done()
   })
 
-  describe('inspectOnFailure', function() {
+  describe('inspectOnFailure', function () {
     it.skip('TODO should provide the expected debug output on failure')
   })
 
-  describe('Deprecated features', function() {
-    it('should error when someone uses globalSetup', function() {
+  describe('Deprecated features', function () {
+    it('should error when someone uses globalSetup', function () {
       expect(() => frisby.globalSetup({})).to.throw(
         Error,
         'globalSetup() has been removed.'
       )
     })
 
-    it('should error when someone uses reset', function() {
+    it('should error when someone uses reset', function () {
       // Had been used to reset globalConfig.
       expect(() => frisby.create(this.test.title).reset()).to.throw(
         Error,
