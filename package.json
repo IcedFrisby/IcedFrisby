@@ -51,7 +51,7 @@
     "eslint": "^7.4.0",
     "eslint-config-prettier": "^6.0.0",
     "eslint-plugin-import": "^2.16.0",
-    "eslint-plugin-mocha": "^6.0.0",
+    "eslint-plugin-mocha": "^7.0.1",
     "express": "^4.14.0",
     "intercept-stdout": "^0.1.2",
     "mocha": "^8.0.1",
